@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "==> Linting..."
+bin/rubocop --parallel
+
+echo "==> Running tests..."
+bin/rails test
+
+echo "==> Precompiling assets..."
+bin/rails assets:precompile RAILS_ENV=production SECRET_KEY_BASE=placeholder
+
+echo "==> Done."
