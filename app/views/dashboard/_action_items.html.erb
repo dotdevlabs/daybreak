@@ -1,33 +1,28 @@
 <div class="action-items">
-  <div class="action-items__group">
-    <h3 class="action-items__group-title">Personal</h3>
-    <% if briefing.action_items_personal.any? %>
-      <ul class="action-item-list">
-        <% briefing.action_items_personal.each do |item| %>
-          <li class="action-item action-item--<%= item["priority"] %>">
-            <span class="action-item__dot"></span>
-            <span class="action-item__text"><%= item["text"] %></span>
-          </li>
-        <% end %>
-      </ul>
-    <% else %>
-      <p class="widget__empty">No personal items</p>
-    <% end %>
-  </div>
-
-  <div class="action-items__group">
-    <h3 class="action-items__group-title">Work</h3>
-    <% if briefing.action_items_work.any? %>
-      <ul class="action-item-list">
-        <% briefing.action_items_work.each do |item| %>
-          <li class="action-item action-item--<%= item["priority"] %>">
-            <span class="action-item__dot"></span>
-            <span class="action-item__text"><%= item["text"] %></span>
-          </li>
-        <% end %>
-      </ul>
-    <% else %>
-      <p class="widget__empty">No work items</p>
-    <% end %>
-  </div>
+  <% [["personal", briefing.action_items_personal], ["work", briefing.action_items_work]].each do |context, items| %>
+    <div class="action-items__group">
+      <h3 class="action-items__group-title"><%= context.capitalize %></h3>
+      <% if items.any? %>
+        <ul class="action-item-list">
+          <% items.each do |item| %>
+            <li class="action-item action-item--<%= item["priority"] %>">
+              <button class="action-item__checkbox"
+                      data-controller="action-item-completion"
+                      data-action="click->action-item-completion#complete"
+                      data-action-item-completion-context-value="<%= context %>"
+                      data-action-item-completion-text-value="<%= item["text"] %>"
+                      data-action-item-completion-priority-value="<%= item["priority"] %>"
+                      data-action-item-completion-url-value="<%= dashboard_action_item_completions_path %>"
+                      aria-label="Mark complete">
+                <i data-lucide="circle"></i>
+              </button>
+              <span class="action-item__text"><%= item["text"] %></span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="widget__empty">No <%= context %> items</p>
+      <% end %>
+    </div>
+  <% end %>
 </div>
