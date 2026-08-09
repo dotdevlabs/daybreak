@@ -31,4 +31,31 @@ class WidgetContractTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test "contract defines outbound key with delivery endpoints" do
+    outbound = CONTRACT["outbound"]
+    assert outbound, "Contract missing top-level 'outbound' key"
+    assert_equal "GET /api/events", outbound["events_endpoint"]
+    assert_equal "POST /api/agent/registrations", outbound["registration_endpoint"]
+    assert outbound["message_format"], "outbound missing message_format"
+  end
+
+  test "contract $defs includes outbound_action with required fields" do
+    schema = CONTRACT.dig("$defs", "outbound_action")
+    assert schema, "Contract missing $defs/outbound_action"
+    assert_equal %w[type action data].sort, schema["required"].sort
+    assert_equal [ "action_items" ], schema.dig("properties", "type", "enum")
+    assert_equal [ "item_completed" ], schema.dig("properties", "action", "enum")
+  end
+
+  test "outbound_action examples have correct structure" do
+    examples = CONTRACT.dig("$defs", "outbound_action", "examples") || []
+    assert examples.any?, "outbound_action has no examples"
+    examples.each_with_index do |example, i|
+      assert_equal "action_items", example["type"], "Example #{i}: wrong type"
+      assert_equal "item_completed", example["action"], "Example #{i}: wrong action"
+      assert example.dig("data", "context"), "Example #{i}: missing data.context"
+      assert example.dig("data", "item", "text"), "Example #{i}: missing data.item.text"
+    end
+  end
 end

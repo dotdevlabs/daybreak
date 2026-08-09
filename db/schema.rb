@@ -10,9 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_09_093124) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_09_104612) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "agent_endpoints", force: :cascade do |t|
+    t.string "callback_url", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "daily_briefings", force: :cascade do |t|
     t.jsonb "action_items_data", default: {}, null: false

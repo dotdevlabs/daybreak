@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 import { createIcons, Calendar, CloudSun, Target, Activity,
          ClipboardList, Star, Zap, Mail, List, AlertCircle,
-         Send, Bell, ChevronDown, Sun } from "lucide"
+         Send, Bell, ChevronDown, Sun, Circle, CheckCircle } from "lucide"
 
 // Connects to data-controller="lucide"
 export default class extends Controller {
@@ -21,7 +21,9 @@ export default class extends Controller {
         Send,
         Bell,
         ChevronDown,
-        Sun
+        Sun,
+        Circle,
+        CheckCircle
       }
     })
   }

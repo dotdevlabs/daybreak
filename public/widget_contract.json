@@ -187,6 +187,47 @@
           { "text": "Updated daily goals progress", "timestamp": "2026-08-09T09:02:00Z", "icon": "target" }
         ]
       ]
+    },
+    "outbound_action": {
+      "title": "User Action (Outbound Message)",
+      "description": "Message sent from Daybreak to the registered agent when a user acts on a widget. Delivered over the SSE push connection (GET /api/events) when connected, or POSTed to the registered callback URL (POST /api/agent/registrations) when not.",
+      "type": "object",
+      "required": ["type", "action", "data"],
+      "properties": {
+        "type": { "type": "string", "enum": ["action_items"] },
+        "action": { "type": "string", "enum": ["item_completed"] },
+        "data": {
+          "type": "object",
+          "required": ["context", "item"],
+          "properties": {
+            "context": { "type": "string", "enum": ["personal", "work"] },
+            "item": {
+              "type": "object",
+              "required": ["text"],
+              "properties": {
+                "text": { "type": "string" },
+                "priority": { "type": "string", "enum": ["high", "medium", "low"] }
+              }
+            }
+          }
+        }
+      },
+      "examples": [
+        {
+          "type": "action_items",
+          "action": "item_completed",
+          "data": {
+            "context": "personal",
+            "item": { "text": "Call dentist to reschedule appointment", "priority": "high" }
+          }
+        }
+      ]
     }
+  },
+  "outbound": {
+    "description": "Messages sent from Daybreak to the agent when a user acts on a widget.",
+    "events_endpoint": "GET /api/events",
+    "registration_endpoint": "POST /api/agent/registrations",
+    "message_format": { "$ref": "#/$defs/outbound_action" }
   }
 }
