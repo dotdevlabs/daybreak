@@ -8,6 +8,6 @@ Rails.application.routes.draw do
   root "dashboard#show"
 
   namespace :api do
-    resources :widgets, only: [:create]
+    resources :widgets, only: [ :create ]
   end
 end

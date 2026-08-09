@@ -6,7 +6,7 @@ class WidgetMessageTest < ActiveSupport::TestCase
   test "valid date_calendar message passes" do
     msg = WidgetMessage.new(
       type: "date_calendar",
-      data: { "events" => [{ "title" => "Standup", "time" => "09:00" }] }
+      data: { "events" => [ { "title" => "Standup", "time" => "09:00" } ] }
     )
     assert msg.valid?
   end
@@ -16,7 +16,7 @@ class WidgetMessageTest < ActiveSupport::TestCase
       type: "weather",
       data: {
         "location" => "NYC", "current_temp" => 72, "unit" => "F", "condition" => "Sunny",
-        "hourly" => [{ "hour" => "9AM", "temp" => 70, "condition" => "Clear" }]
+        "hourly" => [ { "hour" => "9AM", "temp" => 70, "condition" => "Clear" } ]
       }
     )
     assert msg.valid?
@@ -34,8 +34,8 @@ class WidgetMessageTest < ActiveSupport::TestCase
     msg = WidgetMessage.new(
       type: "action_items",
       data: {
-        "personal" => [{ "text" => "Call dentist", "priority" => "high" }],
-        "work" => [{ "text" => "Review PR", "priority" => "medium" }]
+        "personal" => [ { "text" => "Call dentist", "priority" => "high" } ],
+        "work" => [ { "text" => "Review PR", "priority" => "medium" } ]
       }
     )
     assert msg.valid?
@@ -44,7 +44,7 @@ class WidgetMessageTest < ActiveSupport::TestCase
   test "valid long_term_goals message with array data passes" do
     msg = WidgetMessage.new(
       type: "long_term_goals",
-      data: [{ "text" => "Read 24 books", "progress" => 9, "target" => 24, "unit" => "books" }]
+      data: [ { "text" => "Read 24 books", "progress" => 9, "target" => 24, "unit" => "books" } ]
     )
     assert msg.valid?
   end
@@ -52,7 +52,7 @@ class WidgetMessageTest < ActiveSupport::TestCase
   test "valid agent_activity message with array data passes" do
     msg = WidgetMessage.new(
       type: "agent_activity",
-      data: [{ "text" => "Fetched weather", "timestamp" => "2026-08-09T09:00:00Z", "icon" => "cloud" }]
+      data: [ { "text" => "Fetched weather", "timestamp" => "2026-08-09T09:00:00Z", "icon" => "cloud" } ]
     )
     assert msg.valid?
   end
@@ -94,7 +94,7 @@ class WidgetMessageTest < ActiveSupport::TestCase
   end
 
   test "date_calendar event missing title fails" do
-    msg = WidgetMessage.new(type: "date_calendar", data: { "events" => [{ "time" => "09:00" }] })
+    msg = WidgetMessage.new(type: "date_calendar", data: { "events" => [ { "time" => "09:00" } ] })
     assert msg.invalid?
     assert_includes msg.errors.full_messages.join, "events[0].title is required"
   end
@@ -113,13 +113,13 @@ class WidgetMessageTest < ActiveSupport::TestCase
   end
 
   test "weather hourly missing hour fails" do
-    msg = WidgetMessage.new(type: "weather", data: { "hourly" => [{ "temp" => 70 }] })
+    msg = WidgetMessage.new(type: "weather", data: { "hourly" => [ { "temp" => 70 } ] })
     assert msg.invalid?
     assert_includes msg.errors.full_messages.join, "hourly[0].hour is required"
   end
 
   test "weather hourly missing temp fails" do
-    msg = WidgetMessage.new(type: "weather", data: { "hourly" => [{ "hour" => "9AM" }] })
+    msg = WidgetMessage.new(type: "weather", data: { "hourly" => [ { "hour" => "9AM" } ] })
     assert msg.invalid?
     assert_includes msg.errors.full_messages.join, "hourly[0].temp is required"
   end
@@ -164,7 +164,7 @@ class WidgetMessageTest < ActiveSupport::TestCase
   end
 
   test "action_items personal item missing text fails" do
-    msg = WidgetMessage.new(type: "action_items", data: { "personal" => [{ "priority" => "high" }] })
+    msg = WidgetMessage.new(type: "action_items", data: { "personal" => [ { "priority" => "high" } ] })
     assert msg.invalid?
     assert_includes msg.errors.full_messages.join, "personal[0].text is required"
   end
@@ -180,7 +180,7 @@ class WidgetMessageTest < ActiveSupport::TestCase
   test "long_term_goals goal missing text fails" do
     msg = WidgetMessage.new(
       type: "long_term_goals",
-      data: [{ "progress" => 5, "target" => 10, "unit" => "books" }]
+      data: [ { "progress" => 5, "target" => 10, "unit" => "books" } ]
     )
     assert msg.invalid?
     assert_includes msg.errors.full_messages.join, "goals[0].text is required"
@@ -189,7 +189,7 @@ class WidgetMessageTest < ActiveSupport::TestCase
   test "long_term_goals goal missing progress fails" do
     msg = WidgetMessage.new(
       type: "long_term_goals",
-      data: [{ "text" => "Read books", "target" => 10, "unit" => "books" }]
+      data: [ { "text" => "Read books", "target" => 10, "unit" => "books" } ]
     )
     assert msg.invalid?
     assert_includes msg.errors.full_messages.join, "goals[0].progress is required"
@@ -206,7 +206,7 @@ class WidgetMessageTest < ActiveSupport::TestCase
   test "agent_activity entry missing text fails" do
     msg = WidgetMessage.new(
       type: "agent_activity",
-      data: [{ "timestamp" => "2026-08-09T09:00:00Z" }]
+      data: [ { "timestamp" => "2026-08-09T09:00:00Z" } ]
     )
     assert msg.invalid?
     assert_includes msg.errors.full_messages.join, "activities[0].text is required"
@@ -215,7 +215,7 @@ class WidgetMessageTest < ActiveSupport::TestCase
   test "agent_activity entry missing timestamp fails" do
     msg = WidgetMessage.new(
       type: "agent_activity",
-      data: [{ "text" => "Did something" }]
+      data: [ { "text" => "Did something" } ]
     )
     assert msg.invalid?
     assert_includes msg.errors.full_messages.join, "activities[0].timestamp is required"
@@ -233,7 +233,7 @@ class WidgetMessageTest < ActiveSupport::TestCase
 
   test "apply_to sets array column for long_term_goals" do
     briefing = DailyBriefing.new(date: Date.current)
-    data = [{ "text" => "Run a marathon", "progress" => 5, "target" => 26.2, "unit" => "miles" }]
+    data = [ { "text" => "Run a marathon", "progress" => 5, "target" => 26.2, "unit" => "miles" } ]
     msg = WidgetMessage.new(type: "long_term_goals", data: data)
     msg.apply_to(briefing)
     assert_equal data, briefing.long_term_goals_data
@@ -241,7 +241,7 @@ class WidgetMessageTest < ActiveSupport::TestCase
 
   test "apply_to sets array column for agent_activity" do
     briefing = DailyBriefing.new(date: Date.current)
-    data = [{ "text" => "Fetched weather", "timestamp" => "2026-08-09T09:00:00Z" }]
+    data = [ { "text" => "Fetched weather", "timestamp" => "2026-08-09T09:00:00Z" } ]
     msg = WidgetMessage.new(type: "agent_activity", data: data)
     msg.apply_to(briefing)
     assert_equal data, briefing.agent_activity_data

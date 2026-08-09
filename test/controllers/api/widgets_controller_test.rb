@@ -37,7 +37,7 @@ class Api::WidgetsControllerTest < ActionDispatch::IntegrationTest
     assert_difference "DailyBriefing.count", 1 do
       post_widget(
         type: "date_calendar",
-        data: { "events" => [{ "title" => "Standup", "time" => "09:00" }] }
+        data: { "events" => [ { "title" => "Standup", "time" => "09:00" } ] }
       )
     end
     assert_response :success
@@ -46,7 +46,7 @@ class Api::WidgetsControllerTest < ActionDispatch::IntegrationTest
   test "valid long_term_goals message with array data returns 200" do
     post_widget(
       type: "long_term_goals",
-      data: [{ "text" => "Read 24 books", "progress" => 9, "target" => 24, "unit" => "books" }]
+      data: [ { "text" => "Read 24 books", "progress" => 9, "target" => 24, "unit" => "books" } ]
     )
     assert_response :success
   end
@@ -54,7 +54,7 @@ class Api::WidgetsControllerTest < ActionDispatch::IntegrationTest
   test "valid agent_activity message with array data returns 200" do
     post_widget(
       type: "agent_activity",
-      data: [{ "text" => "Fetched weather", "timestamp" => "2026-08-09T09:00:00Z", "icon" => "cloud" }]
+      data: [ { "text" => "Fetched weather", "timestamp" => "2026-08-09T09:00:00Z", "icon" => "cloud" } ]
     )
     assert_response :success
   end
@@ -71,8 +71,8 @@ class Api::WidgetsControllerTest < ActionDispatch::IntegrationTest
     post_widget(
       type: "action_items",
       data: {
-        "personal" => [{ "text" => "Call dentist", "priority" => "high" }],
-        "work" => [{ "text" => "Review PR", "priority" => "medium" }]
+        "personal" => [ { "text" => "Call dentist", "priority" => "high" } ],
+        "work" => [ { "text" => "Review PR", "priority" => "medium" } ]
       }
     )
     assert_response :success
@@ -110,7 +110,7 @@ class Api::WidgetsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "missing required field returns 422 with field error" do
-    post_widget(type: "date_calendar", data: { "events" => [{ "time" => "09:00" }] })
+    post_widget(type: "date_calendar", data: { "events" => [ { "time" => "09:00" } ] })
     assert_response :unprocessable_entity
     assert_includes response.parsed_body["errors"].join, "title is required"
   end
