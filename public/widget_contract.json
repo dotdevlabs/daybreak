@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "/widget_contract.json",
+  "title": "Daybreak Widget Message",
+  "description": "Message format for the Daybreak agent widget protocol v1. POST to /api/widgets with Authorization: Bearer <token>. Sending a message replaces all of that widget's data for today.",
+  "type": "object",
+  "required": ["type", "data"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["date_calendar", "weather", "daily_goals", "action_items", "long_term_goals", "agent_activity"],
+      "description": "Widget to update. Sending a message replaces all of that widget's data for today."
+    },
+    "data": {
+      "description": "Widget data payload. Shape varies by type — see $defs for each type's schema and examples."
+    }
+  },
+  "$defs": {
+    "date_calendar": {
+      "title": "Date/Calendar Widget",
+      "description": "Calendar events for the current day.",
+      "type": "object",
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title"],
+            "properties": {
+              "title": { "type": "string", "description": "Event title (required)" },
+              "time": { "type": "string", "description": "Event time, e.g. '09:00'" },
+              "duration_minutes": { "type": "integer", "description": "Duration in minutes" }
+            }
+          }
+        }
+      },
+      "examples": [
+        {
+          "events": [
+            { "title": "Team standup", "time": "09:00", "duration_minutes": 15 },
+            { "title": "Design review", "time": "14:00", "duration_minutes": 60 },
+            { "title": "End-of-day wrap-up", "time": "17:00" }
+          ]
+        }
+      ]
+    },
+    "weather": {
+      "title": "Weather Widget",
+      "description": "Current conditions and hourly forecast.",
+      "type": "object",
+      "properties": {
+        "location": { "type": "string", "description": "Location name" },
+        "current_temp": { "type": "number", "description": "Current temperature" },
+        "unit": { "type": "string", "enum": ["F", "C"], "description": "Temperature unit" },
+        "condition": { "type": "string", "description": "Current weather condition, e.g. 'Sunny'" },
+        "hourly": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["hour", "temp"],
+            "properties": {
+              "hour": { "type": "string", "description": "Hour label, e.g. '9AM' (required)" },
+              "temp": { "type": "number", "description": "Temperature at this hour (required)" },
+              "condition": { "type": "string", "description": "Weather condition at this hour" }
+            }
+          }
+        }
+      },
+      "examples": [
+        {
+          "location": "San Francisco",
+          "current_temp": 68,
+          "unit": "F",
+          "condition": "Partly Cloudy",
+          "hourly": [
+            { "hour": "9AM", "temp": 63, "condition": "Foggy" },
+            { "hour": "12PM", "temp": 68, "condition": "Partly Cloudy" },
+            { "hour": "3PM", "temp": 72, "condition": "Sunny" },
+            { "hour": "6PM", "temp": 65, "condition": "Clear" }
+          ]
+        }
+      ]
+    },
+    "daily_goals": {
+      "title": "Daily Goals Widget",
+      "description": "Keyed map of progress metrics for daily goals. Each key is a goal identifier; each value is a progress object.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["label", "current", "target", "unit"],
+        "properties": {
+          "label": { "type": "string", "description": "Display label for the goal (required)" },
+          "current": { "type": "number", "description": "Current progress value (required)" },
+          "target": { "type": "number", "description": "Target value (required)" },
+          "unit": { "type": "string", "description": "Unit of measurement, e.g. 'steps', 'oz', 'minutes' (required)" }
+        }
+      },
+      "examples": [
+        {
+          "steps": { "label": "Steps", "current": 4200, "target": 10000, "unit": "steps" },
+          "water": { "label": "Water", "current": 48, "target": 64, "unit": "oz" },
+          "exercise": { "label": "Exercise", "current": 20, "target": 30, "unit": "minutes" }
+        }
+      ]
+    },
+    "action_items": {
+      "title": "Action Items Widget",
+      "description": "Action items organized by context (personal and work).",
+      "type": "object",
+      "properties": {
+        "personal": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["text"],
+            "properties": {
+              "text": { "type": "string", "description": "Action item text (required)" },
+              "priority": { "type": "string", "enum": ["high", "medium", "low"], "description": "Priority level" }
+            }
+          }
+        },
+        "work": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["text"],
+            "properties": {
+              "text": { "type": "string", "description": "Action item text (required)" },
+              "priority": { "type": "string", "enum": ["high", "medium", "low"], "description": "Priority level" }
+            }
+          }
+        }
+      },
+      "examples": [
+        {
+          "personal": [
+            { "text": "Call dentist to reschedule appointment", "priority": "high" },
+            { "text": "Pick up groceries", "priority": "medium" }
+          ],
+          "work": [
+            { "text": "Review PR #142 before end of day", "priority": "high" },
+            { "text": "Send project status update to stakeholders", "priority": "medium" },
+            { "text": "Update Jira tickets", "priority": "low" }
+          ]
+        }
+      ]
+    },
+    "long_term_goals": {
+      "title": "Long-Term Goals Widget",
+      "description": "Array of long-term goals with progress tracking. data is an array (not an object).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["text", "progress", "target", "unit"],
+        "properties": {
+          "text": { "type": "string", "description": "Goal description (required)" },
+          "progress": { "type": "number", "description": "Current progress value (required)" },
+          "target": { "type": "number", "description": "Target value (required)" },
+          "unit": { "type": "string", "description": "Unit of measurement (required)" }
+        }
+      },
+      "examples": [
+        [
+          { "text": "Read 24 books this year", "progress": 9, "target": 24, "unit": "books" },
+          { "text": "Run a half marathon", "progress": 8.5, "target": 13.1, "unit": "miles" },
+          { "text": "Save for vacation fund", "progress": 2400, "target": 5000, "unit": "dollars" }
+        ]
+      ]
+    },
+    "agent_activity": {
+      "title": "Agent Activity Widget",
+      "description": "Log of recent activity entries from the assistant agent. data is an array (not an object).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["text", "timestamp"],
+        "properties": {
+          "text": { "type": "string", "description": "Activity description (required)" },
+          "timestamp": { "type": "string", "description": "ISO 8601 timestamp (required)" },
+          "icon": { "type": "string", "description": "Lucide icon name for the activity type" }
+        }
+      },
+      "examples": [
+        [
+          { "text": "Fetched weather data for San Francisco", "timestamp": "2026-08-09T09:00:00Z", "icon": "cloud" },
+          { "text": "Synced 3 new calendar events from Google Calendar", "timestamp": "2026-08-09T09:01:30Z", "icon": "calendar" },
+          { "text": "Updated daily goals progress", "timestamp": "2026-08-09T09:02:00Z", "icon": "target" }
+        ]
+      ]
+    }
+  }
+}
