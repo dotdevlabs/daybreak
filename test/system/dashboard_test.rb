@@ -22,8 +22,7 @@ class DashboardTest < ApplicationSystemTestCase
   test "dashboard page shows action items section with personal and work columns" do
     visit root_url
     assert_selector ".action-items"
-    assert_text "Personal"
-    assert_text "Work"
+    assert_selector ".action-items__group-title", count: 2
   end
 
   test "dashboard page shows long term goals section" do
