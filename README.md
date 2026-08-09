@@ -180,3 +180,54 @@ bin/rails test
 ```bash
 bin/ci
 ```
+
+On every push to `main`, CI also builds the Dockerfile and pushes the image to the GitHub Container Registry:
+
+- `ghcr.io/dotdevlabs/daybreak:latest`
+- `ghcr.io/dotdevlabs/daybreak:main-<unix-timestamp>-<short-sha>`
+
+The build job uses the built-in `GITHUB_TOKEN` (no external secret required). It does not run on pull requests.
+
+## Deployment
+
+### Prerequisites
+
+Before the first deploy, a Postgres role and four databases must exist on the production server:
+
+```sql
+CREATE ROLE daybreak WITH LOGIN PASSWORD '<secret>';
+CREATE DATABASE daybreak_production OWNER daybreak;
+CREATE DATABASE daybreak_production_cache OWNER daybreak;
+CREATE DATABASE daybreak_production_queue OWNER daybreak;
+CREATE DATABASE daybreak_production_cable OWNER daybreak;
+```
+
+### Environment Variables (production)
+
+| Variable | Purpose |
+|----------|---------|
+| `DAYBREAK_DATABASE_PASSWORD` | Password for the `daybreak` Postgres role |
+| `DAYBREAK_API_TOKEN` | Bearer token the agent uses to authenticate widget updates |
+| `RAILS_MASTER_KEY` | Decrypts `config/credentials.yml.enc` |
+| `REDIS_URL` | Redis connection string for Action Cable |
+| `WEB_CONCURRENCY` | Must remain `1` (in-memory push registry) |
+
+### Deploying an Image
+
+Pull and run any tagged image from the registry:
+
+```bash
+docker pull ghcr.io/dotdevlabs/daybreak:latest
+docker run -e RAILS_ENV=production \
+           -e DAYBREAK_DATABASE_PASSWORD=<secret> \
+           -e DAYBREAK_API_TOKEN=<secret> \
+           -e RAILS_MASTER_KEY=<key> \
+           -p 3000:3000 \
+           ghcr.io/dotdevlabs/daybreak:latest
+```
+
+Run migrations on first deploy (and after any schema change):
+
+```bash
+docker run --rm -e RAILS_ENV=production ... ghcr.io/dotdevlabs/daybreak:latest bin/rails db:migrate
+```
