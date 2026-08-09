@@ -1,0 +1,37 @@
+<% content_for :title, "Daybreak — Today's Briefing" %>
+
+<div class="dashboard">
+  <header class="dashboard__header">
+    <h1 class="dashboard__greeting">Good morning</h1>
+  </header>
+
+  <% if @briefing %>
+    <!-- Row 1: Glanceable widgets (equal height) -->
+    <div class="dashboard__widgets-row">
+      <%= render "date_widget", briefing: @briefing %>
+      <%= render "weather_widget", briefing: @briefing %>
+      <%= render "daily_goals_widget", briefing: @briefing %>
+    </div>
+
+    <!-- Action Items -->
+    <%= render "section", title: "Action Items", icon: "clipboard-list" do %>
+      <%= render "action_items", briefing: @briefing %>
+    <% end %>
+
+    <!-- Long Term Goals -->
+    <%= render "section", title: "Long Term Goals", icon: "target" do %>
+      <%= render "long_term_goals", briefing: @briefing %>
+    <% end %>
+
+    <!-- Agent Activity with overflow indicator -->
+    <%= render "section", title: "Agent Activity", icon: "zap",
+               stimulus_controller: "overflow-indicator" do %>
+      <%= render "agent_activity", briefing: @briefing %>
+    <% end %>
+  <% else %>
+    <div class="dashboard__empty">
+      <i data-lucide="sun"></i>
+      <p>No briefing available for today. Check back soon.</p>
+    </div>
+  <% end %>
+</div>

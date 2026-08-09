@@ -1,0 +1,33 @@
+<div class="action-items">
+  <div class="action-items__group">
+    <h3 class="action-items__group-title">Personal</h3>
+    <% if briefing.action_items_personal.any? %>
+      <ul class="action-item-list">
+        <% briefing.action_items_personal.each do |item| %>
+          <li class="action-item action-item--<%= item["priority"] %>">
+            <span class="action-item__dot"></span>
+            <span class="action-item__text"><%= item["text"] %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="widget__empty">No personal items</p>
+    <% end %>
+  </div>
+
+  <div class="action-items__group">
+    <h3 class="action-items__group-title">Work</h3>
+    <% if briefing.action_items_work.any? %>
+      <ul class="action-item-list">
+        <% briefing.action_items_work.each do |item| %>
+          <li class="action-item action-item--<%= item["priority"] %>">
+            <span class="action-item__dot"></span>
+            <span class="action-item__text"><%= item["text"] %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="widget__empty">No work items</p>
+    <% end %>
+  </div>
+</div>

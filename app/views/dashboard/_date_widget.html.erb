@@ -1,0 +1,27 @@
+<div class="widget date-widget">
+  <div class="widget__header">
+    <i data-lucide="calendar"></i>
+    Today
+  </div>
+
+  <div class="date-widget__date">
+    <div class="date-widget__weekday"><%= briefing.date.strftime("%A") %></div>
+    <div class="date-widget__full"><%= briefing.date.strftime("%B %-d, %Y") %></div>
+  </div>
+
+  <% if briefing.calendar_events.any? %>
+    <ul class="calendar-events">
+      <% briefing.calendar_events.each do |event| %>
+        <li class="calendar-event">
+          <span class="calendar-event__time"><%= event["time"] %></span>
+          <span class="calendar-event__title"><%= event["title"] %></span>
+          <% if event["duration_minutes"] %>
+            <span class="calendar-event__duration"><%= event["duration_minutes"] %>m</span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="widget__empty">No events today</p>
+  <% end %>
+</div>
