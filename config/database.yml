@@ -87,18 +87,18 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: workspace_production
-    username: workspace
-    password: <%= ENV["WORKSPACE_DATABASE_PASSWORD"] %>
+    database: daybreak_production
+    username: daybreak
+    password: <%= ENV["DAYBREAK_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
-    database: workspace_production_cache
+    database: daybreak_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: workspace_production_queue
+    database: daybreak_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: workspace_production_cable
+    database: daybreak_production_cable
     migrations_paths: db/cable_migrate
