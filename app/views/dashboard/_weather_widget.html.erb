@@ -1,0 +1,29 @@
+<div class="widget weather-widget">
+  <div class="widget__header">
+    <i data-lucide="cloud-sun"></i>
+    Weather
+  </div>
+
+  <% current = briefing.weather_current %>
+  <div class="weather-widget__current">
+    <div class="weather-widget__temp">
+      <%= current["current_temp"] || "--" %>&deg;<%= current["unit"] || "F" %>
+    </div>
+    <div class="weather-widget__meta">
+      <div class="weather-widget__condition"><%= current["condition"] || "—" %></div>
+      <div class="weather-widget__location"><%= current["location"] %></div>
+    </div>
+  </div>
+
+  <% if briefing.hourly_forecast.any? %>
+    <div class="weather-widget__forecast">
+      <% briefing.hourly_forecast.each do |slot| %>
+        <div class="forecast-slot">
+          <div class="forecast-slot__hour"><%= slot["hour"] %></div>
+          <div class="forecast-slot__temp"><%= slot["temp"] %>&deg;</div>
+          <div class="forecast-slot__condition"><%= slot["condition"] %></div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

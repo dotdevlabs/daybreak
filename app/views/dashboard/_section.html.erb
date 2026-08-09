@@ -1,0 +1,10 @@
+<% stimulus_controller ||= nil %>
+<section class="section" <%= stimulus_controller ? "data-controller=\"#{stimulus_controller}\"".html_safe : "" %>>
+  <div class="section__header">
+    <i data-lucide="<%= icon %>"></i>
+    <h2 class="section__title"><%= title %></h2>
+  </div>
+  <div class="section__body">
+    <%= yield %>
+  </div>
+</section>

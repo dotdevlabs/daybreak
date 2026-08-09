@@ -1,0 +1,20 @@
+<div class="widget goals-widget">
+  <div class="widget__header">
+    <i data-lucide="target"></i>
+    Daily Goals
+  </div>
+
+  <% briefing.goals.each do |_key, goal| %>
+    <% pct = goal["target"].to_f > 0 ? (goal["current"].to_f / goal["target"].to_f * 100).round : 0 %>
+    <% fill_class = pct >= 80 ? "goal-bar__fill--success" : pct >= 40 ? "goal-bar__fill--warning" : "" %>
+    <div class="goal-bar">
+      <div class="goal-bar__label">
+        <span class="goal-bar__name"><%= goal["label"] %></span>
+        <span class="goal-bar__value"><%= goal["current"] %> / <%= goal["target"] %> <%= goal["unit"] %></span>
+      </div>
+      <div class="goal-bar__track">
+        <div class="goal-bar__fill <%= fill_class %>" style="width: <%= [pct, 100].min %>%"></div>
+      </div>
+    </div>
+  <% end %>
+</div>

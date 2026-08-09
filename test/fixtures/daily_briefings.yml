@@ -1,0 +1,73 @@
+today:
+  date: <%= Date.today %>
+  calendar_data:
+    events:
+      - title: "Team standup"
+        time: "09:00"
+        duration_minutes: 30
+  weather_data:
+    location: "San Francisco, CA"
+    current_temp: 65
+    unit: "F"
+    condition: "Partly Cloudy"
+    hourly:
+      - hour: "9am"
+        temp: 64
+        condition: "Sunny"
+  daily_goals_data:
+    exercise:
+      label: "Exercise"
+      current: 25
+      target: 60
+      unit: "min"
+    protein:
+      label: "Protein"
+      current: 45
+      target: 150
+      unit: "g"
+  action_items_data:
+    personal:
+      - text: "Call dentist"
+        priority: "high"
+    work:
+      - text: "Review PR #247"
+        priority: "high"
+  long_term_goals_data:
+    - text: "Learn Spanish"
+      progress: 35
+      target: 100
+      unit: "%"
+  agent_activity_data:
+    - text: "Summarized 3 emails"
+      timestamp: "7:15am"
+      icon: "mail"
+    - text: "Updated grocery list"
+      timestamp: "7:18am"
+      icon: "list"
+    - text: "Booked restaurant"
+      timestamp: "7:22am"
+      icon: "calendar"
+    - text: "Flagged charge"
+      timestamp: "7:26am"
+      icon: "alert-circle"
+    - text: "Weather brief ready"
+      timestamp: "7:30am"
+      icon: "cloud-sun"
+    - text: "Prepped meeting agenda"
+      timestamp: "7:35am"
+      icon: "clipboard-list"
+    - text: "Drafted reply"
+      timestamp: "7:40am"
+      icon: "send"
+    - text: "Reminded dentist call"
+      timestamp: "7:45am"
+      icon: "bell"
+
+yesterday:
+  date: <%= Date.yesterday %>
+  calendar_data: {}
+  weather_data: {}
+  daily_goals_data: {}
+  action_items_data: {}
+  long_term_goals_data: []
+  agent_activity_data: []

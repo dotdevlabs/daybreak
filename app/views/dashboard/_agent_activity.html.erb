@@ -1,0 +1,14 @@
+<div class="agent-activity" data-controller="overflow-indicator">
+  <ul class="agent-activity__list" data-overflow-indicator-target="container">
+    <% briefing.agent_activities.each do |activity| %>
+      <li class="agent-activity__item" data-overflow-indicator-target="item">
+        <i class="agent-activity__icon" data-lucide="<%= activity["icon"] %>"></i>
+        <span class="agent-activity__text"><%= activity["text"] %></span>
+        <span class="agent-activity__time"><%= activity["timestamp"] %></span>
+      </li>
+    <% end %>
+  </ul>
+  <div class="agent-activity__overflow-badge" data-overflow-indicator-target="badge" hidden>
+    +0 more
+  </div>
+</div>
