@@ -102,6 +102,73 @@ An invalid message (unknown type, missing required field, wrong shape) returns `
 
 `public/widget_contract.json` is a machine-readable JSON Schema (draft 2020-12) describing every widget type, its fields, and example payloads. It is also served statically at `/widget_contract.json`. Build your agent against this document. The test suite verifies that the contract's examples are accepted by the live validation logic.
 
+## Outbound Protocol (Widget Actions → Agent)
+
+Daybreak is bidirectional. When the user acts on a widget — for example, checking off an action item — Daybreak sends a message back to the agent describing the action. Delivery uses a live SSE push connection when the agent is connected, or an HTTP POST to a registered callback URL when it is not.
+
+### Registering a Callback Endpoint
+
+```
+POST /api/agent/registrations
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{ "callback_url": "https://your-agent.example.com/daybreak/events" }
+```
+
+Response:
+
+```json
+{ "status": "ok", "callback_url": "https://your-agent.example.com/daybreak/events" }
+```
+
+Daybreak will POST outbound messages to this URL when no live push connection is active.
+
+### Holding a Live Push Connection (SSE)
+
+```
+GET /api/events
+Authorization: Bearer <token>
+Accept: text/event-stream
+```
+
+Daybreak keeps the connection open and writes Server-Sent Events to it as user actions occur. A `ping` event is sent every 15 seconds to keep the connection alive. The agent's push connection takes precedence over the registered callback URL.
+
+### Outbound Message Format
+
+Outbound messages use the same `{ type, action, data }` envelope:
+
+```json
+{
+  "type": "action_items",
+  "action": "item_completed",
+  "data": {
+    "context": "personal",
+    "item": {
+      "text": "Call dentist to reschedule appointment",
+      "priority": "high"
+    }
+  }
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `type` | Widget type the action came from (`action_items`) |
+| `action` | What the user did (`item_completed`) |
+| `data.context` | Which column the item was in (`personal` or `work`) |
+| `data.item.text` | The action item text |
+| `data.item.priority` | The item's priority (`high`, `medium`, `low`) — omitted if not set |
+
+The full outbound schema is in `public/widget_contract.json` under `$defs.outbound_action` and the top-level `outbound` key.
+
+### Delivery Semantics
+
+- If the agent holds a live `GET /api/events` SSE connection, the message is written to that stream.
+- If no SSE connection is active, the message is POSTed to the most recently registered callback URL.
+- If neither is available, the message is dropped (logged server-side). No user-visible error occurs.
+- `AgentPushRegistry` is in-memory, so `WEB_CONCURRENCY` must remain `1` (the default).
+
 ## Testing
 
 ```bash
