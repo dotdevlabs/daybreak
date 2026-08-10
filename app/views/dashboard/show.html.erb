@@ -1,9 +1,7 @@
 <% content_for :title, "Daybreak — Today's Briefing" %>
 
 <div class="dashboard">
-  <header class="dashboard__header">
-    <h1 class="dashboard__greeting">Good morning</h1>
-  </header>
+  <%= render "header" %>
 
   <% if @briefing %>
     <!-- Row 1: Glanceable widgets (equal height) -->
@@ -14,7 +12,7 @@
     </div>
 
     <!-- Action Items -->
-    <%= render "section", title: "Action Items", icon: "clipboard-list" do %>
+    <%= render "section", title: "Action Items", icon: "list-checks" do %>
       <%= render "action_items", briefing: @briefing %>
     <% end %>
 
@@ -23,11 +21,12 @@
       <%= render "long_term_goals", briefing: @briefing %>
     <% end %>
 
-    <!-- Agent Activity with overflow indicator -->
-    <%= render "section", title: "Agent Activity", icon: "zap",
-               stimulus_controller: "overflow-indicator" do %>
+    <!-- Agent Activity -->
+    <%= render "section", title: "Agent Activity", icon: "bot" do %>
       <%= render "agent_activity", briefing: @briefing %>
     <% end %>
+
+    <%= render "footer", briefing: @briefing %>
   <% else %>
     <div class="dashboard__empty">
       <i data-lucide="sun"></i>

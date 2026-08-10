@@ -1,0 +1,3 @@
+<footer class="dashboard__footer">
+  Curated by your AI assistant<% if defined?(briefing) && briefing %> &middot; Last updated <%= briefing.updated_at.strftime("%-I:%M %p") %><% end %>
+</footer>

@@ -5,25 +5,45 @@ today:
       - title: "Team standup"
         time: "09:00"
         duration_minutes: 30
+        dot_color: "#D4916E"
+      - title: "Design review"
+        time: "14:00"
+        duration_minutes: 60
+        dot_color: "#7BAE7F"
   weather_data:
     location: "San Francisco, CA"
     current_temp: 65
     unit: "F"
     condition: "Partly Cloudy"
+    hi: 72
+    lo: 55
     hourly:
       - hour: "9am"
         temp: 64
         condition: "Sunny"
+        is_current: true
+      - hour: "10am"
+        temp: 66
+        condition: "Partly Cloudy"
+      - hour: "11am"
+        temp: 68
+        condition: "Partly Cloudy"
   daily_goals_data:
     exercise:
       label: "Exercise"
-      current: 25
-      target: 60
+      current: 45
+      target: 45
       unit: "min"
+      status: "complete"
+    steps:
+      label: "Steps"
+      current: 2400
+      target: 8000
+      unit: "steps"
     protein:
       label: "Protein"
-      current: 45
-      target: 150
+      current: 128
+      target: 160
       unit: "g"
   action_items_data:
     personal:
@@ -33,35 +53,57 @@ today:
       - text: "Review PR #247"
         priority: "high"
   long_term_goals_data:
-    - text: "Learn Spanish"
-      progress: 35
-      target: 100
-      unit: "%"
+    - text: "Read 24 books"
+      progress: 8
+      target: 24
+      unit: "books"
+      subtitle: "8 of 24 books"
+      insight: "On track to finish by December at current pace."
+    - text: "Run a half marathon"
+      progress: 8.5
+      target: 13.1
+      unit: "miles"
+      insight: "Adding one long run per week will close the gap."
+    - text: "Save for vacation"
+      progress: 2400
+      target: 5000
+      unit: "dollars"
+      insight: "Three months away from the target at current rate."
   agent_activity_data:
     - text: "Summarized 3 emails"
-      timestamp: "7:15am"
+      timestamp: "7:15 AM"
       icon: "mail"
+      status: "Completed"
     - text: "Updated grocery list"
-      timestamp: "7:18am"
+      timestamp: "7:18 AM"
       icon: "list"
+      status: "Completed"
+      body: "Added 12 items from this week's meal plan. Removed duplicates from last week. Organized by grocery store section for easier shopping. Also noted items running low in the pantry that should be restocked soon."
     - text: "Booked restaurant"
-      timestamp: "7:22am"
+      timestamp: "7:22 AM"
       icon: "calendar"
+      status: "Completed"
     - text: "Flagged charge"
-      timestamp: "7:26am"
+      timestamp: "7:26 AM"
       icon: "alert-circle"
+      status: "Pending"
+      body: "Unusual charge of $147.50 on card ending 4242 needs review. May be a subscription renewal for an annual service. Recommend checking with bank before disputing the charge to avoid accidental cancellation of active services."
     - text: "Weather brief ready"
-      timestamp: "7:30am"
+      timestamp: "7:30 AM"
       icon: "cloud-sun"
+      status: "Completed"
     - text: "Prepped meeting agenda"
-      timestamp: "7:35am"
+      timestamp: "7:35 AM"
       icon: "clipboard-list"
+      status: "Completed"
     - text: "Drafted reply"
-      timestamp: "7:40am"
+      timestamp: "7:40 AM"
       icon: "send"
+      status: "Completed"
     - text: "Reminded dentist call"
-      timestamp: "7:45am"
+      timestamp: "7:45 AM"
       icon: "bell"
+      status: "Pending"
 
 yesterday:
   date: <%= Date.yesterday %>

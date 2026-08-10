@@ -1,0 +1,17 @@
+<div class="dashboard__header"
+     data-controller="clock"
+     data-clock-user-name-value="<%= ENV.fetch('DAYBREAK_USER_NAME', '') %>">
+  <div class="header__logo">
+    <%= render "logo" %>
+  </div>
+  <div class="header__right">
+    <div class="header__clock">
+      <span class="header__clock-time" data-clock-target="time">--:--</span>
+      <span class="header__clock-ampm" data-clock-target="ampm">--</span>
+    </div>
+    <div class="header__meta">
+      <span class="header__greeting" data-clock-target="greeting">Good morning</span>
+      <span class="header__date" data-clock-target="date"><%= Date.current.strftime("%A, %B %-d, %Y") %></span>
+    </div>
+  </div>
+</div>
