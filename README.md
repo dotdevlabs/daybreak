@@ -21,15 +21,17 @@ Open `http://localhost:3000` to see the dashboard.
 
 ## Dashboard Layout
 
-**Row 1 — glanceable widgets** (equal height, responsive grid):
-- **Date & Calendar** — today's date with upcoming events
-- **Weather** — current conditions and hourly forecast strip
-- **Daily Goals** — exercise, protein, and calorie progress bars
+The dashboard uses a warm terracotta design system with full light/dark mode support (follows `prefers-color-scheme`). Typography: Quicksand wordmark, Newsreader section titles, Inter body, Geist Mono for numeric readouts. The header shows a live clock and time-of-day greeting.
 
-**Sections below:**
-- **Action Items** — personal and work columns
-- **Long Term Goals** — progress bars for multi-week objectives
-- **Agent Activity** — recent agent actions with an overflow indicator when items exceed the visible area
+**Row 1 — glanceable widgets** (equal height on desktop, stacked on mobile):
+- **Calendar** — mini week calendar with today highlighted + today's schedule list
+- **Weather** — current temp/conditions with a clipped hourly forecast strip; current-hour tile highlighted
+- **Daily Goals** — completed items (green dot + unit · Complete) and in-progress items with data-driven progress bars
+
+**Sections below** (3-across card grid on desktop, single column on mobile):
+- **Action Items** — Personal and Work widget cards side by side
+- **Long Term Goals** — progress cards with percentage, agent insight sentence, and data-driven progress bars
+- **Agent Activity** — activity cards with title, body summary, status chip, and a bottom-fade overflow indicator when card content exceeds the card's bounded height
 
 ## Data Model
 
@@ -42,7 +44,7 @@ The dashboard renders from a `DailyBriefing` record. Each briefing stores JSONB 
 | `daily_goals_data` | Exercise / protein / calorie current and target values |
 | `action_items_data` | Personal and work item arrays |
 | `long_term_goals_data` | Goal text, progress, and target arrays |
-| `agent_activity_data` | Activity text, timestamp, and icon arrays |
+| `agent_activity_data` | Activity text, timestamp, icon, optional body summary, and status arrays |
 
 `DailyBriefing.for_today` returns today's record, falling back to the most recent record if none exists for today.
 
@@ -81,14 +83,16 @@ Each message replaces all of that widget's data for today. Widgets not included 
 
 ### Widget Types
 
-| `type` | `data` shape | Required fields |
-|--------|-------------|-----------------|
-| `date_calendar` | object with `events` array | `events[].title` |
-| `weather` | object with `hourly` array | `hourly[].hour`, `hourly[].temp` |
-| `daily_goals` | object (keyed map of goals) | `<key>.label`, `.current`, `.target`, `.unit` |
-| `action_items` | object with `personal` and `work` arrays | `personal[].text`, `work[].text` |
-| `long_term_goals` | **array** of goals | `[].text`, `.progress`, `.target`, `.unit` |
-| `agent_activity` | **array** of entries | `[].text`, `[].timestamp` |
+| `type` | `data` shape | Required fields | Notable optional fields |
+|--------|-------------|-----------------|------------------------|
+| `date_calendar` | object with `events` array | `events[].title` | `events[].dot_color` (CSS color for event dot) |
+| `weather` | object with `hourly` array | `hourly[].hour`, `hourly[].temp` | `hi`, `lo` (daily high/low); `hourly[].is_current`, `hourly[].condition` |
+| `daily_goals` | object (keyed map of goals) | `<key>.label`, `.current`, `.target`, `.unit` | `<key>.status` (`"complete"` or `"in_progress"`) |
+| `action_items` | object with `personal` and `work` arrays | `personal[].text`, `work[].text` | `[].priority` |
+| `long_term_goals` | **array** of goals | `[].text`, `.progress`, `.target`, `.unit` | `[].insight` (one-line summary), `[].subtitle` |
+| `agent_activity` | **array** of entries | `[].text`, `[].timestamp` | `[].body` (longer summary), `[].status` (`"Completed"` or `"Pending"`) |
+
+Full field descriptions and examples are in `public/widget_contract.json` (also served at `/widget_contract.json`).
 
 A valid response looks like:
 
@@ -208,6 +212,7 @@ CREATE DATABASE daybreak_production_cable OWNER daybreak;
 |----------|---------|
 | `DAYBREAK_DATABASE_PASSWORD` | Password for the `daybreak` Postgres role |
 | `DAYBREAK_API_TOKEN` | Bearer token the agent uses to authenticate widget updates |
+| `DAYBREAK_USER_NAME` | Your first name — shown in the dashboard greeting ("Good morning, Alex") |
 | `RAILS_MASTER_KEY` | Decrypts `config/credentials.yml.enc` |
 | `WEB_CONCURRENCY` | Must remain `1` (in-memory push registry) |
 
