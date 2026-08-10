@@ -209,8 +209,9 @@ CREATE DATABASE daybreak_production_cable OWNER daybreak;
 | `DAYBREAK_DATABASE_PASSWORD` | Password for the `daybreak` Postgres role |
 | `DAYBREAK_API_TOKEN` | Bearer token the agent uses to authenticate widget updates |
 | `RAILS_MASTER_KEY` | Decrypts `config/credentials.yml.enc` |
-| `REDIS_URL` | Redis connection string for Action Cable |
 | `WEB_CONCURRENCY` | Must remain `1` (in-memory push registry) |
+
+Action Cable uses the `cable` PostgreSQL database (Solid Cable adapter) — no Redis required.
 
 ### Deploying an Image
 
@@ -226,8 +227,28 @@ docker run -e RAILS_ENV=production \
            ghcr.io/dotdevlabs/daybreak:latest
 ```
 
-Run migrations on first deploy (and after any schema change):
+On first deploy, prepare all four databases (creates them if absent and loads schemas):
+
+```bash
+docker run --rm -e RAILS_ENV=production ... ghcr.io/dotdevlabs/daybreak:latest bin/rails db:prepare
+```
+
+After schema changes on subsequent deploys:
 
 ```bash
 docker run --rm -e RAILS_ENV=production ... ghcr.io/dotdevlabs/daybreak:latest bin/rails db:migrate
 ```
+
+### Running the Worker
+
+Solid Queue processes background jobs and is required for the application to function. Run it alongside the web process:
+
+```bash
+docker run -e RAILS_ENV=production \
+           -e DAYBREAK_DATABASE_PASSWORD=<secret> \
+           -e DAYBREAK_API_TOKEN=<secret> \
+           -e RAILS_MASTER_KEY=<key> \
+           ghcr.io/dotdevlabs/daybreak:latest bin/rails solid_queue:start
+```
+
+Or use the convenience script: `bin/jobs`.
