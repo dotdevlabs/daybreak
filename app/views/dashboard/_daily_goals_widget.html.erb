@@ -1,19 +1,39 @@
 <div class="widget goals-widget">
   <div class="widget__header">
-    <i data-lucide="target"></i>
-    Daily Goals
+    <i data-lucide="activity" class="widget__header-icon"></i>
+    <h3 class="widget__title">Daily Goals</h3>
   </div>
 
-  <% briefing.goals.each do |_key, goal| %>
-    <% pct = goal["target"].to_f > 0 ? (goal["current"].to_f / goal["target"].to_f * 100).round : 0 %>
-    <% fill_class = pct >= 80 ? "goal-bar__fill--success" : pct >= 40 ? "goal-bar__fill--warning" : "" %>
-    <div class="goal-bar">
-      <div class="goal-bar__label">
-        <span class="goal-bar__name"><%= goal["label"] %></span>
-        <span class="goal-bar__value"><%= goal["current"] %> / <%= goal["target"] %> <%= goal["unit"] %></span>
+  <%
+    goals = briefing.goals.values
+    complete_goals  = goals.select { |g| g["status"] == "complete" || g["current"].to_f >= g["target"].to_f }
+    progress_goals  = goals.reject { |g| g["status"] == "complete" || g["current"].to_f >= g["target"].to_f }
+  %>
+
+  <% complete_goals.each do |goal| %>
+    <div class="goal-item goal-item--complete">
+      <div class="goal-item__header">
+        <span class="goal-item__dot goal-item__dot--complete"></span>
+        <span class="goal-item__name"><%= goal["label"] %></span>
+        <span class="goal-item__value"><%= goal["current"] %> <%= goal["unit"] %> &middot; Complete</span>
       </div>
-      <div class="goal-bar__track">
-        <div class="goal-bar__fill <%= fill_class %>" style="width: <%= [pct, 100].min %>%"></div>
+    </div>
+  <% end %>
+
+  <% if complete_goals.any? && progress_goals.any? %>
+    <div class="goal-divider"></div>
+  <% end %>
+
+  <% progress_goals.each do |goal| %>
+    <% pct = goal["target"].to_f > 0 ? (goal["current"].to_f / goal["target"].to_f * 100).round : 0 %>
+    <div class="goal-item goal-item--in-progress">
+      <div class="goal-item__header">
+        <span class="goal-item__dot goal-item__dot--pending"></span>
+        <span class="goal-item__name"><%= goal["label"] %></span>
+        <span class="goal-item__value"><%= goal["current"] %> / <%= goal["target"] %> <%= goal["unit"] %></span>
+      </div>
+      <div class="goal-item__bar-track goal-bar__track">
+        <div class="goal-item__bar-fill goal-bar__fill" style="width: <%= [pct, 100].min %>%"></div>
       </div>
     </div>
   <% end %>

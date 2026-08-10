@@ -1,14 +1,21 @@
-<div class="agent-activity" data-controller="overflow-indicator">
-  <ul class="agent-activity__list" data-overflow-indicator-target="container">
-    <% briefing.agent_activities.each do |activity| %>
-      <li class="agent-activity__item" data-overflow-indicator-target="item">
-        <i class="agent-activity__icon" data-lucide="<%= activity["icon"] %>"></i>
-        <span class="agent-activity__text"><%= activity["text"] %></span>
-        <span class="agent-activity__time"><%= activity["timestamp"] %></span>
-      </li>
-    <% end %>
-  </ul>
-  <div class="agent-activity__overflow-badge" data-overflow-indicator-target="badge" hidden>
-    +0 more
-  </div>
+<div class="agent-activity">
+  <% briefing.agent_activities.each do |activity| %>
+    <div class="agent-activity-card" data-controller="card-overflow">
+      <div class="agent-activity-card__inner" data-card-overflow-target="content">
+        <div class="agent-activity-card__top-row">
+          <span class="agent-activity-card__title"><%= activity["text"] %></span>
+          <span class="agent-activity-card__timestamp"><%= activity["timestamp"] %></span>
+        </div>
+        <% if activity["body"].present? %>
+          <p class="agent-activity-card__body"><%= activity["body"] %></p>
+        <% end %>
+        <div class="agent-activity-card__status">
+          <% status = activity["status"] || "Completed" %>
+          <span class="status-dot status-dot--<%= status.downcase %>"></span>
+          <span class="status-label"><%= status %></span>
+        </div>
+      </div>
+      <div class="agent-activity-card__fade" data-card-overflow-target="fade" hidden></div>
+    </div>
+  <% end %>
 </div>

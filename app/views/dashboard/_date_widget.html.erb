@@ -1,26 +1,52 @@
+<%
+  week_start = briefing.date.beginning_of_week(:sunday)
+  week_end   = week_start + 6.days
+%>
 <div class="widget date-widget">
   <div class="widget__header">
-    <i data-lucide="calendar"></i>
-    Today
+    <i data-lucide="calendar" class="widget__header-icon"></i>
+    <h3 class="widget__title">Calendar</h3>
+    <span class="widget__header-caption">
+      <%= week_start.strftime("%b %-d") %> &ndash; <%= week_end.strftime("%-d") %>
+    </span>
   </div>
 
-  <div class="date-widget__date">
-    <div class="date-widget__weekday"><%= briefing.date.strftime("%A") %></div>
-    <div class="date-widget__full"><%= briefing.date.strftime("%B %-d, %Y") %></div>
-  </div>
-
-  <% if briefing.calendar_events.any? %>
-    <ul class="calendar-events">
-      <% briefing.calendar_events.each do |event| %>
-        <li class="calendar-event">
-          <span class="calendar-event__time"><%= event["time"] %></span>
-          <span class="calendar-event__title"><%= event["title"] %></span>
-          <% if event["duration_minutes"] %>
-            <span class="calendar-event__duration"><%= event["duration_minutes"] %>m</span>
-          <% end %>
-        </li>
+  <!-- Mini week calendar -->
+  <div class="calendar-week">
+    <div class="calendar-week__header">
+      <% %w[Su Mo Tu We Th Fr Sa].each do |d| %>
+        <span class="calendar-week__day-label"><%= d %></span>
       <% end %>
-    </ul>
+    </div>
+    <div class="calendar-week__dates">
+      <% (0..6).each do |offset| %>
+        <% day = week_start + offset.days %>
+        <% is_today = day == briefing.date %>
+        <div class="calendar-week__date <%= "calendar-week__date--today" if is_today %>">
+          <span class="calendar-week__date-num"><%= day.day %></span>
+          <% if is_today && briefing.calendar_events.any? %>
+            <span class="calendar-week__event-dot"></span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Today's Schedule -->
+  <% if briefing.calendar_events.any? %>
+    <div class="schedule-section">
+      <p class="schedule-label">Today's Schedule</p>
+      <ul class="schedule-list">
+        <% dot_colors = ["var(--color-event-dot-1)", "var(--color-event-dot-2)", "var(--color-event-dot-3)"] %>
+        <% briefing.calendar_events.each_with_index do |event, i| %>
+          <li class="schedule-event">
+            <span class="schedule-event__time"><%= event["time"] || "&mdash;".html_safe %></span>
+            <span class="schedule-event__dot" style="background: <%= event["dot_color"] || dot_colors[i % 3] %>"></span>
+            <span class="schedule-event__name"><%= event["title"] %></span>
+          </li>
+        <% end %>
+      </ul>
+    </div>
   <% else %>
     <p class="widget__empty">No events today</p>
   <% end %>

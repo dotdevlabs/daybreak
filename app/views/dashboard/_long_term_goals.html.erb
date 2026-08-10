@@ -1,14 +1,17 @@
 <div class="long-term-goals">
   <% briefing.long_term_goals.each do |goal| %>
     <% pct = goal["target"].to_f > 0 ? (goal["progress"].to_f / goal["target"].to_f * 100).round : 0 %>
-    <div class="goal-bar">
-      <div class="goal-bar__label">
-        <span class="goal-bar__name"><%= goal["text"] %></span>
-        <span class="goal-bar__value"><%= goal["progress"] %> / <%= goal["target"] %> <%= goal["unit"] %></span>
-      </div>
+    <% subtitle = goal["subtitle"].presence || "#{goal["progress"].to_i} of #{goal["target"].to_i} #{goal["unit"]}" %>
+    <div class="widget long-term-goal-card">
+      <h3 class="goal-card__title"><%= goal["text"] %></h3>
+      <p class="goal-card__subtitle"><%= subtitle %></p>
       <div class="goal-bar__track">
         <div class="goal-bar__fill" style="width: <%= [pct, 100].min %>%"></div>
       </div>
+      <p class="goal-card__percent"><%= [pct, 100].min %>% complete</p>
+      <% if goal["insight"].present? %>
+        <p class="goal-card__insight"><%= goal["insight"] %></p>
+      <% end %>
     </div>
   <% end %>
 </div>

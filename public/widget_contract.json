@@ -29,7 +29,8 @@
             "properties": {
               "title": { "type": "string", "description": "Event title (required)" },
               "time": { "type": "string", "description": "Event time, e.g. '09:00'" },
-              "duration_minutes": { "type": "integer", "description": "Duration in minutes" }
+              "duration_minutes": { "type": "integer", "description": "Duration in minutes" },
+              "dot_color": { "type": "string", "description": "CSS color for event dot, e.g. '#D4916E'" }
             }
           }
         }
@@ -53,6 +54,8 @@
         "current_temp": { "type": "number", "description": "Current temperature" },
         "unit": { "type": "string", "enum": ["F", "C"], "description": "Temperature unit" },
         "condition": { "type": "string", "description": "Current weather condition, e.g. 'Sunny'" },
+        "hi": { "type": "number", "description": "Daily high temperature" },
+        "lo": { "type": "number", "description": "Daily low temperature" },
         "hourly": {
           "type": "array",
           "items": {
@@ -61,7 +64,8 @@
             "properties": {
               "hour": { "type": "string", "description": "Hour label, e.g. '9AM' (required)" },
               "temp": { "type": "number", "description": "Temperature at this hour (required)" },
-              "condition": { "type": "string", "description": "Weather condition at this hour" }
+              "condition": { "type": "string", "description": "Weather condition at this hour" },
+              "is_current": { "type": "boolean", "description": "True if this is the current or next hour slot" }
             }
           }
         }
@@ -92,7 +96,8 @@
           "label": { "type": "string", "description": "Display label for the goal (required)" },
           "current": { "type": "number", "description": "Current progress value (required)" },
           "target": { "type": "number", "description": "Target value (required)" },
-          "unit": { "type": "string", "description": "Unit of measurement, e.g. 'steps', 'oz', 'minutes' (required)" }
+          "unit": { "type": "string", "description": "Unit of measurement, e.g. 'steps', 'oz', 'minutes' (required)" },
+          "status": { "type": "string", "enum": ["complete", "in_progress"], "description": "Explicit completion status; inferred from current >= target if omitted" }
         }
       },
       "examples": [
@@ -156,7 +161,9 @@
           "text": { "type": "string", "description": "Goal description (required)" },
           "progress": { "type": "number", "description": "Current progress value (required)" },
           "target": { "type": "number", "description": "Target value (required)" },
-          "unit": { "type": "string", "description": "Unit of measurement (required)" }
+          "unit": { "type": "string", "description": "Unit of measurement (required)" },
+          "insight": { "type": "string", "description": "One-line agent insight sentence about progress" },
+          "subtitle": { "type": "string", "description": "Subtitle line, e.g. '8 of 24 books' or 'Target: May 2026'" }
         }
       },
       "examples": [
@@ -177,7 +184,9 @@
         "properties": {
           "text": { "type": "string", "description": "Activity description (required)" },
           "timestamp": { "type": "string", "description": "ISO 8601 timestamp (required)" },
-          "icon": { "type": "string", "description": "Lucide icon name for the activity type" }
+          "icon": { "type": "string", "description": "Lucide icon name for the activity type" },
+          "body": { "type": "string", "description": "Longer activity summary shown in card body" },
+          "status": { "type": "string", "enum": ["Completed", "Pending"], "description": "Activity status" }
         }
       },
       "examples": [

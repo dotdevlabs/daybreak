@@ -1,27 +1,41 @@
 <div class="widget weather-widget">
   <div class="widget__header">
-    <i data-lucide="cloud-sun"></i>
-    Weather
+    <i data-lucide="cloud-sun" class="widget__header-icon"></i>
+    <h3 class="widget__title">Weather</h3>
+    <span class="widget__header-caption"><%= briefing.weather_current["location"] %></span>
   </div>
 
   <% current = briefing.weather_current %>
   <div class="weather-widget__current">
-    <div class="weather-widget__temp">
-      <%= current["current_temp"] || "--" %>&deg;<%= current["unit"] || "F" %>
-    </div>
+    <span class="weather-widget__temp"><%= current["current_temp"] || "--" %>&deg;</span>
     <div class="weather-widget__meta">
-      <div class="weather-widget__condition"><%= current["condition"] || "—" %></div>
-      <div class="weather-widget__location"><%= current["location"] %></div>
+      <span class="weather-widget__condition"><%= current["condition"] || "&mdash;".html_safe %></span>
+      <% if current["hi"] || current["lo"] %>
+        <span class="weather-widget__hi-lo">H: <%= current["hi"] %>&deg;&nbsp;&nbsp;L: <%= current["lo"] %>&deg;</span>
+      <% end %>
     </div>
   </div>
 
   <% if briefing.hourly_forecast.any? %>
     <div class="weather-widget__forecast">
-      <% briefing.hourly_forecast.each do |slot| %>
-        <div class="forecast-slot">
-          <div class="forecast-slot__hour"><%= slot["hour"] %></div>
-          <div class="forecast-slot__temp"><%= slot["temp"] %>&deg;</div>
-          <div class="forecast-slot__condition"><%= slot["condition"] %></div>
+      <% briefing.hourly_forecast.each_with_index do |slot, i| %>
+        <% condition_str = slot["condition"].to_s.downcase %>
+        <% icon = if condition_str.match?(/sun|clear/)
+                    "sun"
+                  elsif condition_str.match?(/rain|shower/)
+                    "cloud-rain"
+                  elsif condition_str.match?(/moon|night/)
+                    "moon"
+                  elsif condition_str.match?(/cloud/)
+                    "cloud-sun"
+                  else
+                    "cloud-sun"
+                  end %>
+        <% is_current = slot["is_current"] || i == 0 %>
+        <div class="forecast-slot <%= "forecast-slot--current" if is_current %>">
+          <span class="forecast-slot__hour"><%= slot["hour"] %></span>
+          <span class="forecast-slot__icon"><i data-lucide="<%= icon %>"></i></span>
+          <span class="forecast-slot__temp"><%= slot["temp"] %>&deg;</span>
         </div>
       <% end %>
     </div>

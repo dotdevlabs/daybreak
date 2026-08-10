@@ -45,27 +45,26 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_select ".dashboard__empty"
   end
 
-  test "shows briefing date in date widget" do
+  test "shows briefing date in calendar week" do
     get root_url
-    assert_select ".date-widget__weekday"
-    assert_select ".date-widget__full"
+    assert_select ".calendar-week"
+    assert_select ".calendar-week__date--today"
   end
 
   test "shows goal progress bars" do
     get root_url
-    assert_select ".goal-bar"
     assert_select ".goal-bar__track"
     assert_select ".goal-bar__fill"
   end
 
-  test "shows personal and work action item groups" do
+  test "shows personal and work action item cards" do
     get root_url
-    assert_select ".action-items__group-title", text: "Personal"
-    assert_select ".action-items__group-title", text: "Work"
+    assert_select ".widget__title", text: "Action Items – Personal"
+    assert_select ".widget__title", text: "Action Items – Work"
   end
 
-  test "shows agent activity items" do
+  test "shows agent activity cards" do
     get root_url
-    assert_select ".agent-activity__item"
+    assert_select ".agent-activity-card"
   end
 end
