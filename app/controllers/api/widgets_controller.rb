@@ -1,23 +1,32 @@
 module Api
   class WidgetsController < Api::ApplicationController
     def create
-      raw = JSON.parse(request.body.read) rescue {}
-      message = WidgetMessage.new(type: raw["type"], data: raw["data"])
+      raw = JSON.parse(request.body.read)
+      attrs = raw.dig("data", "attributes") || {}
+      message = WidgetMessage.new(type: attrs["widget_type"], data: attrs["data"])
 
       if message.invalid?
-        return render json: { errors: message.errors.full_messages },
-                      status: :unprocessable_entity
+        return render_jsonapi_errors(message.errors.full_messages,
+                                     status: :unprocessable_entity)
       end
 
       briefing = DailyBriefing.find_or_initialize_by(date: Date.current)
       message.apply_to(briefing)
 
       if briefing.save
-        render json: { status: "ok", widget: message.type, date: briefing.date.iso8601 }
+        render_jsonapi(
+          data: {
+            type: "widget_messages",
+            id: briefing.date.iso8601,
+            attributes: { widget_type: message.type, date: briefing.date.iso8601 }
+          },
+          status: :created
+        )
       else
-        render json: { errors: briefing.errors.full_messages },
-               status: :unprocessable_entity
+        render_jsonapi_errors(briefing.errors.full_messages, status: :unprocessable_entity)
       end
+    rescue JSON::ParserError
+      render_jsonapi_errors([ "Request body must be valid JSON" ], status: :unprocessable_entity)
     end
   end
 end

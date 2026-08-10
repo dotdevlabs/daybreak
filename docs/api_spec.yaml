@@ -1,0 +1,420 @@
+openapi: 3.0.3
+info:
+  title: Daybreak Agent API
+  version: "1"
+  description: >
+    Widget message protocol for the Daybreak agent surface.
+    The agent sends messages to create/update widgets; user actions on widgets
+    are sent back to the agent via SSE push or registered callback.
+
+servers:
+  - url: /api
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    JsonApiResourceObject:
+      type: object
+      required: [type, id, attributes]
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        attributes:
+          type: object
+        relationships:
+          type: object
+
+    JsonApiEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          oneOf:
+            - $ref: '#/components/schemas/JsonApiResourceObject'
+            - type: array
+              items:
+                $ref: '#/components/schemas/JsonApiResourceObject'
+
+    JsonApiError:
+      type: object
+      required: [detail]
+      properties:
+        detail:
+          type: string
+
+    JsonApiErrors:
+      type: object
+      required: [errors]
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/JsonApiError'
+
+    WidgetMessageAttributes:
+      type: object
+      required: [widget_type]
+      properties:
+        widget_type:
+          type: string
+          enum:
+            - date_calendar
+            - weather
+            - daily_goals
+            - action_items
+            - long_term_goals
+            - agent_activity
+        data:
+          type: object
+          description: >
+            Widget data payload. Shape varies by type — see the widget catalog
+            (GET /api/catalog) for each type's schema.
+
+    WidgetMessageResponseAttributes:
+      type: object
+      required: [widget_type, date]
+      properties:
+        widget_type:
+          type: string
+        date:
+          type: string
+          format: date
+
+    WidgetTypeAttributes:
+      type: object
+      required: [name, description, schema]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        schema:
+          type: object
+
+    AgentRegistrationAttributes:
+      type: object
+      required: [callback_url]
+      properties:
+        callback_url:
+          type: string
+          format: uri
+
+    OutboundActionData:
+      type: object
+      required: [type, action, data]
+      description: >
+        Message pushed from Daybreak to the agent (via SSE or callback POST)
+        when a user acts on a widget.
+      properties:
+        type:
+          type: string
+          enum: [action_items]
+        action:
+          type: string
+          enum: [item_completed]
+        data:
+          type: object
+          required: [context, item]
+          properties:
+            context:
+              type: string
+              enum: [personal, work]
+            item:
+              type: object
+              required: [text]
+              properties:
+                text:
+                  type: string
+                priority:
+                  type: string
+                  enum: [high, medium, low]
+
+paths:
+  /catalog:
+    get:
+      operationId: listWidgetTypes
+      summary: List available widget types and their message schemas
+      responses:
+        "200":
+          description: Array of widget type definitions
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required: [type, id, attributes]
+                      properties:
+                        type:
+                          type: string
+                          enum: [widget_types]
+                        id:
+                          type: string
+                        attributes:
+                          $ref: '#/components/schemas/WidgetTypeAttributes'
+              example:
+                data:
+                  - type: widget_types
+                    id: weather
+                    attributes:
+                      name: Weather Widget
+                      description: Current conditions and hourly forecast.
+                      schema:
+                        type: object
+                        properties:
+                          location:
+                            type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/JsonApiErrors'
+
+  /widgets:
+    post:
+      operationId: createWidgetMessage
+      summary: Create or update a widget for today
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required: [data]
+              properties:
+                data:
+                  type: object
+                  required: [type, attributes]
+                  properties:
+                    type:
+                      type: string
+                      enum: [widget_messages]
+                    attributes:
+                      $ref: '#/components/schemas/WidgetMessageAttributes'
+            examples:
+              weather:
+                summary: Weather widget
+                value:
+                  data:
+                    type: widget_messages
+                    attributes:
+                      widget_type: weather
+                      data:
+                        location: San Francisco
+                        current_temp: 68
+                        unit: F
+                        condition: Partly Cloudy
+                        hourly:
+                          - hour: 9AM
+                            temp: 63
+                            condition: Foggy
+              date_calendar:
+                summary: Date/Calendar widget
+                value:
+                  data:
+                    type: widget_messages
+                    attributes:
+                      widget_type: date_calendar
+                      data:
+                        events:
+                          - title: Team standup
+                            time: "09:00"
+                            duration_minutes: 15
+              daily_goals:
+                summary: Daily Goals widget
+                value:
+                  data:
+                    type: widget_messages
+                    attributes:
+                      widget_type: daily_goals
+                      data:
+                        steps:
+                          label: Steps
+                          current: 4200
+                          target: 10000
+                          unit: steps
+              action_items:
+                summary: Action Items widget
+                value:
+                  data:
+                    type: widget_messages
+                    attributes:
+                      widget_type: action_items
+                      data:
+                        personal:
+                          - text: Call dentist
+                            priority: high
+                        work:
+                          - text: Review PR
+                            priority: medium
+              long_term_goals:
+                summary: Long-Term Goals widget
+                value:
+                  data:
+                    type: widget_messages
+                    attributes:
+                      widget_type: long_term_goals
+                      data:
+                        - text: Read 24 books this year
+                          progress: 9
+                          target: 24
+                          unit: books
+              agent_activity:
+                summary: Agent Activity widget
+                value:
+                  data:
+                    type: widget_messages
+                    attributes:
+                      widget_type: agent_activity
+                      data:
+                        - text: Fetched weather data
+                          timestamp: "2026-08-09T09:00:00Z"
+                          icon: cloud
+      responses:
+        "201":
+          description: Widget updated successfully
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [type, id, attributes]
+                    properties:
+                      type:
+                        type: string
+                        enum: [widget_messages]
+                      id:
+                        type: string
+                        description: ISO 8601 date string for today
+                      attributes:
+                        $ref: '#/components/schemas/WidgetMessageResponseAttributes'
+              example:
+                data:
+                  type: widget_messages
+                  id: "2026-08-10"
+                  attributes:
+                    widget_type: weather
+                    date: "2026-08-10"
+        "401":
+          description: Unauthorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/JsonApiErrors'
+        "422":
+          description: Validation error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/JsonApiErrors'
+
+  /events:
+    get:
+      operationId: streamAgentEvents
+      summary: SSE stream for outbound agent events
+      description: >
+        Establishes a Server-Sent Events stream. The agent receives outbound
+        action messages (see OutboundActionData schema) when users interact with
+        widgets. The connection sends periodic ping events to keep it alive.
+      responses:
+        "200":
+          description: SSE stream established
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: SSE-formatted event stream
+          x-sse-event-schema:
+            $ref: '#/components/schemas/OutboundActionData'
+        "401":
+          description: Unauthorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/JsonApiErrors'
+
+  /agent/registrations:
+    post:
+      operationId: createAgentRegistration
+      summary: Register or update the agent callback URL
+      description: >
+        Registers a callback URL for the agent. When a user acts on a widget
+        and no SSE connection is active, Daybreak will POST the OutboundActionData
+        payload to this URL.
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              required: [data]
+              properties:
+                data:
+                  type: object
+                  required: [type, attributes]
+                  properties:
+                    type:
+                      type: string
+                      enum: [agent_registrations]
+                    attributes:
+                      $ref: '#/components/schemas/AgentRegistrationAttributes'
+            example:
+              data:
+                type: agent_registrations
+                attributes:
+                  callback_url: https://agent.example.com/daybreak/callback
+      responses:
+        "201":
+          description: Registration created successfully
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [type, id, attributes]
+                    properties:
+                      type:
+                        type: string
+                        enum: [agent_registrations]
+                      id:
+                        type: string
+                      attributes:
+                        $ref: '#/components/schemas/AgentRegistrationAttributes'
+              example:
+                data:
+                  type: agent_registrations
+                  id: "42"
+                  attributes:
+                    callback_url: https://agent.example.com/daybreak/callback
+        "401":
+          description: Unauthorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/JsonApiErrors'
+        "422":
+          description: Validation error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/JsonApiErrors'

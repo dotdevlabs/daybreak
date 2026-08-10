@@ -13,42 +13,44 @@ class Api::Agent::RegistrationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   def auth_headers
-    { "Authorization" => "Bearer #{VALID_TOKEN}", "Content-Type" => "application/json" }
+    { "Authorization" => "Bearer #{VALID_TOKEN}", "Content-Type" => "application/vnd.api+json" }
+  end
+
+  def post_registration(callback_url:, token: VALID_TOKEN)
+    post api_agent_registrations_url,
+         params: { data: { type: "agent_registrations", attributes: { callback_url: callback_url } } }.to_json,
+         headers: { "Authorization" => "Bearer #{token}", "Content-Type" => "application/vnd.api+json" }
   end
 
   test "POST /api/agent/registrations without token returns 401" do
     post api_agent_registrations_url,
-         params: { callback_url: "https://example.com/cb" }.to_json,
-         headers: { "Content-Type" => "application/json" }
+         params: { data: { type: "agent_registrations", attributes: { callback_url: "https://example.com/cb" } } }.to_json,
+         headers: { "Content-Type" => "application/vnd.api+json" }
     assert_response :unauthorized
+    assert_equal "application/vnd.api+json", response.media_type
+    assert_equal "Unauthorized", response.parsed_body.dig("errors", 0, "detail")
   end
 
-  test "POST /api/agent/registrations with valid token creates AgentEndpoint and returns ok" do
+  test "POST /api/agent/registrations with valid token creates AgentEndpoint and returns 201" do
     assert_difference "AgentEndpoint.count", 1 do
-      post api_agent_registrations_url,
-           params: { callback_url: "https://example.com/cb" }.to_json,
-           headers: auth_headers
+      post_registration(callback_url: "https://example.com/cb")
     end
-    assert_response :success
-    assert_equal "ok", response.parsed_body["status"]
-    assert_equal "https://example.com/cb", response.parsed_body["callback_url"]
+    assert_response :created
+    assert_equal "application/vnd.api+json", response.media_type
+    assert_equal "agent_registrations", response.parsed_body.dig("data", "type")
+    assert_equal "https://example.com/cb", response.parsed_body.dig("data", "attributes", "callback_url")
   end
 
   test "POST /api/agent/registrations without callback_url returns 422" do
-    post api_agent_registrations_url,
-         params: { callback_url: "" }.to_json,
-         headers: auth_headers
+    post_registration(callback_url: "")
     assert_response :unprocessable_entity
     assert response.parsed_body["errors"].any?
+    assert response.parsed_body.dig("errors", 0, "detail").present?
   end
 
   test "multiple POSTs create multiple records and current returns the last" do
-    post api_agent_registrations_url,
-         params: { callback_url: "https://first.example.com/cb" }.to_json,
-         headers: auth_headers
-    post api_agent_registrations_url,
-         params: { callback_url: "https://second.example.com/cb" }.to_json,
-         headers: auth_headers
+    post_registration(callback_url: "https://first.example.com/cb")
+    post_registration(callback_url: "https://second.example.com/cb")
     assert_equal 2, AgentEndpoint.count
     assert_equal "https://second.example.com/cb", AgentEndpoint.current.callback_url
   end
