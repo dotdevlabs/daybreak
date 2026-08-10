@@ -86,7 +86,11 @@ class DashboardTest < ApplicationSystemTestCase
 
   test "agent activity card without overflow does not show fade" do
     visit root_url
-    assert_selector "[data-card-overflow-target='fade'][hidden]", minimum: 1
+    # Wait for JS to run (evidenced by overflow fades becoming visible on long cards)
+    assert_selector "[data-card-overflow-target='fade']:not([hidden])", minimum: 1
+    # Cards without body text should still have their fade hidden
+    # visible: :all is required because [hidden] elements are display:none (invisible to Capybara's default filter)
+    assert_selector "[data-card-overflow-target='fade'][hidden]", minimum: 1, visible: :all
   end
 
   test "footer is rendered" do
