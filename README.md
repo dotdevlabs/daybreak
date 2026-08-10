@@ -60,22 +60,60 @@ Set `DAYBREAK_API_TOKEN` to a secret string. The agent includes it as a Bearer t
 Authorization: Bearer <token>
 ```
 
-Requests with a missing or wrong token are rejected with `401 Unauthorized`.
+Requests with a missing or wrong token are rejected with `401 Unauthorized` and a JSON:API error body:
+
+```json
+{ "errors": [{ "detail": "Unauthorized" }] }
+```
+
+### API Contract
+
+The full HTTP API is documented in `docs/api_spec.yaml` (OpenAPI 3.0.3). All endpoints use `Content-Type: application/vnd.api+json` and follow the JSON:API envelope (`{ data: { type, id, attributes } }`).
+
+### Browsing the Widget Catalog
+
+```
+GET /api/catalog
+Authorization: Bearer <token>
+```
+
+Returns all available widget types and their data schemas:
+
+```json
+{
+  "data": [
+    {
+      "type": "widget_types",
+      "id": "weather",
+      "attributes": {
+        "name": "Weather Widget",
+        "description": "Current conditions and hourly forecast.",
+        "schema": { ... }
+      }
+    }
+  ]
+}
+```
 
 ### Sending Widget Updates
 
 ```
 POST /api/widgets
-Content-Type: application/json
+Content-Type: application/vnd.api+json
 Authorization: Bearer <token>
 ```
 
-Request body:
+Request body (JSON:API envelope):
 
 ```json
 {
-  "type": "<widget_type>",
-  "data": { ... }
+  "data": {
+    "type": "widget_messages",
+    "attributes": {
+      "widget_type": "<widget_type>",
+      "data": { ... }
+    }
+  }
 }
 ```
 
@@ -83,8 +121,8 @@ Each message replaces all of that widget's data for today. Widgets not included 
 
 ### Widget Types
 
-| `type` | `data` shape | Required fields | Notable optional fields |
-|--------|-------------|-----------------|------------------------|
+| `widget_type` | `data` shape | Required fields | Notable optional fields |
+|---------------|-------------|-----------------|------------------------|
 | `date_calendar` | object with `events` array | `events[].title` | `events[].dot_color` (CSS color for event dot) |
 | `weather` | object with `hourly` array | `hourly[].hour`, `hourly[].temp` | `hi`, `lo` (daily high/low); `hourly[].is_current`, `hourly[].condition` |
 | `daily_goals` | object (keyed map of goals) | `<key>.label`, `.current`, `.target`, `.unit` | `<key>.status` (`"complete"` or `"in_progress"`) |
@@ -92,19 +130,30 @@ Each message replaces all of that widget's data for today. Widgets not included 
 | `long_term_goals` | **array** of goals | `[].text`, `.progress`, `.target`, `.unit` | `[].insight` (one-line summary), `[].subtitle` |
 | `agent_activity` | **array** of entries | `[].text`, `[].timestamp` | `[].body` (longer summary), `[].status` (`"Completed"` or `"Pending"`) |
 
-Full field descriptions and examples are in `public/widget_contract.json` (also served at `/widget_contract.json`).
+Full field descriptions and examples are in `public/widget_contract.json` (also served at `/widget_contract.json`). The per-type data schemas are also available at runtime via `GET /api/catalog`.
 
-A valid response looks like:
+A successful response (201 Created):
 
 ```json
-{ "status": "ok", "widget": "weather", "date": "2026-08-09" }
+{
+  "data": {
+    "type": "widget_messages",
+    "id": "2026-08-09",
+    "attributes": { "widget_type": "weather", "date": "2026-08-09" }
+  }
+}
 ```
 
-An invalid message (unknown type, missing required field, wrong shape) returns `422 Unprocessable Entity` with an `errors` array describing each problem.
+An invalid message (unknown type, missing required field, wrong shape) returns `422 Unprocessable Entity` with a JSON:API errors body:
 
-### Contract Document
+```json
+{ "errors": [{ "detail": "weather_type is not a recognized widget type" }] }
+```
 
-`public/widget_contract.json` is a machine-readable JSON Schema (draft 2020-12) describing every widget type, its fields, and example payloads. It is also served statically at `/widget_contract.json`. Build your agent against this document. The test suite verifies that the contract's examples are accepted by the live validation logic.
+### Contract Documents
+
+- `docs/api_spec.yaml` — OpenAPI 3.0.3 spec for all HTTP endpoints. Authoritative source for request/response shapes, status codes, and content types. Contract-tested on every CI run.
+- `public/widget_contract.json` — JSON Schema (draft 2020-12) for widget data payloads (the `data` field inside each widget message). Also served at `/widget_contract.json`.
 
 ## Outbound Protocol (Widget Actions → Agent)
 
@@ -114,16 +163,31 @@ Daybreak is bidirectional. When the user acts on a widget — for example, check
 
 ```
 POST /api/agent/registrations
-Content-Type: application/json
+Content-Type: application/vnd.api+json
 Authorization: Bearer <token>
-
-{ "callback_url": "https://your-agent.example.com/daybreak/events" }
 ```
 
-Response:
+Request body:
 
 ```json
-{ "status": "ok", "callback_url": "https://your-agent.example.com/daybreak/events" }
+{
+  "data": {
+    "type": "agent_registrations",
+    "attributes": { "callback_url": "https://your-agent.example.com/daybreak/events" }
+  }
+}
+```
+
+Response (201 Created):
+
+```json
+{
+  "data": {
+    "type": "agent_registrations",
+    "id": "42",
+    "attributes": { "callback_url": "https://your-agent.example.com/daybreak/events" }
+  }
+}
 ```
 
 Daybreak will POST outbound messages to this URL when no live push connection is active.

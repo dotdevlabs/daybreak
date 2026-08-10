@@ -2,6 +2,12 @@ ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
 
+# Register JSON:API MIME type encoder so response.parsed_body works for
+# application/vnd.api+json responses in integration tests.
+ActionDispatch::IntegrationTest.register_encoder :jsonapi,
+  param_encoder: ->(params) { params.to_json },
+  response_parser: ->(body) { JSON.parse(body) }
+
 module ActiveSupport
   class TestCase
     # Run tests in parallel with specified workers
