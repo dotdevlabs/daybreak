@@ -8,7 +8,7 @@
       <div class="goal-bar__track">
         <div class="goal-bar__fill" style="width: <%= [pct, 100].min %>%"></div>
       </div>
-      <p class="goal-card__percent"><%= [pct, 100].min %>% complete</p>
+      <p class="goal-card__percent"><%= t("dashboard.long_term_goals.percent_complete", pct: [pct, 100].min) %></p>
       <% if goal["insight"].present? %>
         <p class="goal-card__insight"><%= goal["insight"] %></p>
       <% end %>

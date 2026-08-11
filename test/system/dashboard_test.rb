@@ -3,6 +3,10 @@ require "application_system_test_case"
 class DashboardTest < ApplicationSystemTestCase
   fixtures :daily_briefings
 
+  teardown do
+    User.destroy_all
+  end
+
   test "dashboard page shows date widget" do
     visit root_url
     assert_selector ".date-widget"
@@ -23,8 +27,8 @@ class DashboardTest < ApplicationSystemTestCase
     visit root_url
     assert_selector ".action-items"
     assert_selector ".action-items-card", count: 2
-    assert_selector ".widget__title", text: "Action Items – Personal"
-    assert_selector ".widget__title", text: "Action Items – Work"
+    assert_selector ".widget__title", text: I18n.t("dashboard.action_items.personal_title")
+    assert_selector ".widget__title", text: I18n.t("dashboard.action_items.work_title")
   end
 
   test "dashboard page shows long term goals section" do

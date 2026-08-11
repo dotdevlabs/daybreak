@@ -1,0 +1,50 @@
+---
+de:
+  app:
+    name: Daybreak
+    title: Daybreak — Heutiger Überblick
+  dashboard:
+    action_items:
+      mark_complete: Als erledigt markieren
+      no_personal_items: Keine persönlichen Aufgaben
+      no_work_items: Keine Arbeitsaufgaben
+      personal_title: Aufgaben – Persönlich
+      work_title: Aufgaben – Arbeit
+    agent_activity:
+      completed_status: Erledigt
+    calendar:
+      no_events_today: Keine Ereignisse heute
+      title: Kalender
+      todays_schedule: Heutiger Zeitplan
+    daily_goals:
+      complete: Erledigt
+      title: Tagesziele
+    footer:
+      curated_by: Zusammengestellt von deinem KI-Assistenten
+      last_updated: Zuletzt aktualisiert %{time}
+    greeting:
+      afternoon: Guten Tag
+      evening: Guten Abend
+      morning: Guten Morgen
+    logo:
+      home_aria_label: Daybreak Startseite
+    long_term_goals:
+      percent_complete: "%{pct}% erledigt"
+    no_briefing: Kein Überblick für heute verfügbar. Schau später wieder vorbei.
+    sections:
+      action_items: Aufgaben
+      agent_activity: Agentenaktivität
+      long_term_goals: Langfristige Ziele
+    weather:
+      title: Wetter
+  locale_names:
+    de: Deutsch
+    en: English
+    es: Español
+    fr: Français
+    it: Italiano
+    pt-BR: Português (Brasil)
+    pt-PT: Português (Portugal)
+  time:
+    formats:
+      time_only: "%H:%M"

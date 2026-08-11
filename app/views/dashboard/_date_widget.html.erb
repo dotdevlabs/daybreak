@@ -5,17 +5,17 @@
 <div class="widget date-widget">
   <div class="widget__header">
     <i data-lucide="calendar" class="widget__header-icon"></i>
-    <h3 class="widget__title">Calendar</h3>
+    <h3 class="widget__title"><%= t("dashboard.calendar.title") %></h3>
     <span class="widget__header-caption">
-      <%= week_start.strftime("%b %-d") %> &ndash; <%= week_end.strftime("%-d") %>
+      <%= I18n.l(week_start, format: :short) %> &ndash; <%= week_end.day %>
     </span>
   </div>
 
   <!-- Mini week calendar -->
   <div class="calendar-week">
     <div class="calendar-week__header">
-      <% %w[Su Mo Tu We Th Fr Sa].each do |d| %>
-        <span class="calendar-week__day-label"><%= d %></span>
+      <% I18n.t("date.abbr_day_names").each do |d| %>
+        <span class="calendar-week__day-label"><%= d.first(2) %></span>
       <% end %>
     </div>
     <div class="calendar-week__dates">
@@ -35,7 +35,7 @@
   <!-- Today's Schedule -->
   <% if briefing.calendar_events.any? %>
     <div class="schedule-section">
-      <p class="schedule-label">Today's Schedule</p>
+      <p class="schedule-label"><%= t("dashboard.calendar.todays_schedule") %></p>
       <ul class="schedule-list">
         <% dot_colors = ["var(--color-event-dot-1)", "var(--color-event-dot-2)", "var(--color-event-dot-3)"] %>
         <% briefing.calendar_events.each_with_index do |event, i| %>
@@ -48,6 +48,6 @@
       </ul>
     </div>
   <% else %>
-    <p class="widget__empty">No events today</p>
+    <p class="widget__empty"><%= t("dashboard.calendar.no_events_today") %></p>
   <% end %>
 </div>

@@ -10,7 +10,7 @@
           <p class="agent-activity-card__body"><%= activity["body"] %></p>
         <% end %>
         <div class="agent-activity-card__status">
-          <% status = activity["status"] || "Completed" %>
+          <% status = activity["status"] || t("dashboard.agent_activity.completed_status") %>
           <span class="status-dot status-dot--<%= status.downcase %>"></span>
           <span class="status-label"><%= status %></span>
         </div>

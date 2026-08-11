@@ -1,0 +1,50 @@
+---
+pt-PT:
+  app:
+    name: Daybreak
+    title: Daybreak — Resumo de Hoje
+  dashboard:
+    action_items:
+      mark_complete: Marcar como concluído
+      no_personal_items: Sem itens pessoais
+      no_work_items: Sem itens de trabalho
+      personal_title: Tarefas – Pessoal
+      work_title: Tarefas – Trabalho
+    agent_activity:
+      completed_status: Concluído
+    calendar:
+      no_events_today: Sem eventos hoje
+      title: Calendário
+      todays_schedule: Agenda de Hoje
+    daily_goals:
+      complete: Concluído
+      title: Metas Diárias
+    footer:
+      curated_by: Curado pelo seu assistente de IA
+      last_updated: Última atualização %{time}
+    greeting:
+      afternoon: Boa tarde
+      evening: Boa noite
+      morning: Bom dia
+    logo:
+      home_aria_label: Início do Daybreak
+    long_term_goals:
+      percent_complete: "%{pct}% concluído"
+    no_briefing: Nenhum resumo disponível para hoje. Volte em breve.
+    sections:
+      action_items: Tarefas
+      agent_activity: Atividade do Agente
+      long_term_goals: Objetivos a Longo Prazo
+    weather:
+      title: Clima
+  locale_names:
+    de: Deutsch
+    en: English
+    es: Español
+    fr: Français
+    it: Italiano
+    pt-BR: Português (Brasil)
+    pt-PT: Português (Portugal)
+  time:
+    formats:
+      time_only: "%H:%M"

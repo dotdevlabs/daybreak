@@ -1,7 +1,7 @@
 <div class="widget goals-widget">
   <div class="widget__header">
     <i data-lucide="activity" class="widget__header-icon"></i>
-    <h3 class="widget__title">Daily Goals</h3>
+    <h3 class="widget__title"><%= t("dashboard.daily_goals.title") %></h3>
   </div>
 
   <%
@@ -15,7 +15,7 @@
       <div class="goal-item__header">
         <span class="goal-item__dot goal-item__dot--complete"></span>
         <span class="goal-item__name"><%= goal["label"] %></span>
-        <span class="goal-item__value"><%= goal["current"] %> <%= goal["unit"] %> &middot; Complete</span>
+        <span class="goal-item__value"><%= goal["current"] %> <%= goal["unit"] %> &middot; <%= t("dashboard.daily_goals.complete") %></span>
       </div>
     </div>
   <% end %>
