@@ -6,6 +6,21 @@ on:
     branches: [ main ]
 
 jobs:
+  i18n_check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Check i18n health (missing + unused translations)
+        run: bundle exec i18n-tasks health
+
   scan_ruby:
     runs-on: ubuntu-latest
 

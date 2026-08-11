@@ -1,3 +1,11 @@
 <footer class="dashboard__footer">
-  Curated by your AI assistant<% if defined?(briefing) && briefing %> &middot; Last updated <%= briefing.updated_at.strftime("%-I:%M %p") %><% end %>
+  <%= t("dashboard.footer.curated_by") %><% if defined?(briefing) && briefing %> &middot; <%= t("dashboard.footer.last_updated", time: I18n.l(briefing.updated_at, format: :time_only)) %><% end %>
+  <span class="locale-switcher">
+    <%= form_with url: user_preference_path, method: :patch do |f| %>
+      <%= f.select :locale,
+            I18n.available_locales.map { |l| [t("locale_names.#{l}"), l] },
+            { selected: I18n.locale },
+            { onchange: "this.form.submit()", class: "locale-switcher__select" } %>
+    <% end %>
+  </span>
 </footer>

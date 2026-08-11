@@ -1,6 +1,10 @@
 <div class="dashboard__header"
      data-controller="clock"
-     data-clock-user-name-value="<%= ENV.fetch('DAYBREAK_USER_NAME', '') %>">
+     data-clock-user-name-value="<%= ENV.fetch('DAYBREAK_USER_NAME', '') %>"
+     data-clock-locale-value="<%= I18n.locale %>"
+     data-clock-greeting-morning-value="<%= t('dashboard.greeting.morning') %>"
+     data-clock-greeting-afternoon-value="<%= t('dashboard.greeting.afternoon') %>"
+     data-clock-greeting-evening-value="<%= t('dashboard.greeting.evening') %>">
   <div class="header__logo">
     <%= render "logo" %>
   </div>
@@ -10,8 +14,8 @@
       <span class="header__clock-ampm" data-clock-target="ampm">--</span>
     </div>
     <div class="header__meta">
-      <span class="header__greeting" data-clock-target="greeting">Good morning</span>
-      <span class="header__date" data-clock-target="date"><%= Date.current.strftime("%A, %B %-d, %Y") %></span>
+      <span class="header__greeting" data-clock-target="greeting"><%= t("dashboard.greeting.morning") %></span>
+      <span class="header__date" data-clock-target="date"><%= I18n.l(Date.current, format: :long) %></span>
     </div>
   </div>
 </div>

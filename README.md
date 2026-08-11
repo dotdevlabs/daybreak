@@ -51,6 +51,31 @@ The dashboard uses a warm terracotta design system with full light/dark mode sup
 - **Long Term Goals** — progress cards with percentage, agent insight sentence, and data-driven progress bars
 - **Agent Activity** — activity cards with title, body summary, status chip, and a bottom-fade overflow indicator when card content exceeds the card's bounded height
 
+## Internationalization (i18n)
+
+Daybreak supports 7 locales out of the box:
+
+| Code | Language |
+|------|----------|
+| `en` | English (default) |
+| `es` | Español |
+| `fr` | Français |
+| `pt-BR` | Português (Brasil) |
+| `pt-PT` | Português (Portugal) |
+| `de` | Deutsch |
+| `it` | Italiano |
+
+The active locale is resolved in this order:
+1. **User preference** — stored on the singleton `User` record; persisted across sessions
+2. **Browser `Accept-Language` header** — best match against the 7 supported locales
+3. **Default** — `en`
+
+A locale switcher `<select>` is embedded in the dashboard footer. Selecting a language POSTs to `PATCH /user_preference` and reloads the page.
+
+Date and time formatting adapts to the active locale via `rails-i18n`. The live clock in the header uses the browser `Intl` API with the current locale for weekday and month names.
+
+Translations live in `config/locales/<locale>.yml`. The CI pipeline runs `bundle exec i18n-tasks health` to catch missing or unused translation keys on every push.
+
 ## Data Model
 
 The dashboard renders from a `DailyBriefing` record. Each briefing stores JSONB columns for each panel:
@@ -331,6 +356,17 @@ bin/rails test
 ```bash
 bin/ci
 ```
+
+The CI pipeline runs the following jobs on every pull request and push:
+
+| Job | What it checks |
+|-----|---------------|
+| `i18n_check` | `bundle exec i18n-tasks health` — fails on missing or unused translation keys |
+| `scan_ruby` | Brakeman static analysis + Bundler Audit for known gem CVEs |
+| `scan_js` | Importmap audit for JavaScript dependency vulnerabilities |
+| `lint` | RuboCop style enforcement |
+| `test` | Full unit + integration test suite |
+| `system-test` | Browser-driven system tests (Chrome) |
 
 On every push to `main`, CI also builds the Dockerfile and pushes the image to the GitHub Container Registry:
 

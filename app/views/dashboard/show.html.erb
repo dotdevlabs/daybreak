@@ -1,4 +1,4 @@
-<% content_for :title, "Daybreak — Today's Briefing" %>
+<% content_for :title, t("app.title") %>
 
 <div class="dashboard">
   <%= render "header" %>
@@ -12,17 +12,17 @@
     </div>
 
     <!-- Action Items -->
-    <%= render "section", title: "Action Items", icon: "list-checks" do %>
+    <%= render "section", title: t("dashboard.sections.action_items"), icon: "list-checks" do %>
       <%= render "action_items", briefing: @briefing %>
     <% end %>
 
     <!-- Long Term Goals -->
-    <%= render "section", title: "Long Term Goals", icon: "target" do %>
+    <%= render "section", title: t("dashboard.sections.long_term_goals"), icon: "target" do %>
       <%= render "long_term_goals", briefing: @briefing %>
     <% end %>
 
     <!-- Agent Activity -->
-    <%= render "section", title: "Agent Activity", icon: "bot" do %>
+    <%= render "section", title: t("dashboard.sections.agent_activity"), icon: "bot" do %>
       <%= render "agent_activity", briefing: @briefing %>
     <% end %>
 
@@ -30,7 +30,7 @@
   <% else %>
     <div class="dashboard__empty">
       <i data-lucide="sun"></i>
-      <p>No briefing available for today. Check back soon.</p>
+      <p><%= t("dashboard.no_briefing") %></p>
     </div>
   <% end %>
 </div>

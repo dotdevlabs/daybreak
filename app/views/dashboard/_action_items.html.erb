@@ -2,7 +2,7 @@
   <div class="widget action-items-card">
     <div class="widget__header">
       <i data-lucide="user" class="widget__header-icon"></i>
-      <h3 class="widget__title">Action Items &ndash; Personal</h3>
+      <h3 class="widget__title"><%= t("dashboard.action_items.personal_title") %></h3>
     </div>
     <% personal_items = briefing.action_items_personal %>
     <% if personal_items.any? %>
@@ -16,7 +16,7 @@
                     data-action-item-completion-text-value="<%= item["text"] %>"
                     data-action-item-completion-priority-value="<%= item["priority"] %>"
                     data-action-item-completion-url-value="<%= dashboard_action_item_completions_path %>"
-                    aria-label="Mark complete">
+                    aria-label="<%= t('dashboard.action_items.mark_complete') %>">
               <i data-lucide="circle"></i>
             </button>
             <span class="action-item__text"><%= item["text"] %></span>
@@ -24,14 +24,14 @@
         <% end %>
       </ul>
     <% else %>
-      <p class="widget__empty">No personal items</p>
+      <p class="widget__empty"><%= t("dashboard.action_items.no_personal_items") %></p>
     <% end %>
   </div>
 
   <div class="widget action-items-card">
     <div class="widget__header">
       <i data-lucide="briefcase" class="widget__header-icon"></i>
-      <h3 class="widget__title">Action Items &ndash; Work</h3>
+      <h3 class="widget__title"><%= t("dashboard.action_items.work_title") %></h3>
     </div>
     <% work_items = briefing.action_items_work %>
     <% if work_items.any? %>
@@ -45,7 +45,7 @@
                     data-action-item-completion-text-value="<%= item["text"] %>"
                     data-action-item-completion-priority-value="<%= item["priority"] %>"
                     data-action-item-completion-url-value="<%= dashboard_action_item_completions_path %>"
-                    aria-label="Mark complete">
+                    aria-label="<%= t('dashboard.action_items.mark_complete') %>">
               <i data-lucide="circle"></i>
             </button>
             <span class="action-item__text"><%= item["text"] %></span>
@@ -53,7 +53,7 @@
         <% end %>
       </ul>
     <% else %>
-      <p class="widget__empty">No work items</p>
+      <p class="widget__empty"><%= t("dashboard.action_items.no_work_items") %></p>
     <% end %>
   </div>
 </div>

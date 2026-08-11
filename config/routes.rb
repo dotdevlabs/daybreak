@@ -4,6 +4,8 @@ Rails.application.routes.draw do
 
   root "dashboard#show"
 
+  resource :user_preference, only: [ :update ]
+
   namespace :dashboard do
     resources :action_item_completions, only: [ :create ]
   end

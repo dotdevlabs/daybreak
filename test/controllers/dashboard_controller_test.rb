@@ -59,8 +59,8 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
 
   test "shows personal and work action item cards" do
     get root_url
-    assert_select ".widget__title", text: "Action Items – Personal"
-    assert_select ".widget__title", text: "Action Items – Work"
+    assert_select ".widget__title", text: I18n.t("dashboard.action_items.personal_title")
+    assert_select ".widget__title", text: I18n.t("dashboard.action_items.work_title")
   end
 
   test "shows agent activity cards" do

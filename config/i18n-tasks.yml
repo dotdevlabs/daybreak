@@ -1,0 +1,24 @@
+base_locale: en
+locales: [en, es, fr, "pt-BR", "pt-PT", de, it]
+
+data:
+  read:
+    - config/locales/%{locale}.yml
+
+search:
+  paths:
+    - app
+  only:
+    - "**/*.rb"
+    - "**/*.erb"
+  exclude:
+    - app/javascript/**
+    - app/assets/**
+
+ignore_missing:
+  - "locale_names.*"
+  - "date.abbr_day_names"
+
+ignore_unused:
+  - "locale_names.*"
+  - "time.formats.*"

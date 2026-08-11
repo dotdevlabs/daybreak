@@ -3,7 +3,13 @@ import { Controller } from "@hotwired/stimulus"
 // Connects to data-controller="clock"
 export default class extends Controller {
   static targets = ["time", "ampm", "greeting", "date"]
-  static values = { userName: String }
+  static values = {
+    userName: String,
+    locale: String,
+    greetingMorning: String,
+    greetingAfternoon: String,
+    greetingEvening: String
+  }
 
   connect() {
     this.update()
@@ -20,9 +26,15 @@ export default class extends Controller {
     const mins = now.getMinutes().toString().padStart(2, "0")
     const h12 = ((h24 % 12) || 12).toString().padStart(2, "0")
     const ampm = h24 < 12 ? "AM" : "PM"
-    const greeting = h24 < 12 ? "Good morning" : h24 < 17 ? "Good afternoon" : "Good evening"
+    const greetings = [
+      this.greetingMorningValue || "Good morning",
+      this.greetingAfternoonValue || "Good afternoon",
+      this.greetingEveningValue || "Good evening"
+    ]
+    const greeting = h24 < 12 ? greetings[0] : h24 < 17 ? greetings[1] : greetings[2]
     const name = this.userNameValue
-    const fullDate = now.toLocaleDateString("en-US", {
+    const locale = this.localeValue || "en"
+    const fullDate = now.toLocaleDateString(locale.replace("_", "-"), {
       weekday: "long", month: "long", day: "numeric", year: "numeric"
     })
 

@@ -1,0 +1,50 @@
+---
+it:
+  app:
+    name: Daybreak
+    title: Daybreak — Il Riepilogo di Oggi
+  dashboard:
+    action_items:
+      mark_complete: Segna come completato
+      no_personal_items: Nessun elemento personale
+      no_work_items: Nessun elemento di lavoro
+      personal_title: Azioni – Personale
+      work_title: Azioni – Lavoro
+    agent_activity:
+      completed_status: Completato
+    calendar:
+      no_events_today: Nessun evento oggi
+      title: Calendario
+      todays_schedule: Programma di Oggi
+    daily_goals:
+      complete: Completato
+      title: Obiettivi del Giorno
+    footer:
+      curated_by: Curato dal tuo assistente IA
+      last_updated: Ultimo aggiornamento %{time}
+    greeting:
+      afternoon: Buon pomeriggio
+      evening: Buonasera
+      morning: Buongiorno
+    logo:
+      home_aria_label: Home di Daybreak
+    long_term_goals:
+      percent_complete: "%{pct}% completato"
+    no_briefing: Nessun riepilogo disponibile per oggi. Torna presto.
+    sections:
+      action_items: Azioni
+      agent_activity: Attività dell'Agente
+      long_term_goals: Obiettivi a Lungo Termine
+    weather:
+      title: Meteo
+  locale_names:
+    de: Deutsch
+    en: English
+    es: Español
+    fr: Français
+    it: Italiano
+    pt-BR: Português (Brasil)
+    pt-PT: Português (Portugal)
+  time:
+    formats:
+      time_only: "%H:%M"
