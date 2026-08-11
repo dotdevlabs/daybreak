@@ -54,7 +54,7 @@ Daybreak's defining mechanic: all widget content is set by the user's assistant 
 
 ### Authentication
 
-Set `DAYBREAK_API_TOKEN` to a secret string. The agent includes it as a Bearer token:
+All API endpoints (except token creation) require a Bearer token:
 
 ```
 Authorization: Bearer <token>
@@ -65,6 +65,33 @@ Requests with a missing or wrong token are rejected with `401 Unauthorized` and 
 ```json
 { "errors": [{ "detail": "Unauthorized" }] }
 ```
+
+#### Obtaining a token programmatically
+
+POST to `/api/tokens` — no authentication required. The server mints and returns a new token:
+
+```
+POST /api/tokens
+Content-Type: application/vnd.api+json
+```
+
+Response (201 Created):
+
+```json
+{
+  "data": {
+    "type": "api_tokens",
+    "id": "1",
+    "attributes": { "token": "a3f7b91c2d6e..." }
+  }
+}
+```
+
+Store the returned `token` value; it is shown only once. Pass it as `Authorization: Bearer <token>` on all subsequent requests. Each call to `POST /api/tokens` mints a distinct token.
+
+#### Legacy env-var token
+
+You can also set `DAYBREAK_API_TOKEN` to a secret string, which is accepted as a valid bearer token. This is useful for development and for deployments that pre-configure the token via environment variables.
 
 ### API Contract
 
@@ -275,7 +302,7 @@ CREATE DATABASE daybreak_production_cable OWNER daybreak;
 | Variable | Purpose |
 |----------|---------|
 | `DAYBREAK_DATABASE_PASSWORD` | Password for the `daybreak` Postgres role |
-| `DAYBREAK_API_TOKEN` | Bearer token the agent uses to authenticate widget updates |
+| `DAYBREAK_API_TOKEN` | Optional legacy bearer token; accepted alongside programmatically-issued tokens |
 | `DAYBREAK_USER_NAME` | Your first name — shown in the dashboard greeting ("Good morning, Alex") |
 | `RAILS_MASTER_KEY` | Decrypts `config/credentials.yml.enc` |
 | `WEB_CONCURRENCY` | Must remain `1` (in-memory push registry) |
