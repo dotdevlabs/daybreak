@@ -19,6 +19,24 @@ bin/rails server
 
 Open `http://localhost:3000` to see the dashboard.
 
+## PWA / Installability
+
+Daybreak ships as a Progressive Web App. The web manifest (`/manifest.json`) is wired into the layout and enables "Add to Home Screen" / browser-install on Chrome, Edge, Safari, and Firefox for Android. Theme color: `#D4916E` (sunrise terracotta). Background color: `#F3EBE2` (warm sand). Display mode: standalone.
+
+Icon set in `public/`:
+
+| File | Size | Use |
+|------|------|-----|
+| `favicon.ico` | 16/32/48 multi-res | browser tab (legacy) |
+| `favicon-16x16.png` | 16×16 | browser tab (PNG) |
+| `favicon-32x32.png` | 32×32 | browser tab (PNG) |
+| `apple-touch-icon.png` | 180×180 | iOS homescreen |
+| `icon-192.png` | 192×192 | Android homescreen / PWA |
+| `icon-512.png` | 512×512 | PWA splash screen + maskable |
+| `icon.svg` | scalable | browser tab (SVG) |
+
+All icons render the sunrise sun mark (warm yellow center `#FFCA6B` → peach `#E0A584`, horizon line `#D4916E`) on the `#F3EBE2` background. The 512×512 PNG is maskable-safe (mark padded within the 80 % safe zone).
+
 ## Dashboard Layout
 
 The dashboard uses a warm terracotta design system with full light/dark mode support (follows `prefers-color-scheme`). Typography: Quicksand wordmark, Newsreader section titles, Inter body, Geist Mono for numeric readouts. The header shows a live clock and time-of-day greeting.
