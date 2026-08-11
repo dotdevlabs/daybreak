@@ -164,6 +164,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -184,6 +186,22 @@ jobs:
         with:
           context: .
           push: true
+          build-args: |
+            APP_SHA=${{ github.sha }}
+            APP_VERSION=${{ steps.meta.outputs.immutable_tag }}
           tags: |
             ghcr.io/dotdevlabs/daybreak:latest
             ghcr.io/dotdevlabs/daybreak:${{ steps.meta.outputs.immutable_tag }}
+
+      - name: Create Sentry release
+        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+        run: |
+          curl -sL https://sentry.io/get-cli/ | bash
+          sentry-cli releases new "${{ github.sha }}"
+          sentry-cli releases set-commits "${{ github.sha }}" --auto
+          sentry-cli releases finalize "${{ github.sha }}"
+          sentry-cli releases deploys "${{ github.sha }}" new -e production
