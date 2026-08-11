@@ -19,9 +19,11 @@ module Api
       expected && ActiveSupport::SecurityUtils.secure_compare(bearer, expected)
     end
 
-    def render_jsonapi(data:, status: :ok)
-      render json: { data: data }, status: status,
-             content_type: "application/vnd.api+json"
+    def render_jsonapi(data:, status: :ok, links: nil, meta: nil)
+      body = { data: data }
+      body[:links] = links if links
+      body[:meta]  = meta  if meta
+      render json: body, status: status, content_type: "application/vnd.api+json"
     end
 
     def render_jsonapi_errors(messages, status:)

@@ -27,7 +27,8 @@ class WidgetCatalog
     {
       type: "widget_types",
       id: id,
-      attributes: { name: name, description: description, schema: schema }
+      attributes: { name: name, description: description, schema: schema },
+      links: { self: "/api/catalog/#{id}" }
     }
   end
 end

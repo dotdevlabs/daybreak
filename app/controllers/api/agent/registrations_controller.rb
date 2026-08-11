@@ -11,7 +11,8 @@ module Api
             data: {
               type: "agent_registrations",
               id: @endpoint.id.to_s,
-              attributes: { callback_url: @endpoint.callback_url }
+              attributes: { callback_url: @endpoint.callback_url },
+              links: { self: "/api/agent/registrations/#{@endpoint.id}" }
             },
             status: :created
           )

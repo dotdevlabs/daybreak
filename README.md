@@ -82,7 +82,8 @@ Response (201 Created):
   "data": {
     "type": "api_tokens",
     "id": "1",
-    "attributes": { "token": "a3f7b91c2d6e..." }
+    "attributes": { "token": "a3f7b91c2d6e..." },
+    "links": { "self": "/api/tokens/1" }
   }
 }
 ```
@@ -96,6 +97,32 @@ You can also set `DAYBREAK_API_TOKEN` to a secret string, which is accepted as a
 ### API Contract
 
 The full HTTP API is documented in `docs/api_spec.yaml` (OpenAPI 3.0.3). All endpoints use `Content-Type: application/vnd.api+json` and follow the JSON:API envelope (`{ data: { type, id, attributes } }`).
+
+### Deploy Status
+
+```
+GET /api/status
+Authorization: Bearer <token>
+```
+
+Returns the running application's version, commit SHA (baked in at Docker build time), and the current database schema migration version.
+
+```json
+{
+  "data": {
+    "type": "status",
+    "id": "current",
+    "attributes": {
+      "version": "1.2.3",
+      "sha": "abc1234",
+      "db_version": "20260811000254"
+    },
+    "links": { "self": "/api/status" }
+  }
+}
+```
+
+`version` and `sha` are `null` when the image was built without the corresponding build args. `db_version` is the latest applied Rails migration version string, read at request time from the `schema_migrations` table.
 
 ### Browsing the Widget Catalog
 
@@ -116,9 +143,18 @@ Returns all available widget types and their data schemas:
         "name": "Weather Widget",
         "description": "Current conditions and hourly forecast.",
         "schema": { ... }
-      }
+      },
+      "links": { "self": "/api/catalog/weather" }
     }
-  ]
+  ],
+  "links": {
+    "self": "/api/catalog",
+    "first": "/api/catalog",
+    "last": "/api/catalog",
+    "prev": null,
+    "next": null
+  },
+  "meta": { "total_count": 6 }
 }
 ```
 
@@ -166,7 +202,8 @@ A successful response (201 Created):
   "data": {
     "type": "widget_messages",
     "id": "2026-08-09",
-    "attributes": { "widget_type": "weather", "date": "2026-08-09" }
+    "attributes": { "widget_type": "weather", "date": "2026-08-09" },
+    "links": { "self": "/api/widgets/2026-08-09" }
   }
 }
 ```
@@ -212,7 +249,8 @@ Response (201 Created):
   "data": {
     "type": "agent_registrations",
     "id": "42",
-    "attributes": { "callback_url": "https://your-agent.example.com/daybreak/events" }
+    "attributes": { "callback_url": "https://your-agent.example.com/daybreak/events" },
+    "links": { "self": "/api/agent/registrations/42" }
   }
 }
 ```
@@ -296,6 +334,15 @@ CREATE DATABASE daybreak_production_cache OWNER daybreak;
 CREATE DATABASE daybreak_production_queue OWNER daybreak;
 CREATE DATABASE daybreak_production_cable OWNER daybreak;
 ```
+
+### Docker Build Args
+
+These are passed at image build time (e.g. `docker build --build-arg APP_VERSION=1.2.3 --build-arg APP_SHA=abc1234 .`) and baked into the image as environment variables. When omitted, `GET /api/status` returns `null` for those fields.
+
+| Build arg | Purpose |
+|-----------|---------|
+| `APP_VERSION` | Application version string, surfaced by `GET /api/status` |
+| `APP_SHA` | Git commit SHA, surfaced by `GET /api/status` |
 
 ### Environment Variables (production)
 

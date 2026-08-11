@@ -20,6 +20,59 @@ components:
       scheme: bearer
 
   schemas:
+    ResourceLinks:
+      type: object
+      properties:
+        self:
+          type: string
+          format: uri-reference
+
+    CollectionLinks:
+      type: object
+      required: [self]
+      properties:
+        self:
+          type: string
+          format: uri-reference
+        first:
+          type: string
+          format: uri-reference
+          nullable: true
+        last:
+          type: string
+          format: uri-reference
+          nullable: true
+        prev:
+          type: string
+          format: uri-reference
+          nullable: true
+        next:
+          type: string
+          format: uri-reference
+          nullable: true
+
+    CollectionMeta:
+      type: object
+      required: [total_count]
+      properties:
+        total_count:
+          type: integer
+          minimum: 0
+
+    StatusAttributes:
+      type: object
+      required: [version, sha, db_version]
+      properties:
+        version:
+          type: string
+          nullable: true
+        sha:
+          type: string
+          nullable: true
+        db_version:
+          type: string
+          nullable: true
+
     JsonApiResourceObject:
       type: object
       required: [type, id, attributes]
@@ -32,6 +85,8 @@ components:
           type: object
         relationships:
           type: object
+        links:
+          $ref: '#/components/schemas/ResourceLinks'
 
     JsonApiEnvelope:
       type: object
@@ -147,6 +202,54 @@ components:
                   enum: [high, medium, low]
 
 paths:
+  /status:
+    get:
+      operationId: getDeployStatus
+      summary: Application deploy status
+      description: >
+        Returns application version, commit SHA (baked in at Docker build time),
+        and the current database schema migration version. version and sha are
+        null when the image was built without those build args.
+      responses:
+        "200":
+          description: Current deploy status
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [type, id, attributes]
+                    properties:
+                      type:
+                        type: string
+                        enum: [status]
+                      id:
+                        type: string
+                        enum: [current]
+                      attributes:
+                        $ref: '#/components/schemas/StatusAttributes'
+                      links:
+                        $ref: '#/components/schemas/ResourceLinks'
+              example:
+                data:
+                  type: status
+                  id: current
+                  attributes:
+                    version: "1.2.3"
+                    sha: "abc1234"
+                    db_version: "20260811000254"
+                  links:
+                    self: /api/status
+        "401":
+          description: Unauthorized
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/JsonApiErrors'
+
   /tokens:
     post:
       operationId: createApiToken
@@ -215,6 +318,12 @@ paths:
                           type: string
                         attributes:
                           $ref: '#/components/schemas/WidgetTypeAttributes'
+                        links:
+                          $ref: '#/components/schemas/ResourceLinks'
+                  links:
+                    $ref: '#/components/schemas/CollectionLinks'
+                  meta:
+                    $ref: '#/components/schemas/CollectionMeta'
               example:
                 data:
                   - type: widget_types
@@ -227,6 +336,16 @@ paths:
                         properties:
                           location:
                             type: string
+                    links:
+                      self: /api/catalog/weather
+                links:
+                  self: /api/catalog
+                  first: /api/catalog
+                  last: /api/catalog
+                  prev: null
+                  next: null
+                meta:
+                  total_count: 6
         "401":
           description: Unauthorized
           content:

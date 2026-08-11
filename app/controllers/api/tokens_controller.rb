@@ -9,7 +9,8 @@ module Api
           data: {
             type: "api_tokens",
             id: api_token.id.to_s,
-            attributes: { token: api_token.token }
+            attributes: { token: api_token.token },
+            links: { self: "/api/tokens/#{api_token.id}" }
           },
           status: :created
         )
