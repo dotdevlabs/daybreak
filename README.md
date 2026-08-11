@@ -321,6 +321,14 @@ On every push to `main`, CI also builds the Dockerfile and pushes the image to t
 
 The build job uses the built-in `GITHUB_TOKEN` (no external secret required). It does not run on pull requests.
 
+After the image push, CI creates a Sentry release for the deployed commit SHA. This step is guarded: if the `SENTRY_AUTH_TOKEN` repository secret is absent the step is skipped silently and the build still passes. To enable Sentry release tracking, set the following in your GitHub repository settings:
+
+| Setting | Kind | Value |
+|---------|------|-------|
+| `SENTRY_AUTH_TOKEN` | Secret | Sentry auth token with `project:releases` scope |
+| `SENTRY_ORG` | Variable | Your Sentry organization slug |
+| `SENTRY_PROJECT` | Variable | Your Sentry project slug |
+
 ## Deployment
 
 ### Prerequisites
@@ -353,6 +361,7 @@ These are passed at image build time (e.g. `docker build --build-arg APP_VERSION
 | `DAYBREAK_USER_NAME` | Your first name — shown in the dashboard greeting ("Good morning, Alex") |
 | `RAILS_MASTER_KEY` | Decrypts `config/credentials.yml.enc` |
 | `WEB_CONCURRENCY` | Must remain `1` (in-memory push registry) |
+| `SENTRY_DSN` | Optional — Sentry Data Source Name; when absent the app boots normally with Sentry inert |
 
 Action Cable uses the `cable` PostgreSQL database (Solid Cable adapter) — no Redis required.
 
