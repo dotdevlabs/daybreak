@@ -25,8 +25,8 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
     spec_ops = SPEC["paths"].flat_map do |path, item|
       item.keys.reject { |k| k == "parameters" }.map { |m| "#{m.upcase} #{path}" }
     end
-    assert_equal 4, spec_ops.size,
-      "Expected 4 spec operations; got #{spec_ops.size}: #{spec_ops.inspect}. " \
+    assert_equal 5, spec_ops.size,
+      "Expected 5 spec operations; got #{spec_ops.size}: #{spec_ops.inspect}. " \
       "Add compliance tests for any new operations."
   end
 
@@ -76,6 +76,7 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
   SPEC["paths"].each do |spec_path, methods|
     methods.each_key do |verb|
       next if verb == "parameters"
+      next if methods.dig(verb, "security") == []
 
       define_method("test_401_#{verb}_api#{spec_path.gsub('/', '_')}") do
         send(verb.downcase, "/api#{spec_path}",
@@ -183,5 +184,17 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
     assert_equal "application/vnd.api+json", response.media_type
     assert response.parsed_body.dig("errors", 0, "detail").present?,
       "422 response must include errors[0].detail"
+  end
+
+  test "POST /api/tokens without auth returns 201 JSON:API data with token" do
+    post "/api/tokens", headers: { "Content-Type" => "application/vnd.api+json" }
+    assert_response :created
+    assert_equal "application/vnd.api+json", response.media_type
+    data = response.parsed_body["data"]
+    assert_equal "api_tokens", data["type"]
+    assert_kind_of String, data["id"]
+    assert_equal %w[token], data["attributes"].keys.sort,
+      "api_tokens attributes must be exactly {token}, no extras"
+    assert data.dig("attributes", "token").present?, "token must not be blank"
   end
 end
