@@ -100,6 +100,14 @@ components:
         schema:
           type: object
 
+    ApiTokenAttributes:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+          description: Bearer token for API authentication. Store this value; it is returned only once.
+
     AgentRegistrationAttributes:
       type: object
       required: [callback_url]
@@ -139,6 +147,48 @@ components:
                   enum: [high, medium, low]
 
 paths:
+  /tokens:
+    post:
+      operationId: createApiToken
+      summary: Create an API token (programmatic signup)
+      description: >
+        Creates a new bearer token for the caller. No authentication is required.
+        The returned token must be stored by the caller and presented as a Bearer
+        token in the Authorization header on all other API requests.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+      responses:
+        "201":
+          description: Token created
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [type, id, attributes]
+                    properties:
+                      type:
+                        type: string
+                        enum: [api_tokens]
+                      id:
+                        type: string
+                      attributes:
+                        $ref: '#/components/schemas/ApiTokenAttributes'
+              example:
+                data:
+                  type: api_tokens
+                  id: "1"
+                  attributes:
+                    token: "a3f7b91c2d6e..."
+
   /catalog:
     get:
       operationId: listWidgetTypes

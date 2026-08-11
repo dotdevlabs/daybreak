@@ -5,14 +5,18 @@ module Api
     private
 
     def authenticate_api_token!
-      token = request.headers["Authorization"]&.delete_prefix("Bearer ")&.strip
-      expected = ENV["DAYBREAK_API_TOKEN"].presence
-      unless expected && token.present? &&
-             ActiveSupport::SecurityUtils.secure_compare(token, expected)
+      bearer = request.headers["Authorization"]&.delete_prefix("Bearer ")&.strip
+      unless bearer.present? && valid_api_token?(bearer)
         render json: { errors: [ { detail: "Unauthorized" } ] },
                status: :unauthorized,
                content_type: "application/vnd.api+json"
       end
+    end
+
+    def valid_api_token?(bearer)
+      return true if ApiToken.exists?(token: bearer)
+      expected = ENV["DAYBREAK_API_TOKEN"].presence
+      expected && ActiveSupport::SecurityUtils.secure_compare(bearer, expected)
     end
 
     def render_jsonapi(data:, status: :ok)
