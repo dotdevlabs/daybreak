@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   end
 
   namespace :api do
+    resource :status, only: [ :show ], controller: :status
     resources :tokens, only: [ :create ]
     resources :catalog, only: [ :index ]
     resources :widgets, only: [ :create ]

@@ -18,7 +18,8 @@ module Api
           data: {
             type: "widget_messages",
             id: briefing.date.iso8601,
-            attributes: { widget_type: message.type, date: briefing.date.iso8601 }
+            attributes: { widget_type: message.type, date: briefing.date.iso8601 },
+            links: { self: "/api/widgets/#{briefing.date.iso8601}" }
           },
           status: :created
         )
