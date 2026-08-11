@@ -67,4 +67,26 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     get root_url
     assert_select ".agent-activity-card"
   end
+
+  test "layout head includes PWA manifest link" do
+    get root_url
+    assert_select "link[rel='manifest']"
+  end
+
+  test "layout head includes favicon links" do
+    get root_url
+    assert_select "link[rel='icon'][href='/favicon.ico']"
+    assert_select "link[rel='icon'][href='/icon.svg']"
+    assert_select "link[rel='apple-touch-icon'][href='/apple-touch-icon.png']"
+  end
+
+  test "layout head includes theme-color meta" do
+    get root_url
+    assert_select "meta[name='theme-color'][content='#D4916E']"
+  end
+
+  test "layout head has application name Daybreak" do
+    get root_url
+    assert_select "meta[name='application-name'][content='Daybreak']"
+  end
 end
