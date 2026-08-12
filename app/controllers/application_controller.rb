@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  include Authentication
+
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
@@ -10,7 +12,7 @@ class ApplicationController < ActionController::Base
   private
 
   def set_locale
-    user_locale = User.current.locale.presence
+    user_locale = current_user&.locale.presence
     browser_locale = parse_accept_language
     I18n.locale = (user_locale || browser_locale || I18n.default_locale).to_sym
   end

@@ -1,32 +1,34 @@
 <% content_for :title, t("app.title") %>
 
+<%= render "dashboard/auth_overlay" %>
+
 <div class="dashboard">
-  <%= render "header" %>
+  <%= render "dashboard/header" %>
 
   <% if @briefing %>
     <!-- Row 1: Glanceable widgets (equal height) -->
     <div class="dashboard__widgets-row">
-      <%= render "date_widget", briefing: @briefing %>
-      <%= render "weather_widget", briefing: @briefing %>
-      <%= render "daily_goals_widget", briefing: @briefing %>
+      <%= render "dashboard/date_widget", briefing: @briefing %>
+      <%= render "dashboard/weather_widget", briefing: @briefing %>
+      <%= render "dashboard/daily_goals_widget", briefing: @briefing %>
     </div>
 
     <!-- Action Items -->
-    <%= render "section", title: t("dashboard.sections.action_items"), icon: "list-checks" do %>
-      <%= render "action_items", briefing: @briefing %>
+    <%= render "dashboard/section", title: t("dashboard.sections.action_items"), icon: "list-checks" do %>
+      <%= render "dashboard/action_items", briefing: @briefing %>
     <% end %>
 
     <!-- Long Term Goals -->
-    <%= render "section", title: t("dashboard.sections.long_term_goals"), icon: "target" do %>
-      <%= render "long_term_goals", briefing: @briefing %>
+    <%= render "dashboard/section", title: t("dashboard.sections.long_term_goals"), icon: "target" do %>
+      <%= render "dashboard/long_term_goals", briefing: @briefing %>
     <% end %>
 
     <!-- Agent Activity -->
-    <%= render "section", title: t("dashboard.sections.agent_activity"), icon: "bot" do %>
-      <%= render "agent_activity", briefing: @briefing %>
+    <%= render "dashboard/section", title: t("dashboard.sections.agent_activity"), icon: "bot" do %>
+      <%= render "dashboard/agent_activity", briefing: @briefing %>
     <% end %>
 
-    <%= render "footer", briefing: @briefing %>
+    <%= render "dashboard/footer", briefing: @briefing %>
   <% else %>
     <div class="dashboard__empty">
       <i data-lucide="sun"></i>

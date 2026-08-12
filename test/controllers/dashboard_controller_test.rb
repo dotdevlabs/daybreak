@@ -3,9 +3,41 @@ require "test_helper"
 class DashboardControllerTest < ActionDispatch::IntegrationTest
   fixtures :daily_briefings
 
-  test "GET root returns 200 OK" do
+  def sign_in(user)
+    post session_path, params: { email_address: user.email_address, password: "password123" }
+  end
+
+  test "GET root returns 200 OK when unauthenticated" do
     get root_url
     assert_response :success
+  end
+
+  test "GET root returns 200 OK when authenticated" do
+    sign_in(users(:alice))
+    get root_url
+    assert_response :success
+  end
+
+  test "unauthenticated GET root renders auth overlay" do
+    get root_url
+    assert_select ".auth-overlay"
+  end
+
+  test "unauthenticated GET root does not render sign-out button" do
+    get root_url
+    assert_select ".header__auth", false
+  end
+
+  test "authenticated GET root does not render auth overlay" do
+    sign_in(users(:alice))
+    get root_url
+    assert_select ".auth-overlay", false
+  end
+
+  test "authenticated GET root renders sign-out button" do
+    sign_in(users(:alice))
+    get root_url
+    assert_select ".header__auth"
   end
 
   test "renders date widget when briefing exists" do

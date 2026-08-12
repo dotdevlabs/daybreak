@@ -37,6 +37,40 @@ es:
       long_term_goals: Metas a Largo Plazo
     weather:
       title: Clima
+  auth:
+    login:
+      title: "Iniciar sesión"
+      email_placeholder: "Correo electrónico"
+      password_placeholder: "Contraseña"
+      submit: "Iniciar sesión"
+      forgot_password: "¿Olvidaste tu contraseña?"
+      invalid_credentials: "Correo electrónico o contraseña incorrectos."
+    register:
+      title: "Crear cuenta"
+      email_placeholder: "Correo electrónico"
+      password_placeholder: "Contraseña"
+      password_confirmation_placeholder: "Confirmar contraseña"
+      submit: "Crear cuenta"
+    sign_out: "Cerrar sesión"
+    passwords:
+      new:
+        title: "Restablecer contraseña"
+        email_placeholder: "Correo electrónico"
+        submit: "Enviar instrucciones"
+      edit:
+        title: "Establecer nueva contraseña"
+        password_placeholder: "Nueva contraseña"
+        password_confirmation_placeholder: "Confirmar nueva contraseña"
+        submit: "Actualizar contraseña"
+      email_sent: "Si ese correo está registrado, recibirás instrucciones de restablecimiento en breve."
+      invalid_token: "El enlace de restablecimiento es inválido o ha expirado."
+      password_updated: "Tu contraseña ha sido actualizada. Por favor, inicia sesión."
+      mailer:
+        subject: "Restablece tu contraseña de Daybreak"
+        greeting: "Hola,"
+        body: "Alguien solicitó un restablecimiento de contraseña para tu cuenta de Daybreak. Haz clic en el enlace a continuación para establecer una nueva contraseña:"
+        link_text: "Restablecer mi contraseña"
+        expiry_note: "Este enlace expira en 15 minutos. Si no solicitaste un restablecimiento, puedes ignorar este correo."
   locale_names:
     de: Deutsch
     en: English

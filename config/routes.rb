@@ -4,6 +4,10 @@ Rails.application.routes.draw do
 
   root "dashboard#show"
 
+  resource :session, only: %i[create destroy]
+  resource :registration, only: %i[create]
+  resources :passwords, only: %i[new create edit update], param: :token
+
   resource :user_preference, only: [ :update ]
 
   namespace :dashboard do

@@ -37,6 +37,40 @@ pt-PT:
       long_term_goals: Objetivos a Longo Prazo
     weather:
       title: Clima
+  auth:
+    login:
+      title: "Iniciar sessão"
+      email_placeholder: "Endereço de e-mail"
+      password_placeholder: "Palavra-passe"
+      submit: "Iniciar sessão"
+      forgot_password: "Esqueceu a palavra-passe?"
+      invalid_credentials: "E-mail ou palavra-passe inválidos."
+    register:
+      title: "Criar conta"
+      email_placeholder: "Endereço de e-mail"
+      password_placeholder: "Palavra-passe"
+      password_confirmation_placeholder: "Confirmar palavra-passe"
+      submit: "Criar conta"
+    sign_out: "Terminar sessão"
+    passwords:
+      new:
+        title: "Redefinir palavra-passe"
+        email_placeholder: "Endereço de e-mail"
+        submit: "Enviar instruções"
+      edit:
+        title: "Definir nova palavra-passe"
+        password_placeholder: "Nova palavra-passe"
+        password_confirmation_placeholder: "Confirmar nova palavra-passe"
+        submit: "Atualizar palavra-passe"
+      email_sent: "Se esse e-mail estiver registado, receberá as instruções de redefinição em breve."
+      invalid_token: "Esse link de redefinição de palavra-passe é inválido ou expirou."
+      password_updated: "A sua palavra-passe foi atualizada. Por favor, inicie sessão."
+      mailer:
+        subject: "Redefina a sua palavra-passe do Daybreak"
+        greeting: "Olá,"
+        body: "Alguém solicitou uma redefinição de palavra-passe para a sua conta Daybreak. Clique no link abaixo para definir uma nova palavra-passe:"
+        link_text: "Redefinir a minha palavra-passe"
+        expiry_note: "Este link expira em 15 minutos. Se não solicitou uma redefinição, pode ignorar este e-mail."
   locale_names:
     de: Deutsch
     en: English

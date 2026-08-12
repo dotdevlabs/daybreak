@@ -37,6 +37,40 @@ pt-BR:
       long_term_goals: Metas de Longo Prazo
     weather:
       title: Clima
+  auth:
+    login:
+      title: "Entrar"
+      email_placeholder: "Endereço de e-mail"
+      password_placeholder: "Senha"
+      submit: "Entrar"
+      forgot_password: "Esqueceu a senha?"
+      invalid_credentials: "E-mail ou senha inválidos."
+    register:
+      title: "Criar conta"
+      email_placeholder: "Endereço de e-mail"
+      password_placeholder: "Senha"
+      password_confirmation_placeholder: "Confirmar senha"
+      submit: "Criar conta"
+    sign_out: "Sair"
+    passwords:
+      new:
+        title: "Redefinir senha"
+        email_placeholder: "Endereço de e-mail"
+        submit: "Enviar instruções"
+      edit:
+        title: "Definir nova senha"
+        password_placeholder: "Nova senha"
+        password_confirmation_placeholder: "Confirmar nova senha"
+        submit: "Atualizar senha"
+      email_sent: "Se esse e-mail estiver registrado, você receberá as instruções de redefinição em breve."
+      invalid_token: "Esse link de redefinição de senha é inválido ou expirou."
+      password_updated: "Sua senha foi atualizada. Por favor, entre."
+      mailer:
+        subject: "Redefina sua senha do Daybreak"
+        greeting: "Olá,"
+        body: "Alguém solicitou uma redefinição de senha para sua conta Daybreak. Clique no link abaixo para definir uma nova senha:"
+        link_text: "Redefinir minha senha"
+        expiry_note: "Este link expira em 15 minutos. Se você não solicitou uma redefinição, pode ignorar este e-mail."
   locale_names:
     de: Deutsch
     en: English

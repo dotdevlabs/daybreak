@@ -37,6 +37,40 @@ fr:
       long_term_goals: Objectifs à Long Terme
     weather:
       title: Météo
+  auth:
+    login:
+      title: "Se connecter"
+      email_placeholder: "Adresse e-mail"
+      password_placeholder: "Mot de passe"
+      submit: "Se connecter"
+      forgot_password: "Mot de passe oublié ?"
+      invalid_credentials: "E-mail ou mot de passe invalide."
+    register:
+      title: "Créer un compte"
+      email_placeholder: "Adresse e-mail"
+      password_placeholder: "Mot de passe"
+      password_confirmation_placeholder: "Confirmer le mot de passe"
+      submit: "Créer un compte"
+    sign_out: "Se déconnecter"
+    passwords:
+      new:
+        title: "Réinitialiser le mot de passe"
+        email_placeholder: "Adresse e-mail"
+        submit: "Envoyer les instructions"
+      edit:
+        title: "Définir un nouveau mot de passe"
+        password_placeholder: "Nouveau mot de passe"
+        password_confirmation_placeholder: "Confirmer le nouveau mot de passe"
+        submit: "Mettre à jour le mot de passe"
+      email_sent: "Si cet e-mail est enregistré, vous recevrez les instructions de réinitialisation sous peu."
+      invalid_token: "Ce lien de réinitialisation est invalide ou a expiré."
+      password_updated: "Votre mot de passe a été mis à jour. Veuillez vous connecter."
+      mailer:
+        subject: "Réinitialisez votre mot de passe Daybreak"
+        greeting: "Bonjour,"
+        body: "Quelqu'un a demandé une réinitialisation de mot de passe pour votre compte Daybreak. Cliquez sur le lien ci-dessous pour définir un nouveau mot de passe :"
+        link_text: "Réinitialiser mon mot de passe"
+        expiry_note: "Ce lien expire dans 15 minutes. Si vous n'avez pas demandé de réinitialisation, vous pouvez ignorer cet e-mail."
   locale_names:
     de: Deutsch
     en: English

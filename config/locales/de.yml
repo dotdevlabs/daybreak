@@ -37,6 +37,40 @@ de:
       long_term_goals: Langfristige Ziele
     weather:
       title: Wetter
+  auth:
+    login:
+      title: "Anmelden"
+      email_placeholder: "E-Mail-Adresse"
+      password_placeholder: "Passwort"
+      submit: "Anmelden"
+      forgot_password: "Passwort vergessen?"
+      invalid_credentials: "Ungültige E-Mail oder ungültiges Passwort."
+    register:
+      title: "Konto erstellen"
+      email_placeholder: "E-Mail-Adresse"
+      password_placeholder: "Passwort"
+      password_confirmation_placeholder: "Passwort bestätigen"
+      submit: "Konto erstellen"
+    sign_out: "Abmelden"
+    passwords:
+      new:
+        title: "Passwort zurücksetzen"
+        email_placeholder: "E-Mail-Adresse"
+        submit: "Anweisungen senden"
+      edit:
+        title: "Neues Passwort festlegen"
+        password_placeholder: "Neues Passwort"
+        password_confirmation_placeholder: "Neues Passwort bestätigen"
+        submit: "Passwort aktualisieren"
+      email_sent: "Falls diese E-Mail registriert ist, erhalten Sie in Kürze Anweisungen zum Zurücksetzen."
+      invalid_token: "Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen."
+      password_updated: "Ihr Passwort wurde aktualisiert. Bitte melden Sie sich an."
+      mailer:
+        subject: "Setzen Sie Ihr Daybreak-Passwort zurück"
+        greeting: "Hallo,"
+        body: "Jemand hat eine Passwortzurücksetzung für Ihr Daybreak-Konto angefordert. Klicken Sie auf den Link unten, um ein neues Passwort festzulegen:"
+        link_text: "Mein Passwort zurücksetzen"
+        expiry_note: "Dieser Link läuft in 15 Minuten ab. Wenn Sie keine Zurücksetzung beantragt haben, können Sie diese E-Mail ignorieren."
   locale_names:
     de: Deutsch
     en: English
