@@ -3,6 +3,43 @@ it:
   app:
     name: Daybreak
     title: Daybreak — Il Riepilogo di Oggi
+  auth:
+    login:
+      email_placeholder: Indirizzo e-mail
+      forgot_password: Password dimenticata?
+      invalid_credentials: E-mail o password non validi.
+      password_placeholder: Password
+      submit: Accedi
+      title: Accedi
+    passwords:
+      edit:
+        password_confirmation_placeholder: Conferma nuova password
+        password_placeholder: Nuova password
+        submit: Aggiorna password
+        title: Imposta nuova password
+      email_sent: Se quella e-mail è registrata, riceverai le istruzioni per il ripristino
+        a breve.
+      invalid_token: Il link di reimpostazione della password non è valido o è scaduto.
+      mailer:
+        body: 'Qualcuno ha richiesto un ripristino della password per il tuo account
+          Daybreak. Clicca sul link qui sotto per impostare una nuova password:'
+        expiry_note: Questo link scade in 15 minuti. Se non hai richiesto un ripristino,
+          puoi ignorare questa e-mail.
+        greeting: Ciao,
+        link_text: Reimposta la mia password
+        subject: Reimposta la tua password Daybreak
+      new:
+        email_placeholder: Indirizzo e-mail
+        submit: Invia istruzioni
+        title: Reimposta password
+      password_updated: La tua password è stata aggiornata. Accedi ora.
+    register:
+      email_placeholder: Indirizzo e-mail
+      password_confirmation_placeholder: Conferma password
+      password_placeholder: Password
+      submit: Crea account
+      title: Crea account
+    sign_out: Esci
   dashboard:
     action_items:
       mark_complete: Segna come completato

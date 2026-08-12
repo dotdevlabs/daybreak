@@ -1,0 +1,19 @@
+<% content_for :title, t("auth.passwords.new.title") %>
+<div class="auth-page">
+  <div class="auth-page__panel">
+    <%= render "dashboard/logo" %>
+    <h1 class="auth-page__title"><%= t("auth.passwords.new.title") %></h1>
+    <% if flash[:alert].present? %>
+      <div class="auth-page__error"><%= flash[:alert] %></div>
+    <% end %>
+    <%= form_with url: passwords_path, class: "auth-page__form" do |f| %>
+      <%= f.email_field :email_address,
+            placeholder: t("auth.passwords.new.email_placeholder"),
+            required: true,
+            autocomplete: "email",
+            class: "auth-overlay__input" %>
+      <%= f.submit t("auth.passwords.new.submit"), class: "btn btn--primary btn--full" %>
+    <% end %>
+    <%= link_to t("auth.login.title"), root_path, class: "auth-overlay__link" %>
+  </div>
+</div>

@@ -3,6 +3,43 @@ pt-BR:
   app:
     name: Daybreak
     title: Daybreak — Resumo de Hoje
+  auth:
+    login:
+      email_placeholder: Endereço de e-mail
+      forgot_password: Esqueceu a senha?
+      invalid_credentials: E-mail ou senha inválidos.
+      password_placeholder: Senha
+      submit: Entrar
+      title: Entrar
+    passwords:
+      edit:
+        password_confirmation_placeholder: Confirmar nova senha
+        password_placeholder: Nova senha
+        submit: Atualizar senha
+        title: Definir nova senha
+      email_sent: Se esse e-mail estiver registrado, você receberá as instruções de
+        redefinição em breve.
+      invalid_token: Esse link de redefinição de senha é inválido ou expirou.
+      mailer:
+        body: 'Alguém solicitou uma redefinição de senha para sua conta Daybreak.
+          Clique no link abaixo para definir uma nova senha:'
+        expiry_note: Este link expira em 15 minutos. Se você não solicitou uma redefinição,
+          pode ignorar este e-mail.
+        greeting: Olá,
+        link_text: Redefinir minha senha
+        subject: Redefina sua senha do Daybreak
+      new:
+        email_placeholder: Endereço de e-mail
+        submit: Enviar instruções
+        title: Redefinir senha
+      password_updated: Sua senha foi atualizada. Por favor, entre.
+    register:
+      email_placeholder: Endereço de e-mail
+      password_confirmation_placeholder: Confirmar senha
+      password_placeholder: Senha
+      submit: Criar conta
+      title: Criar conta
+    sign_out: Sair
   dashboard:
     action_items:
       mark_complete: Marcar como concluído

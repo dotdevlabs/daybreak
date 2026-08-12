@@ -1,0 +1,27 @@
+<% content_for :title, t("auth.passwords.edit.title") %>
+<div class="auth-page">
+  <div class="auth-page__panel">
+    <%= render "dashboard/logo" %>
+    <h1 class="auth-page__title"><%= t("auth.passwords.edit.title") %></h1>
+    <%= form_with url: password_path(params[:token]), method: :patch, class: "auth-page__form" do |f| %>
+      <%= f.password_field :password,
+            placeholder: t("auth.passwords.edit.password_placeholder"),
+            required: true,
+            autocomplete: "new-password",
+            class: "auth-overlay__input" %>
+      <%= f.password_field :password_confirmation,
+            placeholder: t("auth.passwords.edit.password_confirmation_placeholder"),
+            required: true,
+            autocomplete: "new-password",
+            class: "auth-overlay__input" %>
+      <% if @user&.errors&.any? %>
+        <ul class="auth-overlay__errors">
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      <% end %>
+      <%= f.submit t("auth.passwords.edit.submit"), class: "btn btn--primary btn--full" %>
+    <% end %>
+  </div>
+</div>

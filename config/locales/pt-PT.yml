@@ -3,6 +3,43 @@ pt-PT:
   app:
     name: Daybreak
     title: Daybreak — Resumo de Hoje
+  auth:
+    login:
+      email_placeholder: Endereço de e-mail
+      forgot_password: Esqueceu a palavra-passe?
+      invalid_credentials: E-mail ou palavra-passe inválidos.
+      password_placeholder: Palavra-passe
+      submit: Iniciar sessão
+      title: Iniciar sessão
+    passwords:
+      edit:
+        password_confirmation_placeholder: Confirmar nova palavra-passe
+        password_placeholder: Nova palavra-passe
+        submit: Atualizar palavra-passe
+        title: Definir nova palavra-passe
+      email_sent: Se esse e-mail estiver registado, receberá as instruções de redefinição
+        em breve.
+      invalid_token: Esse link de redefinição de palavra-passe é inválido ou expirou.
+      mailer:
+        body: 'Alguém solicitou uma redefinição de palavra-passe para a sua conta
+          Daybreak. Clique no link abaixo para definir uma nova palavra-passe:'
+        expiry_note: Este link expira em 15 minutos. Se não solicitou uma redefinição,
+          pode ignorar este e-mail.
+        greeting: Olá,
+        link_text: Redefinir a minha palavra-passe
+        subject: Redefina a sua palavra-passe do Daybreak
+      new:
+        email_placeholder: Endereço de e-mail
+        submit: Enviar instruções
+        title: Redefinir palavra-passe
+      password_updated: A sua palavra-passe foi atualizada. Por favor, inicie sessão.
+    register:
+      email_placeholder: Endereço de e-mail
+      password_confirmation_placeholder: Confirmar palavra-passe
+      password_placeholder: Palavra-passe
+      submit: Criar conta
+      title: Criar conta
+    sign_out: Terminar sessão
   dashboard:
     action_items:
       mark_complete: Marcar como concluído

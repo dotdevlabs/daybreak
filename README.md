@@ -51,6 +51,35 @@ The dashboard uses a warm terracotta design system with full light/dark mode sup
 - **Long Term Goals** — progress cards with percentage, agent insight sentence, and data-driven progress bars
 - **Agent Activity** — activity cards with title, body summary, status chip, and a bottom-fade overflow indicator when card content exceeds the card's bounded height
 
+## Authentication
+
+Daybreak uses standard Rails 8 session-based authentication (`has_secure_password`, a `Session` model, a signed cookie, `Current` attributes, and an `Authentication` controller concern).
+
+### Sign-in / Sign-up
+
+An unauthenticated visitor to `/` sees the full dashboard with a **full-screen overlay** on top. The overlay cannot be dismissed without authenticating. It offers two modes:
+
+- **Sign in** — enter email and password; on success the overlay disappears and the dashboard is fully interactive.
+- **Create account** — enter email, password, and confirmation; on success the account is created and the session starts immediately.
+
+Failed submits keep the overlay open on the mode that was submitted and display the error.
+
+### Password Reset
+
+A **Forgot password?** link on the sign-in form leads to `/passwords/new`. Enter your email address to receive a signed reset link (valid 15 minutes). The link opens `/passwords/:token/edit` where a new password can be set. After a successful reset, sign in normally via the overlay.
+
+### Sign out
+
+An authenticated user sees a **Sign out** button in the dashboard header. Clicking it destroys the server-side session and returns the visitor to the unauthenticated state (overlay reappears).
+
+### Security properties
+
+- Passwords are stored as bcrypt digests (`has_secure_password`).
+- Session tokens are stored server-side (`sessions` table) and referenced via a signed, `httponly`, `SameSite=Lax` cookie.
+- Login and registration endpoints are rate-limited (10 requests per 3 minutes).
+- Password reset tokens are time-limited (15 minutes) and invalidated when the password changes.
+- The agent API (`/api/*`) uses bearer tokens and is **not** affected by session auth.
+
 ## Internationalization (i18n)
 
 Daybreak supports 7 locales out of the box:
@@ -66,17 +95,26 @@ Daybreak supports 7 locales out of the box:
 | `it` | Italiano |
 
 The active locale is resolved in this order:
-1. **User preference** — stored on the singleton `User` record; persisted across sessions
+1. **User preference** — stored on the authenticated `User` record; persisted across sessions
 2. **Browser `Accept-Language` header** — best match against the 7 supported locales
 3. **Default** — `en`
 
-A locale switcher `<select>` is embedded in the dashboard footer. Selecting a language POSTs to `PATCH /user_preference` and reloads the page.
+A locale switcher `<select>` is embedded in the dashboard footer. Selecting a language POSTs to `PATCH /user_preference` and reloads the page. The locale switcher requires authentication; unauthenticated visitors receive the locale inferred from their browser's `Accept-Language` header.
 
 Date and time formatting adapts to the active locale via `rails-i18n`. The live clock in the header uses the browser `Intl` API with the current locale for weekday and month names.
 
 Translations live in `config/locales/<locale>.yml`. The CI pipeline runs `bundle exec i18n-tasks health` to catch missing or unused translation keys on every push.
 
 ## Data Model
+
+### User and Session
+
+| Model | Key columns | Notes |
+|-------|-------------|-------|
+| `User` | `email_address`, `password_digest`, `locale` | `has_secure_password`; email normalized to lowercase; locale is optional |
+| `Session` | `user_id`, `ip_address`, `user_agent` | Created on sign-in, destroyed on sign-out; referenced by the `session_id` signed cookie |
+
+### Briefings
 
 The dashboard renders from a `DailyBriefing` record. Each briefing stores JSONB columns for each panel:
 
@@ -413,6 +451,7 @@ These are passed at image build time (e.g. `docker build --build-arg APP_VERSION
 | `DAYBREAK_DATABASE_PASSWORD` | Password for the `daybreak` Postgres role |
 | `DAYBREAK_API_TOKEN` | Optional legacy bearer token; accepted alongside programmatically-issued tokens |
 | `DAYBREAK_USER_NAME` | Your first name — shown in the dashboard greeting ("Good morning, Alex") |
+| `DAYBREAK_MAILER_FROM` | From address for outbound emails (password reset); defaults to `noreply@daybreak.local` |
 | `RAILS_MASTER_KEY` | Decrypts `config/credentials.yml.enc` |
 | `WEB_CONCURRENCY` | Must remain `1` (in-memory push registry) |
 | `SENTRY_DSN` | Optional — Sentry Data Source Name; when absent the app boots normally with Sentry inert |

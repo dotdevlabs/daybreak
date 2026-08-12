@@ -3,6 +3,42 @@ en:
   app:
     name: Daybreak
     title: Daybreak — Today's Briefing
+  auth:
+    login:
+      email_placeholder: Email address
+      forgot_password: Forgot password?
+      invalid_credentials: Invalid email or password.
+      password_placeholder: Password
+      submit: Sign in
+      title: Sign In
+    passwords:
+      edit:
+        password_confirmation_placeholder: Confirm new password
+        password_placeholder: New password
+        submit: Update password
+        title: Set new password
+      email_sent: If that email is registered, you'll receive reset instructions shortly.
+      invalid_token: That password reset link is invalid or has expired.
+      mailer:
+        body: 'Someone requested a password reset for your Daybreak account. Click
+          the link below to set a new password:'
+        expiry_note: This link expires in 15 minutes. If you did not request a reset,
+          you can ignore this email.
+        greeting: Hello,
+        link_text: Reset my password
+        subject: Reset your Daybreak password
+      new:
+        email_placeholder: Email address
+        submit: Send reset instructions
+        title: Reset password
+      password_updated: Your password has been updated. Please sign in.
+    register:
+      email_placeholder: Email address
+      password_confirmation_placeholder: Confirm password
+      password_placeholder: Password
+      submit: Create account
+      title: Create account
+    sign_out: Sign out
   dashboard:
     action_items:
       mark_complete: Mark complete

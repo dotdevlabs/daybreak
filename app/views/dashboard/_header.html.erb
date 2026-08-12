@@ -6,7 +6,7 @@
      data-clock-greeting-afternoon-value="<%= t('dashboard.greeting.afternoon') %>"
      data-clock-greeting-evening-value="<%= t('dashboard.greeting.evening') %>">
   <div class="header__logo">
-    <%= render "logo" %>
+    <%= render "dashboard/logo" %>
   </div>
   <div class="header__right">
     <div class="header__clock">
@@ -17,5 +17,11 @@
       <span class="header__greeting" data-clock-target="greeting"><%= t("dashboard.greeting.morning") %></span>
       <span class="header__date" data-clock-target="date"><%= I18n.l(Date.current, format: :long) %></span>
     </div>
+    <% if authenticated? %>
+      <div class="header__auth">
+        <%= button_to t("auth.sign_out"), session_path, method: :delete,
+                      class: "btn btn--ghost btn--sm" %>
+      </div>
+    <% end %>
   </div>
 </div>

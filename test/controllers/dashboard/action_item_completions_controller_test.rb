@@ -9,6 +9,7 @@ class Dashboard::ActionItemCompletionsControllerTest < ActionDispatch::Integrati
 
   setup do
     AgentPushRegistry.instance.instance_variable_set(:@streams, [])  # reset between tests
+    post session_path, params: { email_address: users(:alice).email_address, password: "password123" }
   end
 
   test "POST /dashboard/action_item_completions returns 200" do

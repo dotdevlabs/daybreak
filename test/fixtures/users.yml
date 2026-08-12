@@ -1,4 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 singleton:
+  email_address: stub@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
   locale:
+
+alice:
+  email_address: alice@example.com
+  password_digest: <%= BCrypt::Password.create("password123", cost: BCrypt::Engine::MIN_COST) %>
+  locale: en

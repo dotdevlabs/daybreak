@@ -3,6 +3,44 @@ es:
   app:
     name: Daybreak
     title: Daybreak — El Resumen de Hoy
+  auth:
+    login:
+      email_placeholder: Correo electrónico
+      forgot_password: "¿Olvidaste tu contraseña?"
+      invalid_credentials: Correo electrónico o contraseña incorrectos.
+      password_placeholder: Contraseña
+      submit: Iniciar sesión
+      title: Iniciar sesión
+    passwords:
+      edit:
+        password_confirmation_placeholder: Confirmar nueva contraseña
+        password_placeholder: Nueva contraseña
+        submit: Actualizar contraseña
+        title: Establecer nueva contraseña
+      email_sent: Si ese correo está registrado, recibirás instrucciones de restablecimiento
+        en breve.
+      invalid_token: El enlace de restablecimiento es inválido o ha expirado.
+      mailer:
+        body: 'Alguien solicitó un restablecimiento de contraseña para tu cuenta de
+          Daybreak. Haz clic en el enlace a continuación para establecer una nueva
+          contraseña:'
+        expiry_note: Este enlace expira en 15 minutos. Si no solicitaste un restablecimiento,
+          puedes ignorar este correo.
+        greeting: Hola,
+        link_text: Restablecer mi contraseña
+        subject: Restablece tu contraseña de Daybreak
+      new:
+        email_placeholder: Correo electrónico
+        submit: Enviar instrucciones
+        title: Restablecer contraseña
+      password_updated: Tu contraseña ha sido actualizada. Por favor, inicia sesión.
+    register:
+      email_placeholder: Correo electrónico
+      password_confirmation_placeholder: Confirmar contraseña
+      password_placeholder: Contraseña
+      submit: Crear cuenta
+      title: Crear cuenta
+    sign_out: Cerrar sesión
   dashboard:
     action_items:
       mark_complete: Marcar como completado
