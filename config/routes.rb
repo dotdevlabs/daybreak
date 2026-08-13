@@ -4,8 +4,8 @@ Rails.application.routes.draw do
 
   root "dashboard#show"
 
-  # Sign-out only (sign-in goes through WebAuthn ceremony)
-  resource :session, only: %i[destroy]
+  # Session: create is the no-JS degraded path for sign-in (email in body, never GET)
+  resource :session, only: %i[create destroy]
 
   # Email-first registration (step 1: creates pending user)
   resource :registration, only: %i[create]

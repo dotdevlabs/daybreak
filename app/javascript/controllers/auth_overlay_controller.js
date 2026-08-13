@@ -1,20 +1,36 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Load webauthn-json dynamically so this controller connects immediately even
-// when the CDN resource is slow or unavailable (e.g. in CI / offline mode).
-// Passkey operations check for availability at call time.
+// Real browser capability check — instant, no module loading involved.
+function browserSupportsPasskeys() {
+  return Boolean(window.PublicKeyCredential)
+}
+
+// Lazily-loaded helper, shared across calls (concurrent loads coalesce).
+let webAuthnHelperPromise = null
 let webAuthnCreate = null
 let webAuthnGet = null
 
-;(async () => {
-  try {
-    const { create, get } = await import("@github/webauthn-json")
-    webAuthnCreate = create
-    webAuthnGet = get
-  } catch {
-    // Passkey buttons will show a graceful error; email-fallback path stays open.
+function ensureWebAuthnHelper() {
+  if (webAuthnCreate && webAuthnGet) {
+    return Promise.resolve({ create: webAuthnCreate, get: webAuthnGet })
   }
-})()
+  if (!webAuthnHelperPromise) {
+    webAuthnHelperPromise = import("@github/webauthn-json")
+      .then(({ create, get }) => {
+        webAuthnCreate = create
+        webAuthnGet = get
+        return { create, get }
+      })
+      .catch(err => {
+        webAuthnHelperPromise = null // allow retry on next invocation
+        throw err
+      })
+  }
+  return webAuthnHelperPromise
+}
+
+// Eagerly kick off the load (best-effort; errors handled at call time).
+ensureWebAuthnHelper().catch(() => {})
 
 export default class extends Controller {
   static targets = [
@@ -87,10 +103,19 @@ export default class extends Controller {
   }
 
   async startPasskeyRegistration() {
-    if (!webAuthnCreate) {
+    if (!browserSupportsPasskeys()) {
       this.showError("Passkeys are not supported in this browser.")
       return
     }
+
+    let create
+    try {
+      ({ create } = await ensureWebAuthnHelper())
+    } catch {
+      this.showError("Passkey helper is unavailable. Please try again.")
+      return
+    }
+
     try {
       const optResp = await fetch("/webauthn/registration/challenge", {
         method: "POST",
@@ -99,7 +124,7 @@ export default class extends Controller {
       if (!optResp.ok) throw new Error("Failed to get registration options")
       const options = await optResp.json()
 
-      const credential = await webAuthnCreate(options)
+      const credential = await create(options)
 
       const cbResp = await fetch("/webauthn/registration", {
         method: "POST",
@@ -166,11 +191,20 @@ export default class extends Controller {
       if (!optResp.ok) throw new Error("Failed to get authentication options")
       const options = await optResp.json()
 
-      if (!webAuthnGet) {
+      if (!browserSupportsPasskeys()) {
         this.showError("Passkeys are not supported in this browser.")
         return
       }
-      const credential = await webAuthnGet(options)
+
+      let get
+      try {
+        ({ get } = await ensureWebAuthnHelper())
+      } catch {
+        this.showError("Passkey helper is unavailable. Please try again.")
+        return
+      }
+
+      const credential = await get(options)
 
       const cbResp = await fetch("/webauthn/authentication", {
         method: "POST",

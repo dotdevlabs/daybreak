@@ -7,15 +7,26 @@ class RegistrationsController < ApplicationController
     existing = User.find_by(email_address: email)
 
     if existing&.verified?
-      return render json: { error: t("auth.register.already_registered") }, status: :conflict
+      respond_to do |format|
+        format.json { render json: { error: t("auth.register.already_registered") }, status: :conflict }
+        format.html { redirect_to root_path, alert: t("auth.register.already_registered") }
+      end
+      return
     end
 
     user = existing || User.new(email_address: email)
     unless user.persisted? || user.save
-      return render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+      respond_to do |format|
+        format.json { render json: { errors: user.errors.full_messages }, status: :unprocessable_entity }
+        format.html { redirect_to root_path, alert: user.errors.full_messages.join(", ") }
+      end
+      return
     end
 
     session[:pending_user_id] = user.id
-    render json: { step: "method" }
+    respond_to do |format|
+      format.json { render json: { step: "method" } }
+      format.html { redirect_to root_path }
+    end
   end
 end

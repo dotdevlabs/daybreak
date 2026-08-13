@@ -40,4 +40,30 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
     end
     assert_response :success
   end
+
+  # Bug 1 regression: HTML (no-JS) POST path — email in body, never in URL
+  test "HTML POST registration with valid email redirects and email not in redirect URL" do
+    post registration_path, params: { email_address: "htmluser@example.com" }
+    assert_response :redirect
+    assert_not_includes response.location, "email_address", "Email param must not appear in redirect URL"
+    assert_not_includes response.location, "htmluser", "Email address must not appear in redirect URL"
+  end
+
+  test "HTML POST registration with valid email stores pending_user_id in session" do
+    post registration_path, params: { email_address: "htmluser@example.com" }
+    user = User.find_by!(email_address: "htmluser@example.com")
+    assert_equal user.id, session[:pending_user_id]
+  end
+
+  test "HTML POST registration with already-verified email redirects (no email in URL)" do
+    post registration_path, params: { email_address: users(:alice).email_address }
+    assert_response :redirect
+    assert_not_includes response.location, users(:alice).email_address
+  end
+
+  test "HTML POST registration with invalid email redirects (no email in URL)" do
+    post registration_path, params: { email_address: "not-an-email" }
+    assert_response :redirect
+    assert_not_includes response.location, "not-an-email"
+  end
 end

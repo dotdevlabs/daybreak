@@ -20,6 +20,8 @@ de:
       success: E-Mail bestätigt. Willkommen bei Daybreak!
     login:
       email_placeholder: E-Mail-Adresse
+      javascript_required: Passkey sign-in requires JavaScript. Please enable it and
+        try again.
       submit: Weiter
       title: Anmelden
       toggle: Bereits ein Konto? Anmelden

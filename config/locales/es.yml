@@ -20,6 +20,8 @@ es:
       success: Correo verificado. ¡Bienvenido a Daybreak!
     login:
       email_placeholder: Correo electrónico
+      javascript_required: Passkey sign-in requires JavaScript. Please enable it and
+        try again.
       submit: Continuar
       title: Iniciar sesión
       toggle: "¿Ya tienes cuenta? Inicia sesión"

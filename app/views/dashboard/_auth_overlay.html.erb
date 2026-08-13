@@ -10,16 +10,19 @@
       <%# ── Step: signup-email ── %>
       <div data-auth-overlay-target="signupEmail">
         <h2 class="auth-page__title"><%= t("auth.register.title") %></h2>
-        <form class="auth-overlay__form" data-action="submit->auth-overlay#submitSignupEmail">
-          <input type="email" name="email_address"
-                 placeholder="<%= t("auth.register.email_placeholder") %>"
-                 required autocomplete="email"
-                 class="auth-overlay__input"
-                 data-auth-overlay-target="signupEmailInput">
+        <%= form_with url: registration_path, method: :post, local: true,
+                      class: "auth-overlay__form",
+                      data: { action: "submit->auth-overlay#submitSignupEmail", turbo: false } do |f| %>
+          <%= f.email_field :email_address,
+                placeholder: t("auth.register.email_placeholder"),
+                required: true,
+                autocomplete: "email",
+                class: "auth-overlay__input",
+                data: { auth_overlay_target: "signupEmailInput" } %>
           <button type="submit" class="btn btn--primary btn--full">
             <%= t("auth.register.submit") %>
           </button>
-        </form>
+        <% end %>
         <div class="auth-overlay__footer-links">
           <button class="auth-overlay__link" style="background:none;border:none;cursor:pointer;"
                   data-action="auth-overlay#showSignin">
@@ -61,16 +64,19 @@
       <%# ── Step: signin-email ── %>
       <div data-auth-overlay-target="signinEmail" hidden>
         <h2 class="auth-page__title"><%= t("auth.login.title") %></h2>
-        <form class="auth-overlay__form" data-action="submit->auth-overlay#submitSigninEmail">
-          <input type="email" name="email_address"
-                 placeholder="<%= t("auth.login.email_placeholder") %>"
-                 required autocomplete="email"
-                 class="auth-overlay__input"
-                 data-auth-overlay-target="signinEmailInput">
+        <%= form_with url: session_path, method: :post, local: true,
+                      class: "auth-overlay__form",
+                      data: { action: "submit->auth-overlay#submitSigninEmail", turbo: false } do |f| %>
+          <%= f.email_field :email_address,
+                placeholder: t("auth.login.email_placeholder"),
+                required: true,
+                autocomplete: "email",
+                class: "auth-overlay__input",
+                data: { auth_overlay_target: "signinEmailInput" } %>
           <button type="submit" class="btn btn--primary btn--full">
             <%= t("auth.login.submit") %>
           </button>
-        </form>
+        <% end %>
         <div class="auth-overlay__footer-links">
           <button class="auth-overlay__link" style="background:none;border:none;cursor:pointer;"
                   data-action="auth-overlay#showSignup">
