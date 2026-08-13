@@ -123,7 +123,7 @@ class AuthOverlayTest < ApplicationSystemTestCase
     # be the module-load failure. If the module loaded, the code reaches the
     # challenge fetch, hits the mock, and shows a different error.
     assert_selector "[data-auth-overlay-target='errorMessage']:not([hidden])"
-    assert_no_text "Passkey helper is unavailable",
-      "The WebAuthn helper module must load successfully; the 'unavailable' branch must not be reached"
+    # Module-load failure shows "Passkey helper is unavailable" — the mock fetch rejection shows a different error.
+    assert_no_text "Passkey helper is unavailable"
   end
 end
