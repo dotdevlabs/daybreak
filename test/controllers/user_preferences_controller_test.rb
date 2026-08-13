@@ -3,7 +3,7 @@ require "test_helper"
 class UserPreferencesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:alice)
-    post session_path, params: { email_address: @user.email_address, password: "password123" }
+    sign_in_as(@user)
   end
 
   test "PATCH user_preference with valid locale updates user locale" do

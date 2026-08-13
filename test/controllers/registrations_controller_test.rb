@@ -1,57 +1,43 @@
 require "test_helper"
 
 class RegistrationsControllerTest < ActionDispatch::IntegrationTest
-  test "POST registration with valid params creates user, session, and redirects to root" do
+  test "POST registration with valid email creates pending user" do
     assert_difference "User.count", 1 do
-      assert_difference "Session.count", 1 do
-        post registration_path, params: {
-          email_address: "newuser@example.com",
-          password: "password123",
-          password_confirmation: "password123"
-        }
-      end
+      post registration_path, params: { email_address: "new@example.com" }, as: :json
     end
-    assert_redirected_to root_path
-    assert cookies[:session_id].present?
+    assert_response :success
+    user = User.find_by!(email_address: "new@example.com")
+    assert_nil user.verified_at
   end
 
-  test "POST registration with invalid email returns 422 and renders overlay in register mode" do
-    post registration_path, params: {
-      email_address: "not-an-email",
-      password: "password123",
-      password_confirmation: "password123"
-    }
-    assert_response :unprocessable_entity
-    assert_select ".auth-overlay"
+  test "POST registration does not create a session cookie" do
+    post registration_path, params: { email_address: "new@example.com" }, as: :json
+    assert_nil cookies[:session_id]
   end
 
-  test "POST registration with mismatched passwords returns 422 with errors" do
-    post registration_path, params: {
-      email_address: "newuser@example.com",
-      password: "password123",
-      password_confirmation: "different"
-    }
-    assert_response :unprocessable_entity
-    assert_select ".auth-overlay__errors"
+  test "POST registration stores pending_user_id in session for next step" do
+    post registration_path, params: { email_address: "new@example.com" }, as: :json
+    post webauthn_registration_challenge_path, as: :json
+    assert_response :success
   end
 
-  test "POST registration with duplicate email returns 422 with uniqueness error" do
-    existing = users(:alice)
-    post registration_path, params: {
-      email_address: existing.email_address,
-      password: "password123",
-      password_confirmation: "password123"
-    }
-    assert_response :unprocessable_entity
-    assert_select ".auth-overlay__errors"
+  test "POST registration with already-verified email returns conflict" do
+    post registration_path,
+      params: { email_address: users(:alice).email_address },
+      as: :json
+    assert_response :conflict
   end
 
-  test "POST registration with blank email returns 422" do
-    post registration_path, params: {
-      email_address: "",
-      password: "password123",
-      password_confirmation: "password123"
-    }
+  test "POST registration with invalid email returns 422" do
+    post registration_path, params: { email_address: "not-an-email" }, as: :json
     assert_response :unprocessable_entity
+  end
+
+  test "POST registration re-uses existing pending user" do
+    post registration_path, params: { email_address: "pending@example.com" }, as: :json
+    assert_difference "User.count", 0 do
+      post registration_path, params: { email_address: "pending@example.com" }, as: :json
+    end
+    assert_response :success
   end
 end

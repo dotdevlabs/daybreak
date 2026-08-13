@@ -6,40 +6,46 @@ pt-BR:
   auth:
     login:
       email_placeholder: Endereço de e-mail
-      forgot_password: Esqueceu a senha?
-      invalid_credentials: E-mail ou senha inválidos.
-      password_placeholder: Senha
-      submit: Entrar
+      submit: Continuar
       title: Entrar
-    passwords:
-      edit:
-        password_confirmation_placeholder: Confirmar nova senha
-        password_placeholder: Nova senha
-        submit: Atualizar senha
-        title: Definir nova senha
-      email_sent: Se esse e-mail estiver registrado, você receberá as instruções de
-        redefinição em breve.
-      invalid_token: Esse link de redefinição de senha é inválido ou expirou.
-      mailer:
-        body: 'Alguém solicitou uma redefinição de senha para sua conta Daybreak.
-          Clique no link abaixo para definir uma nova senha:'
-        expiry_note: Este link expira em 15 minutos. Se você não solicitou uma redefinição,
-          pode ignorar este e-mail.
-        greeting: Olá,
-        link_text: Redefinir minha senha
-        subject: Redefina sua senha do Daybreak
-      new:
-        email_placeholder: Endereço de e-mail
-        submit: Enviar instruções
-        title: Redefinir senha
-      password_updated: Sua senha foi atualizada. Por favor, entre.
+      toggle: Já tem uma conta? Entrar
     register:
+      already_registered: Este e-mail já está cadastrado. Por favor, entre.
       email_placeholder: Endereço de e-mail
-      password_confirmation_placeholder: Confirmar senha
-      password_placeholder: Senha
-      submit: Criar conta
+      submit: Continuar
       title: Criar conta
+      toggle: Novo no Daybreak? Cadastrar-se
     sign_out: Sair
+    method:
+      choose: Como você quer entrar?
+      passkey_label: Usar uma chave de acesso
+      passkey_description: Entrada rápida e segura com a biometria ou PIN do seu dispositivo
+    passkey:
+      add: Adicionar nova chave de acesso
+      cancel: Cancelar
+      cannot_remove_last: Você não pode remover sua última chave de acesso
+      credential_removed: Chave de acesso removida
+      credential_renamed: Chave de acesso renomeada
+      credential_saved: Chave de acesso salva com sucesso
+      manage: Gerenciar chaves de acesso
+      remove: Remover
+      remove_confirm: Tem certeza de que deseja remover esta chave de acesso?
+      rename: Renomear
+      save: Salvar
+      unnamed: Chave de acesso
+    email_verification:
+      body: Clique no link abaixo para verificar seu endereço de e-mail e ativar sua conta Daybreak.
+      check_inbox: Verifique seu e-mail
+      check_inbox_prompt: Enviamos um link de verificação para %{email}
+      expiry_note: Este link expira em 24 horas. Se você não criou uma conta Daybreak, pode ignorar este e-mail.
+      greeting: "Bem-vindo ao Daybreak!"
+      invalid_token: Esse link de verificação é inválido ou expirou. Por favor, cadastre-se novamente.
+      link_text: Verificar meu e-mail
+      required: Por favor, verifique seu e-mail antes de entrar.
+      resend: Reenviar e-mail de verificação
+      subject: Verifique seu e-mail do Daybreak
+      success: "E-mail verificado. Bem-vindo ao Daybreak!"
+      already_verified: Seu e-mail já está verificado.
   dashboard:
     action_items:
       mark_complete: Marcar como concluído
@@ -72,6 +78,7 @@ pt-BR:
       action_items: Tarefas
       agent_activity: Atividade do Agente
       long_term_goals: Metas de Longo Prazo
+    back: Voltar ao painel
     weather:
       title: Clima
   locale_names:

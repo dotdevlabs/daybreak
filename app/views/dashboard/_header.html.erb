@@ -19,6 +19,7 @@
     </div>
     <% if authenticated? %>
       <div class="header__auth">
+        <%= link_to t("auth.passkey.manage"), credentials_path, class: "btn btn--ghost btn--sm" %>
         <%= button_to t("auth.sign_out"), session_path, method: :delete,
                       class: "btn btn--ghost btn--sm" %>
       </div>
