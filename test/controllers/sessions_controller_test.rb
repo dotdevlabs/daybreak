@@ -30,8 +30,8 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   test "POST session does not place email in the redirect URL" do
     post session_path, params: { email_address: users(:alice).email_address }
     assert_response :redirect
-    refute_includes response.location, "email_address"
-    refute_includes response.location, users(:alice).email_address
+    assert_not_includes response.location, "email_address"
+    assert_not_includes response.location, users(:alice).email_address
   end
 
   test "POST session is accessible when unauthenticated (no require_authentication redirect)" do

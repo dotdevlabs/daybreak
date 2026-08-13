@@ -45,8 +45,8 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
   test "HTML POST registration with valid email redirects and email not in redirect URL" do
     post registration_path, params: { email_address: "htmluser@example.com" }
     assert_response :redirect
-    refute_includes response.location, "email_address", "Email param must not appear in redirect URL"
-    refute_includes response.location, "htmluser", "Email address must not appear in redirect URL"
+    assert_not_includes response.location, "email_address", "Email param must not appear in redirect URL"
+    assert_not_includes response.location, "htmluser", "Email address must not appear in redirect URL"
   end
 
   test "HTML POST registration with valid email stores pending_user_id in session" do
@@ -58,12 +58,12 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
   test "HTML POST registration with already-verified email redirects (no email in URL)" do
     post registration_path, params: { email_address: users(:alice).email_address }
     assert_response :redirect
-    refute_includes response.location, users(:alice).email_address
+    assert_not_includes response.location, users(:alice).email_address
   end
 
   test "HTML POST registration with invalid email redirects (no email in URL)" do
     post registration_path, params: { email_address: "not-an-email" }
     assert_response :redirect
-    refute_includes response.location, "not-an-email"
+    assert_not_includes response.location, "not-an-email"
   end
 end
