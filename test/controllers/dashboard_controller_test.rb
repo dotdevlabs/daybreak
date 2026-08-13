@@ -121,4 +121,30 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     get root_url
     assert_select "meta[name='application-name'][content='Daybreak']"
   end
+
+  # Bug 1 regression: auth forms must POST (email in body, never GET/URL)
+  test "signup email form renders as POST to registration_path" do
+    get root_url
+    assert_select "form[action='#{registration_path}'][method='post']"
+  end
+
+  test "signup email form has data-turbo=false to prevent Turbo interception" do
+    get root_url
+    assert_select "form[action='#{registration_path}'][data-turbo='false']"
+  end
+
+  test "signin email form renders as POST to session_path" do
+    get root_url
+    assert_select "form[action='#{session_path}'][method='post']"
+  end
+
+  test "signin email form has data-turbo=false to prevent Turbo interception" do
+    get root_url
+    assert_select "form[action='#{session_path}'][data-turbo='false']"
+  end
+
+  test "no auth overlay form uses GET method" do
+    get root_url
+    assert_select ".auth-overlay form[method='get']", count: 0
+  end
 end

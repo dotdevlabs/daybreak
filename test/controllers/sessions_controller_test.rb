@@ -20,4 +20,22 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_select ".auth-overlay"
   end
+
+  # Bug 1 regression: no-JS sign-in degraded path — email in body, never in URL
+  test "POST session (no-JS sign-in fallback) redirects to root" do
+    post session_path, params: { email_address: users(:alice).email_address }
+    assert_redirected_to root_path
+  end
+
+  test "POST session does not place email in the redirect URL" do
+    post session_path, params: { email_address: users(:alice).email_address }
+    assert_response :redirect
+    refute_includes response.location, "email_address"
+    refute_includes response.location, users(:alice).email_address
+  end
+
+  test "POST session is accessible when unauthenticated (no require_authentication redirect)" do
+    post session_path, params: { email_address: "anyone@example.com" }
+    assert_redirected_to root_path
+  end
 end
