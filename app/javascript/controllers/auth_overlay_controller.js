@@ -59,6 +59,7 @@ export default class extends Controller {
       })
       const data = await resp.json()
       if (resp.ok) {
+        this.currentEmail = email
         this.showStep("signup-method")
       } else {
         this.showError(data.errors?.join(", ") || data.error || "Registration failed")
@@ -103,6 +104,19 @@ export default class extends Controller {
         this.showError(e.message || "An error occurred.")
       }
     }
+  }
+
+  async sendEmailFallback() {
+    try {
+      await fetch("/email_verification/resend", {
+        method: "POST",
+        headers: { "X-CSRF-Token": this.csrfToken(), "Content-Type": "application/json" }
+      })
+    } catch {
+      // best-effort; check-email step's resend button handles delivery failures
+    }
+    this.pendingEmailTarget.textContent = this.currentEmail || ""
+    this.showStep("check-email")
   }
 
   async resendEmail() {

@@ -25,6 +25,7 @@ fr:
       toggle: Déjà un compte ? Se connecter
     method:
       choose: Comment souhaitez-vous vous connecter ?
+      email_fallback_label: "Ou, envoyez-moi un lien par e-mail"
       passkey_description: Connexion rapide et sécurisée avec la biométrie ou le PIN
         de votre appareil
       passkey_label: Utiliser une clé d'accès
