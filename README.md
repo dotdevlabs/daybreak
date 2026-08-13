@@ -420,7 +420,7 @@ The CI pipeline runs the following jobs on every pull request and push:
 |-----|---------------|
 | `i18n_check` | `bundle exec i18n-tasks health` — fails on missing or unused translation keys |
 | `scan_ruby` | Brakeman static analysis + Bundler Audit for known gem CVEs |
-| `scan_js` | Importmap audit for JavaScript dependency vulnerabilities |
+| `scan_js` | Importmap audit for JavaScript dependency vulnerabilities; verifies all local importmap pins resolve to vendored files |
 | `lint` | RuboCop style enforcement |
 | `test` | Full unit + integration test suite |
 | `system-test` | Browser-driven system tests (Chrome) |
