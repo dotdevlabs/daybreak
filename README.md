@@ -58,10 +58,14 @@ Daybreak uses **passwordless, passkey-first authentication** (WebAuthn / FIDO2).
 ### Sign-up flow
 
 1. An unauthenticated visitor to `/` sees the full dashboard with a **full-screen blocking overlay**.
-2. They enter their email address — this creates a pending (unverified) account.
-3. They set up a **passkey** using their device's biometrics or PIN (WebAuthn registration ceremony).
+2. They enter their email address and submit — a POST to `/registration` creates a pending (unverified) account.
+3. The overlay advances to the **passkey registration step**:
+   - **Passkey path** — they set up a passkey using their device's biometrics or PIN (WebAuthn registration ceremony). A verification email is then sent.
+   - **Email-link fallback** — if passkeys are unavailable or the user prefers not to use one, an *"Or, send me an email link"* button sends a verification email directly and skips the passkey step.
 4. A **verification email** is sent. The account is inactive until the link is clicked.
 5. Clicking the link activates the account, starts a session, and dismisses the overlay.
+
+Passkeys can always be added later from `/credentials` regardless of which path was taken at sign-up.
 
 ### Sign-in flow
 
