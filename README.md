@@ -53,20 +53,32 @@ The dashboard uses a warm terracotta design system with full light/dark mode sup
 
 ## Authentication
 
-Daybreak uses standard Rails 8 session-based authentication (`has_secure_password`, a `Session` model, a signed cookie, `Current` attributes, and an `Authentication` controller concern).
+Daybreak uses **passwordless, passkey-first authentication** (WebAuthn / FIDO2). There are no passwords. A `Session` model, signed cookie, `Current` attributes, and an `Authentication` controller concern handle the session lifecycle. The `webauthn` gem (cedarcode/webauthn-ruby) handles the server-side ceremony.
 
-### Sign-in / Sign-up
+### Sign-up flow
 
-An unauthenticated visitor to `/` sees the full dashboard with a **full-screen overlay** on top. The overlay cannot be dismissed without authenticating. It offers two modes:
+1. An unauthenticated visitor to `/` sees the full dashboard with a **full-screen blocking overlay**.
+2. They enter their email address — this creates a pending (unverified) account.
+3. They set up a **passkey** using their device's biometrics or PIN (WebAuthn registration ceremony).
+4. A **verification email** is sent. The account is inactive until the link is clicked.
+5. Clicking the link activates the account, starts a session, and dismisses the overlay.
 
-- **Sign in** — enter email and password; on success the overlay disappears and the dashboard is fully interactive.
-- **Create account** — enter email, password, and confirmation; on success the account is created and the session starts immediately.
+### Sign-in flow
 
-Failed submits keep the overlay open on the mode that was submitted and display the error.
+1. The visitor enters their email address on the overlay.
+2. The browser runs the **WebAuthn authentication ceremony** (fingerprint / Face ID / PIN).
+3. On success a session is created and the overlay disappears.
+4. If the account is still pending (email not verified), sign-in is refused and a re-send option is offered.
 
-### Password Reset
+### Passkey management
 
-A **Forgot password?** link on the sign-in form leads to `/passwords/new`. Enter your email address to receive a signed reset link (valid 15 minutes). The link opens `/passwords/:token/edit` where a new password can be set. After a successful reset, sign in normally via the overlay.
+Signed-in users can manage their passkeys at `/credentials`:
+
+- **Add** a new passkey (e.g. a new device)
+- **Rename** a passkey (nickname)
+- **Remove** a passkey — removing the last credential is blocked until a fallback method exists
+
+A **Manage passkeys** link appears in the dashboard header for authenticated users.
 
 ### Sign out
 
@@ -74,10 +86,12 @@ An authenticated user sees a **Sign out** button in the dashboard header. Clicki
 
 ### Security properties
 
-- Passwords are stored as bcrypt digests (`has_secure_password`).
+- No passwords stored. Credentials are stored as WebAuthn public keys (`credentials` table).
+- Each user has a stable `webauthn_id` (random bytes, base64url-encoded) used as the WebAuthn user handle.
+- Email addresses must be verified before an account becomes active (`verified_at` timestamp).
+- Email verification tokens are signed, expire in 24 hours, and are invalidated after first use.
 - Session tokens are stored server-side (`sessions` table) and referenced via a signed, `httponly`, `SameSite=Lax` cookie.
-- Login and registration endpoints are rate-limited (10 requests per 3 minutes).
-- Password reset tokens are time-limited (15 minutes) and invalidated when the password changes.
+- All auth endpoints are rate-limited (10 requests per 3 minutes).
 - The agent API (`/api/*`) uses bearer tokens and is **not** affected by session auth.
 
 ## Internationalization (i18n)
@@ -107,12 +121,13 @@ Translations live in `config/locales/<locale>.yml`. The CI pipeline runs `bundle
 
 ## Data Model
 
-### User and Session
+### User, Credential, and Session
 
 | Model | Key columns | Notes |
 |-------|-------------|-------|
-| `User` | `email_address`, `password_digest`, `locale` | `has_secure_password`; email normalized to lowercase; locale is optional |
-| `Session` | `user_id`, `ip_address`, `user_agent` | Created on sign-in, destroyed on sign-out; referenced by the `session_id` signed cookie |
+| `User` | `email_address`, `webauthn_id`, `verified_at`, `locale` | Email normalized to lowercase; `webauthn_id` is a stable random handle generated on create; `verified_at` is nil until email verification is complete |
+| `Credential` | `user_id`, `external_id`, `public_key`, `sign_count`, `nickname` | One row per registered passkey; `external_id` is the base64url credential id from the WebAuthn ceremony; `sign_count` is updated on every authentication |
+| `Session` | `user_id`, `ip_address`, `user_agent` | Created on sign-in (only for verified users), destroyed on sign-out; referenced by the `session_id` signed cookie |
 
 ### Briefings
 
@@ -451,7 +466,10 @@ These are passed at image build time (e.g. `docker build --build-arg APP_VERSION
 | `DAYBREAK_DATABASE_PASSWORD` | Password for the `daybreak` Postgres role |
 | `DAYBREAK_API_TOKEN` | Optional legacy bearer token; accepted alongside programmatically-issued tokens |
 | `DAYBREAK_USER_NAME` | Your first name — shown in the dashboard greeting ("Good morning, Alex") |
-| `DAYBREAK_MAILER_FROM` | From address for outbound emails (password reset); defaults to `noreply@daybreak.local` |
+| `DAYBREAK_MAILER_FROM` | From address for outbound emails (email verification); defaults to `noreply@daybreak.local` |
+| `WEBAUTHN_ORIGIN` | Full origin for the WebAuthn relying party (e.g. `https://daybreak.cool`); defaults to `https://daybreak.cool` in production, `http://localhost:3000` in development |
+| `WEBAUTHN_RP_NAME` | Human-readable relying party name shown in browser passkey dialogs; defaults to `Daybreak` |
+| `WEBAUTHN_RP_ID` | Relying party ID (registrable domain suffix, e.g. `daybreak.cool`); defaults to `daybreak.cool` in production, `localhost` in development |
 | `RAILS_MASTER_KEY` | Decrypts `config/credentials.yml.enc` |
 | `WEB_CONCURRENCY` | Must remain `1` (in-memory push registry) |
 | `SENTRY_DSN` | Optional — Sentry Data Source Name; when absent the app boots normally with Sentry inert |
