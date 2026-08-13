@@ -54,6 +54,36 @@ jobs:
       - name: Scan for security vulnerabilities in JavaScript dependencies
         run: bin/importmap audit
 
+      - name: Verify importmap local pins resolve to vendored files
+        run: |
+          bundle exec ruby -r 'pathname' -r 'rubygems' -e '
+            root = Pathname.new(".")
+            importmap = root.join("config/importmap.rb").read
+            # Collect all asset search paths: vendor/javascript, app/assets/javascripts,
+            # and app/assets/javascripts directories from installed gems.
+            gem_asset_paths = Gem::Specification.each.filter_map { |spec|
+              p = Pathname.new(spec.gem_dir).join("app/assets/javascripts")
+              p if p.exist?
+            }
+            search_paths = [
+              root.join("vendor/javascript"),
+              root.join("app/assets/javascripts"),
+            ] + gem_asset_paths
+            errors = []
+            importmap.scan(/pin .+?, to: "([^"]+)"/).each do |match|
+              to = match[0].strip
+              next if to.start_with?("http://", "https://")
+              unless search_paths.any? { |p| p.join(to).exist? }
+                errors << "Missing local pin target: #{to}"
+              end
+            end
+            if errors.any?
+              errors.each { |e| puts "ERROR: #{e}" }
+              exit 1
+            end
+            puts "All local importmap pins resolve to existing files"
+          '
+
   lint:
     runs-on: ubuntu-latest
     env:

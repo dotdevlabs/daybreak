@@ -74,4 +74,56 @@ class AuthOverlayTest < ApplicationSystemTestCase
     assert_selector "[data-auth-overlay-target='errorMessage']:not([hidden])",
                     text: /not supported/i
   end
+
+  # Verifies that the vendored @github/webauthn-json module loads successfully in
+  # the browser via dynamic import. A broken/nonexistent CDN pin causes the promise
+  # to reject with a network or 404 error; a vendored file resolves with the module.
+  test "webauthn-json module loads from vendored asset (create and get are functions)" do
+    visit root_url
+    wait_for_overlay
+
+    result = page.evaluate_async_script(<<~JS)
+      var done = arguments[0];
+      import('@github/webauthn-json')
+        .then(function(m) { done('loaded:' + typeof m.create + ':' + typeof m.get); })
+        .catch(function(e) { done('error:' + e.message); });
+    JS
+
+    assert_equal "loaded:function:function", result,
+      "WebAuthn helper module must load with create and get as functions — got: #{result}"
+  end
+
+  # Verifies that clicking "Use a passkey" does NOT show the module-load failure
+  # message. With a broken importmap pin, ensureWebAuthnHelper() throws and the
+  # controller displays "Passkey helper is unavailable." With the vendored fix the
+  # module loads and the code proceeds to the challenge fetch (which we mock out).
+  test "clicking Use a passkey does not show Passkey helper is unavailable" do
+    visit root_url
+    wait_for_overlay
+
+    find("[data-auth-overlay-target='signupEmailInput']").set("passkeyloadtest@example.com")
+    find("[data-auth-overlay-target='signupEmail'] [type='submit']").click
+    assert_selector "[data-auth-overlay-target='signupMethod']:not([hidden])"
+
+    # Intercept WebAuthn server calls so we can observe the module-load outcome
+    # without triggering a real authenticator ceremony in headless Chrome.
+    page.execute_script(<<~JS)
+      window.__origFetch = window.fetch;
+      window.fetch = function(url, opts) {
+        if (typeof url === 'string' && url.includes('/webauthn/')) {
+          return Promise.reject(new Error('mocked-challenge-for-test'));
+        }
+        return window.__origFetch(url, opts);
+      };
+    JS
+
+    find("[data-action='auth-overlay#startPasskeyRegistration']").click
+
+    # An error IS expected (the mocked challenge fetch rejects), but it must NOT
+    # be the module-load failure. If the module loaded, the code reaches the
+    # challenge fetch, hits the mock, and shows a different error.
+    assert_selector "[data-auth-overlay-target='errorMessage']:not([hidden])"
+    assert_no_text "Passkey helper is unavailable",
+      "The WebAuthn helper module must load successfully; the 'unavailable' branch must not be reached"
+  end
 end
