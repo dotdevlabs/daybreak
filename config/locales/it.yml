@@ -25,7 +25,7 @@ it:
       toggle: Hai già un account? Accedi
     method:
       choose: Come vuoi accedere?
-      email_fallback_label: "Oppure, inviami un link via email"
+      email_fallback_label: Oppure, inviami un link via email
       passkey_description: Accesso rapido e sicuro con la biometria o il PIN del tuo
         dispositivo
       passkey_label: Usa una passkey

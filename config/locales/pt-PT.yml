@@ -25,7 +25,7 @@ pt-PT:
       toggle: Já tem conta? Iniciar sessão
     method:
       choose: Como pretende iniciar sessão?
-      email_fallback_label: "Ou, envie-me um link por e-mail"
+      email_fallback_label: Ou, envie-me um link por e-mail
       passkey_description: Início de sessão rápido e seguro com a biometria ou PIN
         do seu dispositivo
       passkey_label: Usar uma chave de acesso
