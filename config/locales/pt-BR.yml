@@ -25,6 +25,7 @@ pt-BR:
       toggle: Já tem uma conta? Entrar
     method:
       choose: Como você quer entrar?
+      email_fallback_label: Ou, me envie um link por e-mail
       passkey_description: Entrada rápida e segura com a biometria ou PIN do seu dispositivo
       passkey_label: Usar uma chave de acesso
     passkey:

@@ -25,6 +25,7 @@ en:
       toggle: Already have an account? Sign in
     method:
       choose: How would you like to sign in?
+      email_fallback_label: Or, send me an email link
       passkey_description: Fast, secure sign-in with your device's biometrics or PIN
       passkey_label: Use a passkey
     passkey:

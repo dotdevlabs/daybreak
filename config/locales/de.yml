@@ -25,6 +25,7 @@ de:
       toggle: Bereits ein Konto? Anmelden
     method:
       choose: Wie möchten Sie sich anmelden?
+      email_fallback_label: Oder sende mir einen E-Mail-Link
       passkey_description: Schnelle, sichere Anmeldung mit der Biometrie oder PIN
         Ihres Geräts
       passkey_label: Passkey verwenden

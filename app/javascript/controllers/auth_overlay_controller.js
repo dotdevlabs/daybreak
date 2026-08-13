@@ -1,5 +1,20 @@
 import { Controller } from "@hotwired/stimulus"
-import { create, get } from "@github/webauthn-json"
+
+// Load webauthn-json dynamically so this controller connects immediately even
+// when the CDN resource is slow or unavailable (e.g. in CI / offline mode).
+// Passkey operations check for availability at call time.
+let webAuthnCreate = null
+let webAuthnGet = null
+
+;(async () => {
+  try {
+    const { create, get } = await import("@github/webauthn-json")
+    webAuthnCreate = create
+    webAuthnGet = get
+  } catch {
+    // Passkey buttons will show a graceful error; email-fallback path stays open.
+  }
+})()
 
 export default class extends Controller {
   static targets = [
@@ -9,6 +24,8 @@ export default class extends Controller {
   static values = { step: String }
 
   connect() {
+    // Signal to tests (and any other observers) that the controller is live.
+    this.element.setAttribute("data-connected", "")
     this.showStep(this.stepValue || "signup-email")
   }
 
@@ -59,6 +76,7 @@ export default class extends Controller {
       })
       const data = await resp.json()
       if (resp.ok) {
+        this.currentEmail = email
         this.showStep("signup-method")
       } else {
         this.showError(data.errors?.join(", ") || data.error || "Registration failed")
@@ -69,6 +87,10 @@ export default class extends Controller {
   }
 
   async startPasskeyRegistration() {
+    if (!webAuthnCreate) {
+      this.showError("Passkeys are not supported in this browser.")
+      return
+    }
     try {
       const optResp = await fetch("/webauthn/registration/challenge", {
         method: "POST",
@@ -77,7 +99,7 @@ export default class extends Controller {
       if (!optResp.ok) throw new Error("Failed to get registration options")
       const options = await optResp.json()
 
-      const credential = await create(options)
+      const credential = await webAuthnCreate(options)
 
       const cbResp = await fetch("/webauthn/registration", {
         method: "POST",
@@ -103,6 +125,19 @@ export default class extends Controller {
         this.showError(e.message || "An error occurred.")
       }
     }
+  }
+
+  async sendEmailFallback() {
+    try {
+      await fetch("/email_verification/resend", {
+        method: "POST",
+        headers: { "X-CSRF-Token": this.csrfToken(), "Content-Type": "application/json" }
+      })
+    } catch {
+      // best-effort; check-email step's resend button handles delivery failures
+    }
+    this.pendingEmailTarget.textContent = this.currentEmail || ""
+    this.showStep("check-email")
   }
 
   async resendEmail() {
@@ -131,7 +166,11 @@ export default class extends Controller {
       if (!optResp.ok) throw new Error("Failed to get authentication options")
       const options = await optResp.json()
 
-      const credential = await get(options)
+      if (!webAuthnGet) {
+        this.showError("Passkeys are not supported in this browser.")
+        return
+      }
+      const credential = await webAuthnGet(options)
 
       const cbResp = await fetch("/webauthn/authentication", {
         method: "POST",

@@ -25,6 +25,7 @@ es:
       toggle: "¿Ya tienes cuenta? Inicia sesión"
     method:
       choose: "¿Cómo quieres iniciar sesión?"
+      email_fallback_label: O, envíame un enlace por correo
       passkey_description: Inicio de sesión rápido y seguro con la biometría o PIN
         de tu dispositivo
       passkey_label: Usar una clave de acceso
