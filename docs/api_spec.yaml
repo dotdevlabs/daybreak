@@ -203,9 +203,12 @@ components:
 
 paths:
   /status:
+    servers:
+      - url: /
     get:
       operationId: getDeployStatus
       summary: Application deploy status
+      security: []
       description: >
         Returns application version, commit SHA (baked in at Docker build time),
         and the current database schema migration version. version and sha are
@@ -242,13 +245,7 @@ paths:
                     sha: "abc1234"
                     db_version: "20260811000254"
                   links:
-                    self: /api/status
-        "401":
-          description: Unauthorized
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/JsonApiErrors'
+                    self: /status
 
   /tokens:
     post:

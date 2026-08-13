@@ -8,7 +8,7 @@ class AppStatus
         sha:        ENV["APP_SHA"],
         db_version: current_db_version
       },
-      links: { self: "/api/status" }
+      links: { self: "/status" }
     }
   end
 
