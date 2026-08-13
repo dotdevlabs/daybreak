@@ -20,7 +20,8 @@ pt-PT:
       success: E-mail verificado. Bem-vindo ao Daybreak!
     login:
       email_placeholder: Endereço de e-mail
-      javascript_required: "Passkey sign-in requires JavaScript. Please enable it and try again."
+      javascript_required: Passkey sign-in requires JavaScript. Please enable it and
+        try again.
       submit: Continuar
       title: Iniciar sessão
       toggle: Já tem conta? Iniciar sessão

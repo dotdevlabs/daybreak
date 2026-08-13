@@ -20,7 +20,8 @@ en:
       success: Email verified. Welcome to Daybreak!
     login:
       email_placeholder: Email address
-      javascript_required: "Passkey sign-in requires JavaScript. Please enable it and try again."
+      javascript_required: Passkey sign-in requires JavaScript. Please enable it and
+        try again.
       submit: Continue
       title: Sign In
       toggle: Already have an account? Sign in
