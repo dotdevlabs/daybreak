@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "status" => "status#show"
   get "up" => "rails/health#show", as: :rails_health_check
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
@@ -39,7 +40,6 @@ Rails.application.routes.draw do
   end
 
   namespace :api do
-    resource :status, only: %i[show], controller: :status
     resources :tokens,  only: %i[create]
     resources :catalog, only: %i[index]
     resources :widgets, only: %i[create]

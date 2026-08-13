@@ -23,7 +23,7 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
 
   test "spec declares exactly the expected documented operations (coverage gate)" do
     spec_ops = SPEC["paths"].flat_map do |path, item|
-      item.keys.reject { |k| k == "parameters" }.map { |m| "#{m.upcase} #{path}" }
+      item.keys.reject { |k| %w[parameters servers].include?(k) }.map { |m| "#{m.upcase} #{path}" }
     end
     assert_equal 6, spec_ops.size,
       "Expected 6 spec operations; got #{spec_ops.size}: #{spec_ops.inspect}. " \
@@ -33,15 +33,18 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
   # --- Layer 1: SPEC→CODE Bijection ---
 
   test "every documented spec path resolves to a Rails route" do
+    default_base = SPEC.dig("servers", 0, "url") || ""
     verified = 0
     SPEC["paths"].each do |spec_path, methods|
+      path_base = methods.dig("servers", 0, "url") || default_base
+      effective_path = "#{path_base.chomp('/')}#{spec_path}"
       methods.each_key do |verb|
-        next if verb == "parameters"
+        next if %w[parameters servers].include?(verb)
         begin
-          Rails.application.routes.recognize_path("/api#{spec_path}", method: verb.upcase)
+          Rails.application.routes.recognize_path(effective_path, method: verb.upcase)
           verified += 1
         rescue ActionController::RoutingError => e
-          flunk "Spec documents #{verb.upcase} /api#{spec_path} but no matching Rails route: #{e.message}"
+          flunk "Spec documents #{verb.upcase} #{effective_path} but no matching Rails route: #{e.message}"
         end
       end
     end
@@ -50,9 +53,11 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
 
   # --- Layer 2: CODE→SPEC Bijection ---
 
+  ROOT_API_CONTROLLERS = %w[status].freeze
+
   test "every Api:: controller action is documented in the spec" do
     spec_operations = SPEC["paths"].flat_map do |path, methods|
-      methods.keys.reject { |k| k == "parameters" }.map { |verb| "#{verb.upcase} #{path}" }
+      methods.keys.reject { |k| %w[parameters servers].include?(k) }.map { |verb| "#{verb.upcase} #{path}" }
     end.to_set
 
     Rails.application.routes.routes.each do |route|
@@ -71,33 +76,56 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "every root-level API controller action is documented in the spec" do
+    root_spec_ops = SPEC["paths"].each_with_object(Set.new) do |(spec_path, methods), set|
+      path_base = methods.dig("servers", 0, "url")
+      next unless path_base && path_base != "/api"
+      methods.each_key do |verb|
+        next if %w[parameters servers].include?(verb)
+        set << "#{verb.upcase} #{path_base.chomp('/') + spec_path}"
+      end
+    end
+
+    Rails.application.routes.routes.each do |route|
+      next unless ROOT_API_CONTROLLERS.include?(route.defaults[:controller].to_s)
+      next if route.defaults[:action].blank?
+      verb = route.verb.to_s.upcase
+      raw_path = route.path.spec.to_s.sub(/\(\..*?\)\z/, "")
+      assert_includes root_spec_ops, "#{verb} #{raw_path}",
+        "Route #{verb} #{raw_path} (controller: #{route.defaults[:controller]}) is not documented in docs/api_spec.yaml"
+    end
+  end
+
   # --- Layer 3: Unauthorized Tests (one per spec operation) ---
 
+  default_base = SPEC.dig("servers", 0, "url") || ""
   SPEC["paths"].each do |spec_path, methods|
+    path_base = methods.dig("servers", 0, "url") || default_base
+    effective_path = "#{path_base.chomp('/')}#{spec_path}"
     methods.each_key do |verb|
-      next if verb == "parameters"
+      next if %w[parameters servers].include?(verb)
       next if methods.dig(verb, "security") == []
 
-      define_method("test_401_#{verb}_api#{spec_path.gsub('/', '_')}") do
-        send(verb.downcase, "/api#{spec_path}",
+      define_method("test_401_#{verb}#{effective_path.gsub('/', '_')}") do
+        send(verb.downcase, effective_path,
              headers: { "Content-Type" => "application/vnd.api+json" })
         assert_response :unauthorized,
-          "Expected 401 for unauthenticated #{verb.upcase} /api#{spec_path}"
+          "Expected 401 for unauthenticated #{verb.upcase} #{effective_path}"
         assert_equal "application/vnd.api+json", response.media_type,
-          "Expected JSON:API content type on 401 for #{verb.upcase} /api#{spec_path}"
+          "Expected JSON:API content type on 401 for #{verb.upcase} #{effective_path}"
         errors = response.parsed_body["errors"]
         assert_kind_of Array, errors,
-          "Expected errors array on 401 for #{verb.upcase} /api#{spec_path}"
+          "Expected errors array on 401 for #{verb.upcase} #{effective_path}"
         assert errors.all? { |e| e.key?("detail") },
-          "Each error must have a 'detail' key on 401 for #{verb.upcase} /api#{spec_path}"
+          "Each error must have a 'detail' key on 401 for #{verb.upcase} #{effective_path}"
       end
     end
   end
 
   # --- Layer 3: Happy-Path Compliance Tests ---
 
-  test "GET /api/status returns 200 JSON:API status resource with deploy attributes" do
-    get "/api/status", headers: auth_headers
+  test "GET /status returns 200 JSON:API status resource with deploy attributes" do
+    get "/status"
     assert_response :ok
     assert_equal "application/vnd.api+json", response.media_type
     data = response.parsed_body["data"]
@@ -108,8 +136,8 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
     # version and sha are nil when ENV vars not set (acceptable per spec)
     assert(data["attributes"]["db_version"].nil? || data["attributes"]["db_version"].is_a?(String),
            "db_version must be a String or nil")
-    assert_equal "/api/status", data.dig("links", "self"),
-      "status resource must carry links.self = /api/status"
+    assert_equal "/status", data.dig("links", "self"),
+      "status resource must carry links.self = /status"
   end
 
   test "GET /api/catalog returns 200 JSON:API data array of widget_types" do
