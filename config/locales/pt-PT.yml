@@ -4,41 +4,49 @@ pt-PT:
     name: Daybreak
     title: Daybreak — Resumo de Hoje
   auth:
+    email_verification:
+      body: Clique no link abaixo para verificar o seu endereço de e-mail e ativar
+        a sua conta Daybreak.
+      check_inbox: Verifique o seu e-mail
+      expiry_note: Este link expira em 24 horas. Se não criou uma conta Daybreak,
+        pode ignorar este e-mail.
+      greeting: Bem-vindo ao Daybreak!
+      invalid_token: Esse link de verificação é inválido ou expirou. Por favor, registe-se
+        novamente.
+      link_text: Verificar o meu e-mail
+      required: Por favor, verifique o seu e-mail antes de iniciar sessão.
+      resend: Reenviar e-mail de verificação
+      subject: Verifique o seu e-mail do Daybreak
+      success: E-mail verificado. Bem-vindo ao Daybreak!
     login:
       email_placeholder: Endereço de e-mail
-      forgot_password: Esqueceu a palavra-passe?
-      invalid_credentials: E-mail ou palavra-passe inválidos.
-      password_placeholder: Palavra-passe
-      submit: Iniciar sessão
+      submit: Continuar
       title: Iniciar sessão
-    passwords:
-      edit:
-        password_confirmation_placeholder: Confirmar nova palavra-passe
-        password_placeholder: Nova palavra-passe
-        submit: Atualizar palavra-passe
-        title: Definir nova palavra-passe
-      email_sent: Se esse e-mail estiver registado, receberá as instruções de redefinição
-        em breve.
-      invalid_token: Esse link de redefinição de palavra-passe é inválido ou expirou.
-      mailer:
-        body: 'Alguém solicitou uma redefinição de palavra-passe para a sua conta
-          Daybreak. Clique no link abaixo para definir uma nova palavra-passe:'
-        expiry_note: Este link expira em 15 minutos. Se não solicitou uma redefinição,
-          pode ignorar este e-mail.
-        greeting: Olá,
-        link_text: Redefinir a minha palavra-passe
-        subject: Redefina a sua palavra-passe do Daybreak
-      new:
-        email_placeholder: Endereço de e-mail
-        submit: Enviar instruções
-        title: Redefinir palavra-passe
-      password_updated: A sua palavra-passe foi atualizada. Por favor, inicie sessão.
+      toggle: Já tem conta? Iniciar sessão
+    method:
+      choose: Como pretende iniciar sessão?
+      passkey_description: Início de sessão rápido e seguro com a biometria ou PIN
+        do seu dispositivo
+      passkey_label: Usar uma chave de acesso
+    passkey:
+      add: Adicionar nova chave de acesso
+      cancel: Cancelar
+      cannot_remove_last: Não pode remover a sua última chave de acesso
+      credential_removed: Chave de acesso removida
+      credential_renamed: Chave de acesso renomeada
+      credential_saved: Chave de acesso guardada com sucesso
+      manage: Gerir chaves de acesso
+      remove: Remover
+      remove_confirm: Tem a certeza de que pretende remover esta chave de acesso?
+      rename: Renomear
+      save: Guardar
+      unnamed: Chave de acesso
     register:
+      already_registered: Este e-mail já está registado. Por favor, inicie sessão.
       email_placeholder: Endereço de e-mail
-      password_confirmation_placeholder: Confirmar palavra-passe
-      password_placeholder: Palavra-passe
-      submit: Criar conta
+      submit: Continuar
       title: Criar conta
+      toggle: Novo no Daybreak? Registar-se
     sign_out: Terminar sessão
   dashboard:
     action_items:
@@ -49,6 +57,7 @@ pt-PT:
       work_title: Tarefas – Trabalho
     agent_activity:
       completed_status: Concluído
+    back: Voltar ao painel
     calendar:
       no_events_today: Sem eventos hoje
       title: Calendário

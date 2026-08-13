@@ -4,7 +4,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
   fixtures :daily_briefings
 
   def sign_in(user)
-    post session_path, params: { email_address: user.email_address, password: "password123" }
+    sign_in_as(user)
   end
 
   test "GET root returns 200 OK when unauthenticated" do

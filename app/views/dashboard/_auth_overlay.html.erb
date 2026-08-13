@@ -1,76 +1,82 @@
 <% unless authenticated? %>
   <div class="auth-overlay"
        data-controller="auth-overlay"
-       data-auth-overlay-mode-value="<%= @overlay_mode || 'login' %>">
+       data-auth-overlay-step-value="signup-email">
     <div class="auth-overlay__panel">
       <div class="auth-overlay__logo">
         <%= render "dashboard/logo" %>
       </div>
 
-      <div class="auth-overlay__tabs" role="tablist">
-        <button class="auth-overlay__tab"
-                data-auth-overlay-target="loginTab"
-                data-action="auth-overlay#showLogin"
-                role="tab">
-          <%= t("auth.login.title") %>
-        </button>
-        <button class="auth-overlay__tab"
-                data-auth-overlay-target="registerTab"
-                data-action="auth-overlay#showRegister"
-                role="tab">
-          <%= t("auth.register.title") %>
-        </button>
-      </div>
-
-      <div data-auth-overlay-target="loginPane">
-        <% if @auth_error.present? %>
-          <div class="auth-overlay__error" role="alert"><%= @auth_error %></div>
-        <% end %>
-        <%= form_with url: session_path, class: "auth-overlay__form" do |f| %>
-          <%= f.email_field :email_address,
-                placeholder: t("auth.login.email_placeholder"),
-                required: true,
-                autocomplete: "email",
-                class: "auth-overlay__input" %>
-          <%= f.password_field :password,
-                placeholder: t("auth.login.password_placeholder"),
-                required: true,
-                autocomplete: "current-password",
-                class: "auth-overlay__input" %>
-          <%= f.submit t("auth.login.submit"), class: "btn btn--primary btn--full" %>
-        <% end %>
+      <%# ── Step: signup-email ── %>
+      <div data-auth-overlay-target="signupEmail">
+        <h2 class="auth-page__title"><%= t("auth.register.title") %></h2>
+        <form class="auth-overlay__form" data-action="submit->auth-overlay#submitSignupEmail">
+          <input type="email" name="email_address"
+                 placeholder="<%= t("auth.register.email_placeholder") %>"
+                 required autocomplete="email"
+                 class="auth-overlay__input"
+                 data-auth-overlay-target="signupEmailInput">
+          <button type="submit" class="btn btn--primary btn--full">
+            <%= t("auth.register.submit") %>
+          </button>
+        </form>
         <div class="auth-overlay__footer-links">
-          <%= link_to t("auth.login.forgot_password"), new_password_path, class: "auth-overlay__link" %>
+          <button class="auth-overlay__link" style="background:none;border:none;cursor:pointer;"
+                  data-action="auth-overlay#showSignin">
+            <%= t("auth.login.toggle") %>
+          </button>
         </div>
       </div>
 
-      <div data-auth-overlay-target="registerPane">
-        <% if @auth_errors.present? %>
-          <ul class="auth-overlay__errors" role="alert">
-            <% Array(@auth_errors).each do |error| %>
-              <li><%= error %></li>
-            <% end %>
-          </ul>
-        <% end %>
-        <%= form_with url: registration_path, class: "auth-overlay__form" do |f| %>
-          <%= f.email_field :email_address,
-                placeholder: t("auth.register.email_placeholder"),
-                required: true,
-                autocomplete: "email",
-                class: "auth-overlay__input" %>
-          <%= f.password_field :password,
-                placeholder: t("auth.register.password_placeholder"),
-                required: true,
-                autocomplete: "new-password",
-                class: "auth-overlay__input" %>
-          <%= f.password_field :password_confirmation,
-                placeholder: t("auth.register.password_confirmation_placeholder"),
-                required: true,
-                autocomplete: "new-password",
-                class: "auth-overlay__input" %>
-          <%= f.submit t("auth.register.submit"), class: "btn btn--primary btn--full" %>
-        <% end %>
+      <%# ── Step: signup-method ── %>
+      <div data-auth-overlay-target="signupMethod" hidden>
+        <h2 class="auth-page__title"><%= t("auth.method.choose") %></h2>
+        <div class="auth-overlay__form">
+          <button class="btn btn--primary btn--full" data-action="auth-overlay#startPasskeyRegistration">
+            <i data-lucide="fingerprint"></i>
+            <%= t("auth.method.passkey_label") %>
+          </button>
+          <p style="font-size:13px;color:var(--color-fg-muted);text-align:center;margin:0;">
+            <%= t("auth.method.passkey_description") %>
+          </p>
+        </div>
       </div>
+
+      <%# ── Step: check-email ── %>
+      <div data-auth-overlay-target="checkEmail" hidden>
+        <h2 class="auth-page__title"><%= t("auth.email_verification.check_inbox") %></h2>
+        <div class="auth-overlay__form">
+          <p style="font-size:14px;color:var(--color-fg-muted);text-align:center;margin:0;"
+             data-auth-overlay-target="pendingEmail"></p>
+          <button class="btn btn--outline btn--full" data-action="auth-overlay#resendEmail">
+            <%= t("auth.email_verification.resend") %>
+          </button>
+        </div>
+      </div>
+
+      <%# ── Step: signin-email ── %>
+      <div data-auth-overlay-target="signinEmail" hidden>
+        <h2 class="auth-page__title"><%= t("auth.login.title") %></h2>
+        <form class="auth-overlay__form" data-action="submit->auth-overlay#submitSigninEmail">
+          <input type="email" name="email_address"
+                 placeholder="<%= t("auth.login.email_placeholder") %>"
+                 required autocomplete="email"
+                 class="auth-overlay__input"
+                 data-auth-overlay-target="signinEmailInput">
+          <button type="submit" class="btn btn--primary btn--full">
+            <%= t("auth.login.submit") %>
+          </button>
+        </form>
+        <div class="auth-overlay__footer-links">
+          <button class="auth-overlay__link" style="background:none;border:none;cursor:pointer;"
+                  data-action="auth-overlay#showSignup">
+            <%= t("auth.register.toggle") %>
+          </button>
+        </div>
+      </div>
+
+      <%# ── Error display ── %>
+      <div data-auth-overlay-target="errorMessage" class="auth-overlay__error" hidden></div>
     </div>
   </div>
 <% end %>

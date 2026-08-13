@@ -4,42 +4,50 @@ de:
     name: Daybreak
     title: Daybreak — Heutiger Überblick
   auth:
+    email_verification:
+      body: Klicken Sie auf den Link unten, um Ihre E-Mail-Adresse zu bestätigen und
+        Ihr Daybreak-Konto zu aktivieren.
+      check_inbox: E-Mail überprüfen
+      expiry_note: Dieser Link läuft in 24 Stunden ab. Wenn Sie kein Daybreak-Konto
+        erstellt haben, können Sie diese E-Mail ignorieren.
+      greeting: Willkommen bei Daybreak!
+      invalid_token: Dieser Bestätigungslink ist ungültig oder abgelaufen. Bitte registrieren
+        Sie sich erneut.
+      link_text: Meine E-Mail bestätigen
+      required: Bitte bestätigen Sie Ihre E-Mail, bevor Sie sich anmelden.
+      resend: Bestätigungs-E-Mail erneut senden
+      subject: Bestätigen Sie Ihre Daybreak-E-Mail
+      success: E-Mail bestätigt. Willkommen bei Daybreak!
     login:
       email_placeholder: E-Mail-Adresse
-      forgot_password: Passwort vergessen?
-      invalid_credentials: Ungültige E-Mail oder ungültiges Passwort.
-      password_placeholder: Passwort
-      submit: Anmelden
+      submit: Weiter
       title: Anmelden
-    passwords:
-      edit:
-        password_confirmation_placeholder: Neues Passwort bestätigen
-        password_placeholder: Neues Passwort
-        submit: Passwort aktualisieren
-        title: Neues Passwort festlegen
-      email_sent: Falls diese E-Mail registriert ist, erhalten Sie in Kürze Anweisungen
-        zum Zurücksetzen.
-      invalid_token: Dieser Link zum Zurücksetzen des Passworts ist ungültig oder
-        abgelaufen.
-      mailer:
-        body: 'Jemand hat eine Passwortzurücksetzung für Ihr Daybreak-Konto angefordert.
-          Klicken Sie auf den Link unten, um ein neues Passwort festzulegen:'
-        expiry_note: Dieser Link läuft in 15 Minuten ab. Wenn Sie keine Zurücksetzung
-          beantragt haben, können Sie diese E-Mail ignorieren.
-        greeting: Hallo,
-        link_text: Mein Passwort zurücksetzen
-        subject: Setzen Sie Ihr Daybreak-Passwort zurück
-      new:
-        email_placeholder: E-Mail-Adresse
-        submit: Anweisungen senden
-        title: Passwort zurücksetzen
-      password_updated: Ihr Passwort wurde aktualisiert. Bitte melden Sie sich an.
+      toggle: Bereits ein Konto? Anmelden
+    method:
+      choose: Wie möchten Sie sich anmelden?
+      passkey_description: Schnelle, sichere Anmeldung mit der Biometrie oder PIN
+        Ihres Geräts
+      passkey_label: Passkey verwenden
+    passkey:
+      add: Neuen Passkey hinzufügen
+      cancel: Abbrechen
+      cannot_remove_last: Sie können Ihren letzten Passkey nicht entfernen
+      credential_removed: Passkey entfernt
+      credential_renamed: Passkey umbenannt
+      credential_saved: Passkey erfolgreich gespeichert
+      manage: Passkeys verwalten
+      remove: Entfernen
+      remove_confirm: Möchten Sie diesen Passkey wirklich entfernen?
+      rename: Umbenennen
+      save: Speichern
+      unnamed: Passkey
     register:
+      already_registered: Diese E-Mail ist bereits registriert. Bitte melden Sie sich
+        an.
       email_placeholder: E-Mail-Adresse
-      password_confirmation_placeholder: Passwort bestätigen
-      password_placeholder: Passwort
-      submit: Konto erstellen
+      submit: Weiter
       title: Konto erstellen
+      toggle: Neu bei Daybreak? Registrieren
     sign_out: Abmelden
   dashboard:
     action_items:
@@ -50,6 +58,7 @@ de:
       work_title: Aufgaben – Arbeit
     agent_activity:
       completed_status: Erledigt
+    back: Zurück zum Dashboard
     calendar:
       no_events_today: Keine Ereignisse heute
       title: Kalender

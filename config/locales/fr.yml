@@ -4,42 +4,49 @@ fr:
     name: Daybreak
     title: Daybreak — Le Résumé du Jour
   auth:
+    email_verification:
+      body: Cliquez sur le lien ci-dessous pour vérifier votre adresse e-mail et activer
+        votre compte Daybreak.
+      check_inbox: Vérifiez votre e-mail
+      expiry_note: Ce lien expire dans 24 heures. Si vous n'avez pas créé de compte
+        Daybreak, vous pouvez ignorer cet e-mail.
+      greeting: Bienvenue sur Daybreak !
+      invalid_token: Ce lien de vérification est invalide ou a expiré. Veuillez vous
+        inscrire à nouveau.
+      link_text: Vérifier mon e-mail
+      required: Veuillez vérifier votre e-mail avant de vous connecter.
+      resend: Renvoyer l'e-mail de vérification
+      subject: Vérifiez votre e-mail Daybreak
+      success: E-mail vérifié. Bienvenue sur Daybreak !
     login:
       email_placeholder: Adresse e-mail
-      forgot_password: Mot de passe oublié ?
-      invalid_credentials: E-mail ou mot de passe invalide.
-      password_placeholder: Mot de passe
-      submit: Se connecter
+      submit: Continuer
       title: Se connecter
-    passwords:
-      edit:
-        password_confirmation_placeholder: Confirmer le nouveau mot de passe
-        password_placeholder: Nouveau mot de passe
-        submit: Mettre à jour le mot de passe
-        title: Définir un nouveau mot de passe
-      email_sent: Si cet e-mail est enregistré, vous recevrez les instructions de
-        réinitialisation sous peu.
-      invalid_token: Ce lien de réinitialisation est invalide ou a expiré.
-      mailer:
-        body: 'Quelqu''un a demandé une réinitialisation de mot de passe pour votre
-          compte Daybreak. Cliquez sur le lien ci-dessous pour définir un nouveau
-          mot de passe :'
-        expiry_note: Ce lien expire dans 15 minutes. Si vous n'avez pas demandé de
-          réinitialisation, vous pouvez ignorer cet e-mail.
-        greeting: Bonjour,
-        link_text: Réinitialiser mon mot de passe
-        subject: Réinitialisez votre mot de passe Daybreak
-      new:
-        email_placeholder: Adresse e-mail
-        submit: Envoyer les instructions
-        title: Réinitialiser le mot de passe
-      password_updated: Votre mot de passe a été mis à jour. Veuillez vous connecter.
+      toggle: Déjà un compte ? Se connecter
+    method:
+      choose: Comment souhaitez-vous vous connecter ?
+      passkey_description: Connexion rapide et sécurisée avec la biométrie ou le PIN
+        de votre appareil
+      passkey_label: Utiliser une clé d'accès
+    passkey:
+      add: Ajouter une nouvelle clé d'accès
+      cancel: Annuler
+      cannot_remove_last: Vous ne pouvez pas supprimer votre dernière clé d'accès
+      credential_removed: Clé d'accès supprimée
+      credential_renamed: Clé d'accès renommée
+      credential_saved: Clé d'accès enregistrée avec succès
+      manage: Gérer les clés d'accès
+      remove: Supprimer
+      remove_confirm: Êtes-vous sûr de vouloir supprimer cette clé d'accès ?
+      rename: Renommer
+      save: Enregistrer
+      unnamed: Clé d'accès
     register:
+      already_registered: Cet e-mail est déjà enregistré. Veuillez vous connecter.
       email_placeholder: Adresse e-mail
-      password_confirmation_placeholder: Confirmer le mot de passe
-      password_placeholder: Mot de passe
-      submit: Créer un compte
+      submit: Continuer
       title: Créer un compte
+      toggle: Nouveau sur Daybreak ? S'inscrire
     sign_out: Se déconnecter
   dashboard:
     action_items:
@@ -50,6 +57,7 @@ fr:
       work_title: Actions – Travail
     agent_activity:
       completed_status: Terminé
+    back: Retour au tableau de bord
     calendar:
       no_events_today: Aucun événement aujourd'hui
       title: Calendrier

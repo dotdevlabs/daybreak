@@ -4,41 +4,49 @@ it:
     name: Daybreak
     title: Daybreak — Il Riepilogo di Oggi
   auth:
+    email_verification:
+      body: Clicca sul link qui sotto per verificare il tuo indirizzo e-mail e attivare
+        il tuo account Daybreak.
+      check_inbox: Controlla la tua e-mail
+      expiry_note: Questo link scade in 24 ore. Se non hai creato un account Daybreak,
+        puoi ignorare questa e-mail.
+      greeting: Benvenuto su Daybreak!
+      invalid_token: Questo link di verifica non è valido o è scaduto. Registrati
+        di nuovo.
+      link_text: Verifica la mia e-mail
+      required: Verifica la tua e-mail prima di accedere.
+      resend: Invia di nuovo l'e-mail di verifica
+      subject: Verifica la tua e-mail Daybreak
+      success: E-mail verificata. Benvenuto su Daybreak!
     login:
       email_placeholder: Indirizzo e-mail
-      forgot_password: Password dimenticata?
-      invalid_credentials: E-mail o password non validi.
-      password_placeholder: Password
-      submit: Accedi
+      submit: Continua
       title: Accedi
-    passwords:
-      edit:
-        password_confirmation_placeholder: Conferma nuova password
-        password_placeholder: Nuova password
-        submit: Aggiorna password
-        title: Imposta nuova password
-      email_sent: Se quella e-mail è registrata, riceverai le istruzioni per il ripristino
-        a breve.
-      invalid_token: Il link di reimpostazione della password non è valido o è scaduto.
-      mailer:
-        body: 'Qualcuno ha richiesto un ripristino della password per il tuo account
-          Daybreak. Clicca sul link qui sotto per impostare una nuova password:'
-        expiry_note: Questo link scade in 15 minuti. Se non hai richiesto un ripristino,
-          puoi ignorare questa e-mail.
-        greeting: Ciao,
-        link_text: Reimposta la mia password
-        subject: Reimposta la tua password Daybreak
-      new:
-        email_placeholder: Indirizzo e-mail
-        submit: Invia istruzioni
-        title: Reimposta password
-      password_updated: La tua password è stata aggiornata. Accedi ora.
+      toggle: Hai già un account? Accedi
+    method:
+      choose: Come vuoi accedere?
+      passkey_description: Accesso rapido e sicuro con la biometria o il PIN del tuo
+        dispositivo
+      passkey_label: Usa una passkey
+    passkey:
+      add: Aggiungi una nuova passkey
+      cancel: Annulla
+      cannot_remove_last: Non puoi rimuovere la tua ultima passkey
+      credential_removed: Passkey rimossa
+      credential_renamed: Passkey rinominata
+      credential_saved: Passkey salvata con successo
+      manage: Gestisci passkey
+      remove: Rimuovi
+      remove_confirm: Sei sicuro di voler rimuovere questa passkey?
+      rename: Rinomina
+      save: Salva
+      unnamed: Passkey
     register:
+      already_registered: Questa e-mail è già registrata. Accedi.
       email_placeholder: Indirizzo e-mail
-      password_confirmation_placeholder: Conferma password
-      password_placeholder: Password
-      submit: Crea account
+      submit: Continua
       title: Crea account
+      toggle: Nuovo su Daybreak? Registrati
     sign_out: Esci
   dashboard:
     action_items:
@@ -49,6 +57,7 @@ it:
       work_title: Azioni – Lavoro
     agent_activity:
       completed_status: Completato
+    back: Torna alla dashboard
     calendar:
       no_events_today: Nessun evento oggi
       title: Calendario

@@ -1,8 +1,8 @@
 class User < ApplicationRecord
   SUPPORTED_LOCALES = %w[en es fr pt-BR pt-PT de it].freeze
 
-  has_secure_password
-  has_many :sessions, dependent: :destroy
+  has_many :sessions,    dependent: :destroy
+  has_many :credentials, dependent: :destroy
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
@@ -11,7 +11,23 @@ class User < ApplicationRecord
                             uniqueness: { case_sensitive: false },
                             format: { with: URI::MailTo::EMAIL_REGEXP }
 
-  generates_token_for :password_reset, expires_in: 15.minutes do
-    password_salt.last(10)
+  generates_token_for :email_verification, expires_in: 24.hours do
+    verified_at.to_i
+  end
+
+  before_create :assign_webauthn_id
+
+  def verified?
+    verified_at.present?
+  end
+
+  def verify!
+    update!(verified_at: Time.current)
+  end
+
+  private
+
+  def assign_webauthn_id
+    self.webauthn_id ||= WebAuthn.generate_user_id
   end
 end
