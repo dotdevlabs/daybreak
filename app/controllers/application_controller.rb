@@ -7,14 +7,14 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
-  before_action :set_locale
+  around_action :set_locale
 
   private
 
   def set_locale
     user_locale = current_user&.locale.presence
     browser_locale = parse_accept_language
-    I18n.locale = (user_locale || browser_locale || I18n.default_locale).to_sym
+    I18n.with_locale(user_locale || browser_locale || I18n.default_locale) { yield }
   end
 
   def parse_accept_language
