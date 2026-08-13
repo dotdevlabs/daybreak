@@ -4,22 +4,30 @@ de:
     name: Daybreak
     title: Daybreak — Heutiger Überblick
   auth:
+    email_verification:
+      body: Klicken Sie auf den Link unten, um Ihre E-Mail-Adresse zu bestätigen und
+        Ihr Daybreak-Konto zu aktivieren.
+      check_inbox: E-Mail überprüfen
+      expiry_note: Dieser Link läuft in 24 Stunden ab. Wenn Sie kein Daybreak-Konto
+        erstellt haben, können Sie diese E-Mail ignorieren.
+      greeting: Willkommen bei Daybreak!
+      invalid_token: Dieser Bestätigungslink ist ungültig oder abgelaufen. Bitte registrieren
+        Sie sich erneut.
+      link_text: Meine E-Mail bestätigen
+      required: Bitte bestätigen Sie Ihre E-Mail, bevor Sie sich anmelden.
+      resend: Bestätigungs-E-Mail erneut senden
+      subject: Bestätigen Sie Ihre Daybreak-E-Mail
+      success: E-Mail bestätigt. Willkommen bei Daybreak!
     login:
       email_placeholder: E-Mail-Adresse
       submit: Weiter
       title: Anmelden
       toggle: Bereits ein Konto? Anmelden
-    register:
-      already_registered: Diese E-Mail ist bereits registriert. Bitte melden Sie sich an.
-      email_placeholder: E-Mail-Adresse
-      submit: Weiter
-      title: Konto erstellen
-      toggle: Neu bei Daybreak? Registrieren
-    sign_out: Abmelden
     method:
       choose: Wie möchten Sie sich anmelden?
+      passkey_description: Schnelle, sichere Anmeldung mit der Biometrie oder PIN
+        Ihres Geräts
       passkey_label: Passkey verwenden
-      passkey_description: Schnelle, sichere Anmeldung mit der Biometrie oder PIN Ihres Geräts
     passkey:
       add: Neuen Passkey hinzufügen
       cancel: Abbrechen
@@ -33,19 +41,14 @@ de:
       rename: Umbenennen
       save: Speichern
       unnamed: Passkey
-    email_verification:
-      body: Klicken Sie auf den Link unten, um Ihre E-Mail-Adresse zu bestätigen und Ihr Daybreak-Konto zu aktivieren.
-      check_inbox: E-Mail überprüfen
-      check_inbox_prompt: Wir haben einen Bestätigungslink an %{email} gesendet
-      expiry_note: Dieser Link läuft in 24 Stunden ab. Wenn Sie kein Daybreak-Konto erstellt haben, können Sie diese E-Mail ignorieren.
-      greeting: "Willkommen bei Daybreak!"
-      invalid_token: Dieser Bestätigungslink ist ungültig oder abgelaufen. Bitte registrieren Sie sich erneut.
-      link_text: Meine E-Mail bestätigen
-      required: Bitte bestätigen Sie Ihre E-Mail, bevor Sie sich anmelden.
-      resend: Bestätigungs-E-Mail erneut senden
-      subject: Bestätigen Sie Ihre Daybreak-E-Mail
-      success: E-Mail bestätigt. Willkommen bei Daybreak!
-      already_verified: Ihre E-Mail ist bereits bestätigt.
+    register:
+      already_registered: Diese E-Mail ist bereits registriert. Bitte melden Sie sich
+        an.
+      email_placeholder: E-Mail-Adresse
+      submit: Weiter
+      title: Konto erstellen
+      toggle: Neu bei Daybreak? Registrieren
+    sign_out: Abmelden
   dashboard:
     action_items:
       mark_complete: Als erledigt markieren
@@ -55,6 +58,7 @@ de:
       work_title: Aufgaben – Arbeit
     agent_activity:
       completed_status: Erledigt
+    back: Zurück zum Dashboard
     calendar:
       no_events_today: Keine Ereignisse heute
       title: Kalender
@@ -78,7 +82,6 @@ de:
       action_items: Aufgaben
       agent_activity: Agentenaktivität
       long_term_goals: Langfristige Ziele
-    back: Zurück zum Dashboard
     weather:
       title: Wetter
   locale_names:

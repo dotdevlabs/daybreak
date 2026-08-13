@@ -4,22 +4,30 @@ fr:
     name: Daybreak
     title: Daybreak — Le Résumé du Jour
   auth:
+    email_verification:
+      body: Cliquez sur le lien ci-dessous pour vérifier votre adresse e-mail et activer
+        votre compte Daybreak.
+      check_inbox: Vérifiez votre e-mail
+      expiry_note: Ce lien expire dans 24 heures. Si vous n'avez pas créé de compte
+        Daybreak, vous pouvez ignorer cet e-mail.
+      greeting: Bienvenue sur Daybreak !
+      invalid_token: Ce lien de vérification est invalide ou a expiré. Veuillez vous
+        inscrire à nouveau.
+      link_text: Vérifier mon e-mail
+      required: Veuillez vérifier votre e-mail avant de vous connecter.
+      resend: Renvoyer l'e-mail de vérification
+      subject: Vérifiez votre e-mail Daybreak
+      success: E-mail vérifié. Bienvenue sur Daybreak !
     login:
       email_placeholder: Adresse e-mail
       submit: Continuer
       title: Se connecter
       toggle: Déjà un compte ? Se connecter
-    register:
-      already_registered: Cet e-mail est déjà enregistré. Veuillez vous connecter.
-      email_placeholder: Adresse e-mail
-      submit: Continuer
-      title: Créer un compte
-      toggle: Nouveau sur Daybreak ? S'inscrire
-    sign_out: Se déconnecter
     method:
       choose: Comment souhaitez-vous vous connecter ?
+      passkey_description: Connexion rapide et sécurisée avec la biométrie ou le PIN
+        de votre appareil
       passkey_label: Utiliser une clé d'accès
-      passkey_description: Connexion rapide et sécurisée avec la biométrie ou le PIN de votre appareil
     passkey:
       add: Ajouter une nouvelle clé d'accès
       cancel: Annuler
@@ -33,19 +41,13 @@ fr:
       rename: Renommer
       save: Enregistrer
       unnamed: Clé d'accès
-    email_verification:
-      body: Cliquez sur le lien ci-dessous pour vérifier votre adresse e-mail et activer votre compte Daybreak.
-      check_inbox: Vérifiez votre e-mail
-      check_inbox_prompt: Nous avons envoyé un lien de vérification à %{email}
-      expiry_note: Ce lien expire dans 24 heures. Si vous n'avez pas créé de compte Daybreak, vous pouvez ignorer cet e-mail.
-      greeting: "Bienvenue sur Daybreak !"
-      invalid_token: Ce lien de vérification est invalide ou a expiré. Veuillez vous inscrire à nouveau.
-      link_text: Vérifier mon e-mail
-      required: Veuillez vérifier votre e-mail avant de vous connecter.
-      resend: Renvoyer l'e-mail de vérification
-      subject: Vérifiez votre e-mail Daybreak
-      success: "E-mail vérifié. Bienvenue sur Daybreak !"
-      already_verified: Votre e-mail est déjà vérifié.
+    register:
+      already_registered: Cet e-mail est déjà enregistré. Veuillez vous connecter.
+      email_placeholder: Adresse e-mail
+      submit: Continuer
+      title: Créer un compte
+      toggle: Nouveau sur Daybreak ? S'inscrire
+    sign_out: Se déconnecter
   dashboard:
     action_items:
       mark_complete: Marquer comme terminé
@@ -55,6 +57,7 @@ fr:
       work_title: Actions – Travail
     agent_activity:
       completed_status: Terminé
+    back: Retour au tableau de bord
     calendar:
       no_events_today: Aucun événement aujourd'hui
       title: Calendrier
@@ -78,7 +81,6 @@ fr:
       action_items: Actions
       agent_activity: Activité de l'Agent
       long_term_goals: Objectifs à Long Terme
-    back: Retour au tableau de bord
     weather:
       title: Météo
   locale_names:
