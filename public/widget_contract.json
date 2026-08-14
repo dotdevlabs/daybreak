@@ -120,7 +120,9 @@
             "required": ["text"],
             "properties": {
               "text": { "type": "string", "description": "Action item text (required)" },
-              "priority": { "type": "string", "enum": ["high", "medium", "low"], "description": "Priority level" }
+              "priority": { "type": "string", "enum": ["high", "medium", "low"], "description": "Priority level" },
+              "done": { "type": "boolean", "description": "True if the item is already completed; absent or false means not yet done" },
+              "link": { "type": "string", "description": "Optional URL the item links to" }
             }
           }
         },
@@ -131,7 +133,9 @@
             "required": ["text"],
             "properties": {
               "text": { "type": "string", "description": "Action item text (required)" },
-              "priority": { "type": "string", "enum": ["high", "medium", "low"], "description": "Priority level" }
+              "priority": { "type": "string", "enum": ["high", "medium", "low"], "description": "Priority level" },
+              "done": { "type": "boolean", "description": "True if the item is already completed; absent or false means not yet done" },
+              "link": { "type": "string", "description": "Optional URL the item links to" }
             }
           }
         }
@@ -139,11 +143,11 @@
       "examples": [
         {
           "personal": [
-            { "text": "Call dentist to reschedule appointment", "priority": "high" },
+            { "text": "Call dentist to reschedule appointment", "priority": "high", "done": true, "link": "https://example.com/dentist" },
             { "text": "Pick up groceries", "priority": "medium" }
           ],
           "work": [
-            { "text": "Review PR #142 before end of day", "priority": "high" },
+            { "text": "Review PR #142 before end of day", "priority": "high", "link": "https://example.com/pr/142" },
             { "text": "Send project status update to stakeholders", "priority": "medium" },
             { "text": "Update Jira tickets", "priority": "low" }
           ]
@@ -215,7 +219,8 @@
               "required": ["text"],
               "properties": {
                 "text": { "type": "string" },
-                "priority": { "type": "string", "enum": ["high", "medium", "low"] }
+                "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+                "link": { "type": "string", "description": "URL the item links to, if it was set on the item" }
               }
             }
           }
@@ -227,7 +232,7 @@
           "action": "item_completed",
           "data": {
             "context": "personal",
-            "item": { "text": "Call dentist to reschedule appointment", "priority": "high" }
+            "item": { "text": "Call dentist to reschedule appointment", "priority": "high", "link": "https://example.com/dentist" }
           }
         }
       ]
