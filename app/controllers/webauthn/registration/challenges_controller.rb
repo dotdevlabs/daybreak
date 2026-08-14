@@ -8,7 +8,7 @@ class Webauthn::Registration::ChallengesController < ApplicationController
 
     options = WebAuthn::Credential.options_for_create(
       user: { id: user.webauthn_id, name: user.email_address, display_name: user.email_address },
-      exclude: user.credentials.map { |c| { id: c.external_id, type: "public-key" } }
+      exclude: user.credentials.map(&:external_id)
     )
     session[:webauthn_challenge] = options.challenge
     render json: options
