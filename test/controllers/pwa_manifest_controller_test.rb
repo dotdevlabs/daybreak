@@ -34,4 +34,12 @@ class PwaManifestControllerTest < ActionDispatch::IntegrationTest
     body = JSON.parse(response.body)
     assert_equal "standalone", body["display"]
   end
+
+  test "manifest JSON has a dedicated maskable icon at /icon-maskable-512.png" do
+    get pwa_manifest_url(format: :json)
+    body = JSON.parse(response.body)
+    maskable = body["icons"].select { |i| i["purpose"] == "maskable" }
+    assert_not maskable.empty?, "manifest must have at least one maskable icon"
+    assert_includes maskable.map { |i| i["src"] }, "/icon-maskable-512.png"
+  end
 end
