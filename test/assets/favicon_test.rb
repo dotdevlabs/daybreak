@@ -45,7 +45,7 @@ class FaviconTest < ActiveSupport::TestCase
     "icon.png"               => [ 512, 512 ],
     "icon-maskable-512.png"  => [ 512, 512 ],
     "favicon-dark-16x16.png" => [ 16, 16 ],
-    "favicon-dark-32x32.png" => [ 32, 32 ],
+    "favicon-dark-32x32.png" => [ 32, 32 ]
   }.each do |filename, (expected_w, expected_h)|
     test "#{filename} exists and is #{expected_w}×#{expected_h}" do
       path = PUBLIC.join(filename)
