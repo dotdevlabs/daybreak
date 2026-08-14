@@ -78,6 +78,40 @@ class Api::WidgetsControllerTest < ActionDispatch::IntegrationTest
     assert_response :created
   end
 
+  test "valid action_items message with done and link fields returns 201" do
+    post_widget(
+      type: "action_items",
+      data: {
+        "personal" => [ { "text" => "Call dentist", "done" => true, "link" => "https://example.com/dentist" } ],
+        "work" => [ { "text" => "Review PR", "done" => false } ]
+      }
+    )
+    assert_response :created
+    briefing = DailyBriefing.for_today
+    assert_equal true, briefing.action_items_data.dig("personal", 0, "done")
+    assert_equal "https://example.com/dentist", briefing.action_items_data.dig("personal", 0, "link")
+  end
+
+  test "action_items with non-boolean done returns 422 with error" do
+    post_widget(
+      type: "action_items",
+      data: { "work" => [ { "text" => "Review PR", "done" => "yes" } ] }
+    )
+    assert_response :unprocessable_entity
+    errors = response.parsed_body["errors"].map { |e| e["detail"] }
+    assert_includes errors.join, "done must be a boolean"
+  end
+
+  test "action_items with non-string link returns 422 with error" do
+    post_widget(
+      type: "action_items",
+      data: { "personal" => [ { "text" => "Call dentist", "link" => 99 } ] }
+    )
+    assert_response :unprocessable_entity
+    errors = response.parsed_body["errors"].map { |e| e["detail"] }
+    assert_includes errors.join, "link must be a string"
+  end
+
   # --- authentication ---
 
   test "missing Authorization header returns 401" do

@@ -200,6 +200,9 @@ components:
                 priority:
                   type: string
                   enum: [high, medium, low]
+                link:
+                  type: string
+                  description: URL the item links to, if set on the item
 
 paths:
   /status:
@@ -424,9 +427,12 @@ paths:
                         personal:
                           - text: Call dentist
                             priority: high
+                            done: true
+                            link: https://example.com/dentist
                         work:
                           - text: Review PR
                             priority: medium
+                            link: https://example.com/pr
               long_term_goals:
                 summary: Long-Term Goals widget
                 value:
