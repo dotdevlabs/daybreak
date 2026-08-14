@@ -503,7 +503,8 @@ These are passed at image build time (e.g. `docker build --build-arg APP_VERSION
 |----------|---------|
 | `DAYBREAK_DATABASE_PASSWORD` | Password for the `daybreak` Postgres role |
 | `DAYBREAK_USER_NAME` | Your first name — shown in the dashboard greeting ("Good morning, Alex") |
-| `DAYBREAK_MAILER_FROM` | From address for outbound emails (email verification); defaults to `noreply@daybreak.local` |
+| `POSTMARK_API_TOKEN` | Postmark API token for transactional email delivery (email verification / magic-link) — required in production |
+| `DAYBREAK_MAILER_FROM` | From address for outbound emails (email verification); defaults to `noreply@daybreak.cool` |
 | `WEBAUTHN_ORIGIN` | Full origin for the WebAuthn relying party (e.g. `https://daybreak.cool`); defaults to `https://daybreak.cool` in production, `http://localhost:3000` in development |
 | `WEBAUTHN_RP_NAME` | Human-readable relying party name shown in browser passkey dialogs; defaults to `Daybreak` |
 | `WEBAUTHN_RP_ID` | Relying party ID (registrable domain suffix, e.g. `daybreak.cool`); defaults to `daybreak.cool` in production, `localhost` in development |
