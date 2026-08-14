@@ -28,14 +28,17 @@ Icon set in `public/`:
 | File | Size | Use |
 |------|------|-----|
 | `favicon.ico` | 16/32/48 multi-res | browser tab (legacy) |
-| `favicon-16x16.png` | 16×16 | browser tab (PNG) |
-| `favicon-32x32.png` | 32×32 | browser tab (PNG) |
+| `favicon-16x16.png` | 16×16 | browser tab (PNG, light scheme) |
+| `favicon-32x32.png` | 32×32 | browser tab (PNG, light scheme) |
+| `favicon-dark-16x16.png` | 16×16 | browser tab (PNG, dark scheme) |
+| `favicon-dark-32x32.png` | 32×32 | browser tab (PNG, dark scheme) |
 | `apple-touch-icon.png` | 180×180 | iOS homescreen |
 | `icon-192.png` | 192×192 | Android homescreen / PWA |
-| `icon-512.png` | 512×512 | PWA splash screen + maskable |
+| `icon-512.png` | 512×512 | PWA splash screen |
+| `icon-maskable-512.png` | 512×512 | PWA maskable icon (20 % safe-area padding) |
 | `icon.svg` | scalable | browser tab (SVG) |
 
-All icons render the sunrise sun mark (warm yellow center `#FFCA6B` → peach `#E0A584`, horizon line `#D4916E`) on the `#F3EBE2` background. The 512×512 PNG is maskable-safe (mark padded within the 80 % safe zone).
+All icons render the sunrise sun mark (warm yellow center `#FFCA6B` → peach `#E0A584`, horizon line `#D4916E`) from the 1024×1024 source PNGs in `app/assets/images/logo/`. Light-scheme icons use the `#F3EBE2` background; dark-scheme icons use `#1A1A1A`. The layout serves dark favicon PNGs to dark-mode user agents via `media="(prefers-color-scheme: dark)"` link attributes. To regenerate the full icon set: `bin/rake favicons:generate`.
 
 ## Dashboard Layout
 
