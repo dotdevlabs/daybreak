@@ -75,7 +75,7 @@ class WidgetMessage
       return errors.add(:data, "#{context} must be an array") unless items.is_a?(Array)
       items.each_with_index do |item, i|
         errors.add(:data, "#{context}[#{i}].text is required") if item["text"].blank?
-        if item.key?("done") && ![true, false].include?(item["done"])
+        if item.key?("done") && ![ true, false ].include?(item["done"])
           errors.add(:data, "#{context}[#{i}].done must be a boolean")
         end
         if item.key?("link") && !item["link"].is_a?(String)
