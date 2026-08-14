@@ -124,7 +124,7 @@ export default class extends Controller {
       if (!optResp.ok) throw new Error("Failed to get registration options")
       const options = await optResp.json()
 
-      const credential = await create(options)
+      const credential = await create({ publicKey: options })
 
       const cbResp = await fetch("/webauthn/registration", {
         method: "POST",
@@ -204,7 +204,7 @@ export default class extends Controller {
         return
       }
 
-      const credential = await get(options)
+      const credential = await get({ publicKey: options })
 
       const cbResp = await fetch("/webauthn/authentication", {
         method: "POST",
