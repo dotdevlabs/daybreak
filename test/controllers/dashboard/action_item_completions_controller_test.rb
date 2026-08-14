@@ -48,4 +48,28 @@ class Dashboard::ActionItemCompletionsControllerTest < ActionDispatch::Integrati
 
     assert_not captured.dig("data", "item").key?("priority")
   end
+
+  test "POST /dashboard/action_item_completions includes link in outbound message when present" do
+    captured = nil
+    mock_registry = Object.new
+    mock_registry.define_singleton_method(:broadcast) do |json|
+      captured = JSON.parse(json)
+      true
+    end
+    with_push_registry(mock_registry) do
+      post_completion(link: "https://example.com/pr")
+    end
+    assert_equal "https://example.com/pr", captured.dig("data", "item", "link")
+  end
+
+  test "POST /dashboard/action_item_completions omits link from outbound message when absent" do
+    captured = nil
+    mock_registry = Object.new
+    mock_registry.define_singleton_method(:broadcast) do |json|
+      captured = JSON.parse(json)
+      true
+    end
+    with_push_registry(mock_registry) { post_completion }
+    assert_not captured.dig("data", "item").key?("link")
+  end
 end

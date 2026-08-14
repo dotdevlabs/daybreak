@@ -8,18 +8,33 @@
     <% if personal_items.any? %>
       <ul class="action-item-list">
         <% personal_items.each do |item| %>
-          <li class="action-item action-item--<%= item["priority"] %>">
-            <button class="action-item__checkbox"
-                    data-controller="action-item-completion"
-                    data-action="click->action-item-completion#complete"
-                    data-action-item-completion-context-value="personal"
-                    data-action-item-completion-text-value="<%= item["text"] %>"
-                    data-action-item-completion-priority-value="<%= item["priority"] %>"
-                    data-action-item-completion-url-value="<%= dashboard_action_item_completions_path %>"
-                    aria-label="<%= t('dashboard.action_items.mark_complete') %>">
-              <i data-lucide="circle"></i>
-            </button>
-            <span class="action-item__text"><%= item["text"] %></span>
+          <% item_done = item["done"] == true %>
+          <li class="action-item action-item--<%= item["priority"] %><%= " action-item--completed" if item_done %>">
+            <% if item_done %>
+              <button class="action-item__checkbox"
+                      aria-label="<%= t('dashboard.action_items.mark_complete') %>">
+                <i data-lucide="check-circle"></i>
+              </button>
+            <% else %>
+              <button class="action-item__checkbox"
+                      data-controller="action-item-completion"
+                      data-action="click->action-item-completion#complete"
+                      data-action-item-completion-context-value="personal"
+                      data-action-item-completion-text-value="<%= item["text"] %>"
+                      data-action-item-completion-priority-value="<%= item["priority"] %>"
+                      data-action-item-completion-link-value="<%= item["link"] %>"
+                      data-action-item-completion-url-value="<%= dashboard_action_item_completions_path %>"
+                      aria-label="<%= t('dashboard.action_items.mark_complete') %>">
+                <i data-lucide="circle"></i>
+              </button>
+            <% end %>
+            <span class="action-item__text">
+              <% if item["link"].present? %>
+                <a href="<%= item["link"] %>" target="_blank" rel="noopener noreferrer" class="action-item__link"><%= item["text"] %></a>
+              <% else %>
+                <%= item["text"] %>
+              <% end %>
+            </span>
           </li>
         <% end %>
       </ul>
@@ -37,18 +52,33 @@
     <% if work_items.any? %>
       <ul class="action-item-list">
         <% work_items.each do |item| %>
-          <li class="action-item action-item--<%= item["priority"] %>">
-            <button class="action-item__checkbox"
-                    data-controller="action-item-completion"
-                    data-action="click->action-item-completion#complete"
-                    data-action-item-completion-context-value="work"
-                    data-action-item-completion-text-value="<%= item["text"] %>"
-                    data-action-item-completion-priority-value="<%= item["priority"] %>"
-                    data-action-item-completion-url-value="<%= dashboard_action_item_completions_path %>"
-                    aria-label="<%= t('dashboard.action_items.mark_complete') %>">
-              <i data-lucide="circle"></i>
-            </button>
-            <span class="action-item__text"><%= item["text"] %></span>
+          <% item_done = item["done"] == true %>
+          <li class="action-item action-item--<%= item["priority"] %><%= " action-item--completed" if item_done %>">
+            <% if item_done %>
+              <button class="action-item__checkbox"
+                      aria-label="<%= t('dashboard.action_items.mark_complete') %>">
+                <i data-lucide="check-circle"></i>
+              </button>
+            <% else %>
+              <button class="action-item__checkbox"
+                      data-controller="action-item-completion"
+                      data-action="click->action-item-completion#complete"
+                      data-action-item-completion-context-value="work"
+                      data-action-item-completion-text-value="<%= item["text"] %>"
+                      data-action-item-completion-priority-value="<%= item["priority"] %>"
+                      data-action-item-completion-link-value="<%= item["link"] %>"
+                      data-action-item-completion-url-value="<%= dashboard_action_item_completions_path %>"
+                      aria-label="<%= t('dashboard.action_items.mark_complete') %>">
+                <i data-lucide="circle"></i>
+              </button>
+            <% end %>
+            <span class="action-item__text">
+              <% if item["link"].present? %>
+                <a href="<%= item["link"] %>" target="_blank" rel="noopener noreferrer" class="action-item__link"><%= item["text"] %></a>
+              <% else %>
+                <%= item["text"] %>
+              <% end %>
+            </span>
           </li>
         <% end %>
       </ul>

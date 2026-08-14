@@ -6,7 +6,7 @@ module Dashboard
         action: "item_completed",
         data: {
           "context" => params[:context],
-          "item" => { "text" => params[:text], "priority" => params[:priority] }.compact
+          "item" => { "text" => params[:text], "priority" => params[:priority], "link" => params[:link] }.compact
         }
       ).deliver
       head :ok

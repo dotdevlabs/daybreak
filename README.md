@@ -28,14 +28,17 @@ Icon set in `public/`:
 | File | Size | Use |
 |------|------|-----|
 | `favicon.ico` | 16/32/48 multi-res | browser tab (legacy) |
-| `favicon-16x16.png` | 16×16 | browser tab (PNG) |
-| `favicon-32x32.png` | 32×32 | browser tab (PNG) |
+| `favicon-16x16.png` | 16×16 | browser tab (PNG, light scheme) |
+| `favicon-32x32.png` | 32×32 | browser tab (PNG, light scheme) |
+| `favicon-dark-16x16.png` | 16×16 | browser tab (PNG, dark scheme) |
+| `favicon-dark-32x32.png` | 32×32 | browser tab (PNG, dark scheme) |
 | `apple-touch-icon.png` | 180×180 | iOS homescreen |
 | `icon-192.png` | 192×192 | Android homescreen / PWA |
-| `icon-512.png` | 512×512 | PWA splash screen + maskable |
+| `icon-512.png` | 512×512 | PWA splash screen |
+| `icon-maskable-512.png` | 512×512 | PWA maskable icon (20 % safe-area padding) |
 | `icon.svg` | scalable | browser tab (SVG) |
 
-All icons render the sunrise sun mark (warm yellow center `#FFCA6B` → peach `#E0A584`, horizon line `#D4916E`) on the `#F3EBE2` background. The 512×512 PNG is maskable-safe (mark padded within the 80 % safe zone).
+All icons render the sunrise sun mark (warm yellow center `#FFCA6B` → peach `#E0A584`, horizon line `#D4916E`) from the 1024×1024 source PNGs in `app/assets/images/logo/`. Light-scheme icons use the `#F3EBE2` background; dark-scheme icons use `#1A1A1A`. The layout serves dark favicon PNGs to dark-mode user agents via `media="(prefers-color-scheme: dark)"` link attributes. To regenerate the full icon set: `bin/rake favicons:generate`.
 
 ## Dashboard Layout
 
@@ -289,7 +292,7 @@ Each message replaces all of that widget's data for today. Widgets not included 
 | `date_calendar` | object with `events` array | `events[].title` | `events[].dot_color` (CSS color for event dot) |
 | `weather` | object with `hourly` array | `hourly[].hour`, `hourly[].temp` | `hi`, `lo` (daily high/low); `hourly[].is_current`, `hourly[].condition` |
 | `daily_goals` | object (keyed map of goals) | `<key>.label`, `.current`, `.target`, `.unit` | `<key>.status` (`"complete"` or `"in_progress"`) |
-| `action_items` | object with `personal` and `work` arrays | `personal[].text`, `work[].text` | `[].priority` |
+| `action_items` | object with `personal` and `work` arrays | `personal[].text`, `work[].text` | `[].priority`; `[].done` (boolean, default false); `[].link` (URL string) |
 | `long_term_goals` | **array** of goals | `[].text`, `.progress`, `.target`, `.unit` | `[].insight` (one-line summary), `[].subtitle` |
 | `agent_activity` | **array** of entries | `[].text`, `[].timestamp` | `[].body` (longer summary), `[].status` (`"Completed"` or `"Pending"`) |
 
@@ -379,7 +382,8 @@ Outbound messages use the same `{ type, action, data }` envelope:
     "context": "personal",
     "item": {
       "text": "Call dentist to reschedule appointment",
-      "priority": "high"
+      "priority": "high",
+      "link": "https://example.com/dentist"
     }
   }
 }
@@ -392,6 +396,7 @@ Outbound messages use the same `{ type, action, data }` envelope:
 | `data.context` | Which column the item was in (`personal` or `work`) |
 | `data.item.text` | The action item text |
 | `data.item.priority` | The item's priority (`high`, `medium`, `low`) — omitted if not set |
+| `data.item.link` | The item's URL, if one was set — omitted if not set |
 
 The full outbound schema is in `public/widget_contract.json` under `$defs.outbound_action` and the top-level `outbound` key.
 
