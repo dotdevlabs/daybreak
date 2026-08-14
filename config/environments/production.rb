@@ -55,7 +55,7 @@ Rails.application.configure do
 
   # Email delivery via Postmark (token supplied by platform ENV)
   config.action_mailer.delivery_method   = :postmark
-  config.action_mailer.postmark_settings = { api_token: ENV.fetch("POSTMARK_API_TOKEN") }
+  config.action_mailer.postmark_settings = { api_token: ENV.fetch("POSTMARK_API_TOKEN", nil) }
   config.action_mailer.perform_deliveries   = true
   config.action_mailer.raise_delivery_errors = true
 
