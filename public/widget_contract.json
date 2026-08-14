@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "/widget_contract.json",
   "title": "Daybreak Widget Message",
-  "description": "Message format for the Daybreak agent widget protocol v1. POST to /api/widgets with Authorization: Bearer <token>. Sending a message replaces all of that widget's data for today.",
+  "description": "Message format for the Daybreak agent widget protocol v1. POST to /api/widgets with Authorization: Bearer <token>. Sending a message replaces all of that widget's data for today on the authenticated account's surface. Obtain a token via POST /api/registrations (programmatic/headless) or POST /api/tokens (browser session required).",
   "type": "object",
   "required": ["type", "data"],
   "properties": {

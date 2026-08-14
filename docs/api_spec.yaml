@@ -250,21 +250,53 @@ paths:
                   links:
                     self: /status
 
-  /tokens:
+  /registrations:
     post:
-      operationId: createApiToken
-      summary: Create an API token (programmatic signup)
+      operationId: createRegistration
+      summary: Create a new account and mint a bound API token
       description: >
-        Creates a new bearer token for the caller. No authentication is required.
-        The returned token must be stored by the caller and presented as a Bearer
-        token in the Authorization header on all other API requests.
+        Creates a new account and returns an API token bound to that account.
+        Use this path when no browser session is available (headless / programmatic agents).
+        No authentication is required.
       security: []
       requestBody:
         required: false
-        content:
-          application/vnd.api+json:
-            schema:
-              type: object
+      responses:
+        "201":
+          description: Account created, token returned
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [type, id, attributes]
+                    properties:
+                      type:
+                        type: string
+                        enum: [api_tokens]
+                      id:
+                        type: string
+                      attributes:
+                        $ref: '#/components/schemas/ApiTokenAttributes'
+              example:
+                data:
+                  type: api_tokens
+                  id: "1"
+                  attributes:
+                    token: "a3f7b91c2d6e..."
+
+  /tokens:
+    post:
+      operationId: createApiToken
+      summary: Create an API token for the signed-in user
+      description: >
+        Mints a new bearer token for the authenticated user's account.
+        Requires an active browser session (signed_in cookie).
+        The returned token must be stored by the caller and presented as a Bearer
+        token in the Authorization header on all other API requests.
       responses:
         "201":
           description: Token created
@@ -291,6 +323,12 @@ paths:
                   id: "1"
                   attributes:
                     token: "a3f7b91c2d6e..."
+        "401":
+          description: Unauthorized — no valid browser session
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/JsonApiErrors'
 
   /catalog:
     get:

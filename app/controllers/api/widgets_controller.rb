@@ -10,7 +10,7 @@ module Api
                                      status: :unprocessable_entity)
       end
 
-      briefing = DailyBriefing.find_or_initialize_by(date: Date.current)
+      briefing = Current.account.daily_briefings.find_or_initialize_by(date: Date.current)
       message.apply_to(briefing)
 
       if briefing.save

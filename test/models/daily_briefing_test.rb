@@ -1,38 +1,50 @@
 require "test_helper"
 
 class DailyBriefingTest < ActiveSupport::TestCase
+  setup do
+    @account = Account.create!
+  end
+
   test "valid with required attributes" do
-    briefing = DailyBriefing.new(date: Date.today + 10)
+    briefing = DailyBriefing.new(account: @account, date: Date.today + 10)
     assert briefing.valid?
   end
 
   test "invalid without date" do
-    briefing = DailyBriefing.new(date: nil)
+    briefing = DailyBriefing.new(account: @account, date: nil)
     assert_not briefing.valid?
     assert_includes briefing.errors[:date], "can't be blank"
   end
 
-  test "invalid with duplicate date" do
+  test "invalid with duplicate date within same account" do
     existing = daily_briefings(:today)
-    duplicate = DailyBriefing.new(date: existing.date)
+    duplicate = DailyBriefing.new(account: existing.account, date: existing.date)
     assert_not duplicate.valid?
     assert_includes duplicate.errors[:date], "has already been taken"
   end
 
-  test "for_today returns today record when it exists" do
-    result = DailyBriefing.for_today
+  test "same date is valid for different accounts" do
+    account_b = Account.create!
+    existing = daily_briefings(:today)
+    briefing_b = DailyBriefing.new(account: account_b, date: existing.date)
+    assert briefing_b.valid?
+  end
+
+  test "for_today returns today record when scoped to account" do
+    result = daily_briefings(:today).account.daily_briefings.for_today
     assert_equal Date.today, result.date
   end
 
   test "for_today falls back to most recent record when no today record" do
+    account = daily_briefings(:today).account
     daily_briefings(:today).destroy
-    result = DailyBriefing.for_today
+    result = account.daily_briefings.for_today
     assert_equal daily_briefings(:yesterday).date, result.date
   end
 
-  test "for_today returns nil when no records exist" do
-    DailyBriefing.delete_all
-    assert_nil DailyBriefing.for_today
+  test "for_today returns nil when no records exist for account" do
+    @account.daily_briefings.delete_all
+    assert_nil @account.daily_briefings.for_today
   end
 
   test "calendar_events returns empty array for blank calendar_data" do

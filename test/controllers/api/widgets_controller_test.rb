@@ -1,18 +1,14 @@
 require "test_helper"
 
 class Api::WidgetsControllerTest < ActionDispatch::IntegrationTest
-  VALID_TOKEN = "test_daybreak_token".freeze
-
   setup do
-    ENV["DAYBREAK_API_TOKEN"] = VALID_TOKEN
-    DailyBriefing.delete_all
+    @account = Account.create!
+    @token = @account.api_tokens.create!.token
+    @account_b = Account.create!
+    @token_b = @account_b.api_tokens.create!.token
   end
 
-  teardown do
-    ENV.delete("DAYBREAK_API_TOKEN")
-  end
-
-  def post_widget(type:, data:, token: VALID_TOKEN)
+  def post_widget(type:, data:, token: @token)
     post api_widgets_url,
          params: { data: { type: "widget_messages", attributes: { widget_type: type, data: data } } }.to_json,
          headers: {
@@ -87,7 +83,7 @@ class Api::WidgetsControllerTest < ActionDispatch::IntegrationTest
       }
     )
     assert_response :created
-    briefing = DailyBriefing.for_today
+    briefing = @account.daily_briefings.for_today
     assert_equal true, briefing.action_items_data.dig("personal", 0, "done")
     assert_equal "https://example.com/dentist", briefing.action_items_data.dig("personal", 0, "link")
   end
@@ -175,11 +171,11 @@ class Api::WidgetsControllerTest < ActionDispatch::IntegrationTest
       )
     end
     assert_response :created
-    assert_equal "NYC", DailyBriefing.for_today.weather_current["location"]
+    assert_equal "NYC", @account.daily_briefings.for_today.weather_current["location"]
   end
 
   test "widget update modifies existing briefing without creating a duplicate" do
-    DailyBriefing.create!(date: Date.current)
+    @account.daily_briefings.create!(date: Date.current)
     assert_no_difference "DailyBriefing.count" do
       post_widget(
         type: "weather",
@@ -187,7 +183,7 @@ class Api::WidgetsControllerTest < ActionDispatch::IntegrationTest
       )
     end
     assert_response :created
-    assert_equal "LA", DailyBriefing.for_today.weather_current["location"]
+    assert_equal "LA", @account.daily_briefings.for_today.weather_current["location"]
   end
 
   test "response includes date in iso8601 format" do
@@ -205,8 +201,31 @@ class Api::WidgetsControllerTest < ActionDispatch::IntegrationTest
       type: "daily_goals",
       data: { "steps" => { "label" => "Steps", "current" => 3000, "target" => 10000, "unit" => "steps" } }
     )
-    briefing = DailyBriefing.for_today
+    briefing = @account.daily_briefings.for_today
     assert_equal "NYC", briefing.weather_current["location"]
     assert_equal 3000, briefing.goals.dig("steps", "current")
+  end
+
+  # --- account isolation ---
+
+  test "account A posting widget does not affect account B briefing" do
+    post_widget(
+      type: "weather",
+      data: { "location" => "NYC", "current_temp" => 72, "unit" => "F", "condition" => "Sunny" },
+      token: @token
+    )
+    assert_response :created
+    assert_nil @account_b.daily_briefings.for_today
+  end
+
+  test "account B posting widget does not affect account A briefing" do
+    @account.daily_briefings.create!(date: Date.current, weather_data: { "location" => "NYC" })
+    post_widget(
+      type: "weather",
+      data: { "location" => "LA", "current_temp" => 80, "unit" => "F", "condition" => "Clear" },
+      token: @token_b
+    )
+    assert_response :created
+    assert_equal "NYC", @account.daily_briefings.for_today.weather_current["location"]
   end
 end

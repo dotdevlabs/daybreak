@@ -40,64 +40,86 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_select ".header__auth"
   end
 
-  test "renders date widget when briefing exists" do
+  test "renders date widget when authenticated with briefing" do
+    sign_in(users(:alice))
     get root_url
     assert_select ".date-widget"
   end
 
-  test "renders weather widget when briefing exists" do
+  test "renders weather widget when authenticated with briefing" do
+    sign_in(users(:alice))
     get root_url
     assert_select ".weather-widget"
   end
 
-  test "renders daily goals widget when briefing exists" do
+  test "renders daily goals widget when authenticated with briefing" do
+    sign_in(users(:alice))
     get root_url
     assert_select ".goals-widget"
   end
 
-  test "renders action items section when briefing exists" do
+  test "renders action items section when authenticated with briefing" do
+    sign_in(users(:alice))
     get root_url
     assert_select ".action-items"
   end
 
-  test "renders long term goals section when briefing exists" do
+  test "renders long term goals section when authenticated with briefing" do
+    sign_in(users(:alice))
     get root_url
     assert_select ".long-term-goals"
   end
 
-  test "renders agent activity section when briefing exists" do
+  test "renders agent activity section when authenticated with briefing" do
+    sign_in(users(:alice))
     get root_url
     assert_select ".agent-activity"
   end
 
-  test "renders without error when no briefing record exists" do
-    DailyBriefing.delete_all
+  test "unauthenticated visitor sees empty state, not another user's briefing" do
     get root_url
     assert_response :success
     assert_select ".dashboard__empty"
   end
 
-  test "shows briefing date in calendar week" do
+  test "renders without error when no briefing record exists" do
+    get root_url
+    assert_response :success
+    assert_select ".dashboard__empty"
+  end
+
+  test "shows briefing date in calendar week when authenticated" do
+    sign_in(users(:alice))
     get root_url
     assert_select ".calendar-week"
     assert_select ".calendar-week__date--today"
   end
 
-  test "shows goal progress bars" do
+  test "shows goal progress bars when authenticated" do
+    sign_in(users(:alice))
     get root_url
     assert_select ".goal-bar__track"
     assert_select ".goal-bar__fill"
   end
 
-  test "shows personal and work action item cards" do
+  test "shows personal and work action item cards when authenticated" do
+    sign_in(users(:alice))
     get root_url
     assert_select ".widget__title", text: I18n.t("dashboard.action_items.personal_title")
     assert_select ".widget__title", text: I18n.t("dashboard.action_items.work_title")
   end
 
-  test "shows agent activity cards" do
+  test "shows agent activity cards when authenticated" do
+    sign_in(users(:alice))
     get root_url
     assert_select ".agent-activity-card"
+  end
+
+  test "authenticated user sees only their own briefing" do
+    sign_in(users(:alice))
+    get root_url
+    assert_response :success
+    assert_select ".date-widget"
   end
 
   test "layout head includes PWA manifest link" do

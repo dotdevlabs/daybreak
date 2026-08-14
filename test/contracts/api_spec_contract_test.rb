@@ -2,21 +2,17 @@ require "test_helper"
 require "yaml"
 
 class ApiSpecContractTest < ActionDispatch::IntegrationTest
-  VALID_TOKEN = "test_daybreak_token".freeze
   SPEC = YAML.load_file(Rails.root.join("docs/api_spec.yaml")).freeze
 
   setup do
-    ENV["DAYBREAK_API_TOKEN"] = VALID_TOKEN
-    DailyBriefing.delete_all
-    AgentEndpoint.delete_all
-  end
-
-  teardown do
-    ENV.delete("DAYBREAK_API_TOKEN")
+    @account = Account.create!
+    @token = @account.api_tokens.create!.token
+    DailyBriefing.where(account: @account).delete_all
+    @account.agent_endpoints.delete_all
   end
 
   def auth_headers
-    { "Authorization" => "Bearer #{VALID_TOKEN}", "Content-Type" => "application/vnd.api+json" }
+    { "Authorization" => "Bearer #{@token}", "Content-Type" => "application/vnd.api+json" }
   end
 
   # --- Coverage Gate ---
@@ -25,8 +21,8 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
     spec_ops = SPEC["paths"].flat_map do |path, item|
       item.keys.reject { |k| %w[parameters servers].include?(k) }.map { |m| "#{m.upcase} #{path}" }
     end
-    assert_equal 6, spec_ops.size,
-      "Expected 6 spec operations; got #{spec_ops.size}: #{spec_ops.inspect}. " \
+    assert_equal 7, spec_ops.size,
+      "Expected 7 spec operations; got #{spec_ops.size}: #{spec_ops.inspect}. " \
       "Add compliance tests for any new operations."
   end
 
@@ -133,7 +129,6 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
     assert_equal "current", data["id"]
     assert_equal %w[db_version sha version], data["attributes"].keys.sort,
       "status attributes must be exactly {version, sha, db_version}, no extras"
-    # version and sha are nil when ENV vars not set (acceptable per spec)
     assert(data["attributes"]["db_version"].nil? || data["attributes"]["db_version"].is_a?(String),
            "db_version must be a String or nil")
     assert_equal "/status", data.dig("links", "self"),
@@ -153,7 +148,6 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
       assert_equal %w[description name schema], resource["attributes"].keys.sort,
         "widget_types attributes must be exactly {name, description, schema}, no extras"
     end
-    # Collection-level links
     body  = response.parsed_body
     links = body["links"]
     assert_kind_of Hash, links, "catalog response must have top-level links object"
@@ -162,11 +156,9 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
     assert_equal "/api/catalog", links["last"]
     assert_nil links["prev"], "prev must be nil for single-page catalog"
     assert_nil links["next"], "next must be nil for single-page catalog"
-    # Meta counts
     meta = body["meta"]
     assert_kind_of Hash, meta, "catalog response must have meta"
     assert_equal 6, meta["total_count"]
-    # Per-resource self links
     data.each do |resource|
       assert_match %r{\A/api/catalog/\w}, resource.dig("links", "self"),
         "widget_type resource must carry links.self"
@@ -210,11 +202,11 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
 
   test "GET /api/events with auth returns 200 SSE stream" do
     stub_registry = Object.new
-    stub_registry.define_singleton_method(:register) { |_sse| raise IOError }
-    stub_registry.define_singleton_method(:unregister) { |_sse| }
+    stub_registry.define_singleton_method(:register) { |_account_id, _sse| raise IOError }
+    stub_registry.define_singleton_method(:unregister) { |_account_id, _sse| }
 
     with_push_registry(stub_registry) do
-      get "/api/events", headers: { "Authorization" => "Bearer #{VALID_TOKEN}" }
+      get "/api/events", headers: { "Authorization" => "Bearer #{@token}" }
     end
     assert_response :ok
     assert_equal "text/event-stream", response.media_type
@@ -252,8 +244,17 @@ class ApiSpecContractTest < ActionDispatch::IntegrationTest
       "422 response must include errors[0].detail"
   end
 
-  test "POST /api/tokens without auth returns 201 JSON:API data with token" do
+  test "POST /api/tokens without browser session returns 401" do
     post "/api/tokens", headers: { "Content-Type" => "application/vnd.api+json" }
+    assert_response :unauthorized
+    assert_equal "application/vnd.api+json", response.media_type
+    errors = response.parsed_body["errors"]
+    assert_kind_of Array, errors
+    assert errors.all? { |e| e.key?("detail") }
+  end
+
+  test "POST /api/registrations without auth returns 201 JSON:API data with token" do
+    post "/api/registrations", headers: { "Content-Type" => "application/vnd.api+json" }
     assert_response :created
     assert_equal "application/vnd.api+json", response.media_type
     data = response.parsed_body["data"]

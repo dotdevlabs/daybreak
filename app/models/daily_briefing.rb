@@ -1,5 +1,7 @@
 class DailyBriefing < ApplicationRecord
-  validates :date, presence: true, uniqueness: true
+  belongs_to :account
+
+  validates :date, presence: true, uniqueness: { scope: :account_id }
 
   def self.for_today
     find_by(date: Date.current) || order(date: :desc).first

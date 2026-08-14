@@ -3,6 +3,10 @@ require "application_system_test_case"
 class DashboardTest < ApplicationSystemTestCase
   fixtures :daily_briefings
 
+  setup do
+    sign_in_for_system(users(:alice))
+  end
+
   teardown do
     User.destroy_all
   end

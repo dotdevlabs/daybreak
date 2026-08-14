@@ -7,10 +7,11 @@ module Api
       response.headers["Cache-Control"] = "no-cache"
       response.headers["X-Accel-Buffering"] = "no"
 
+      account_id = Current.account.id
       sse = SSE.new(response.stream, retry: 5000, event: "connected")
       sse.write({ status: "connected" })
 
-      AgentPushRegistry.instance.register(sse)
+      AgentPushRegistry.instance.register(account_id, sse)
 
       loop do
         sleep 15
@@ -19,7 +20,7 @@ module Api
     rescue ActionController::Live::ClientDisconnected, IOError
       # agent disconnected
     ensure
-      AgentPushRegistry.instance.unregister(sse) if defined?(sse)
+      AgentPushRegistry.instance.unregister(account_id, sse) if defined?(sse) && defined?(account_id)
       response.stream.close
     end
   end

@@ -1,22 +1,17 @@
 require "test_helper"
 
 class Api::Agent::RegistrationsControllerTest < ActionDispatch::IntegrationTest
-  VALID_TOKEN = "test_daybreak_token".freeze
-
   setup do
-    ENV["DAYBREAK_API_TOKEN"] = VALID_TOKEN
-    AgentEndpoint.delete_all
-  end
-
-  teardown do
-    ENV.delete("DAYBREAK_API_TOKEN")
+    @account = Account.create!
+    @token = @account.api_tokens.create!.token
+    @account.agent_endpoints.delete_all
   end
 
   def auth_headers
-    { "Authorization" => "Bearer #{VALID_TOKEN}", "Content-Type" => "application/vnd.api+json" }
+    { "Authorization" => "Bearer #{@token}", "Content-Type" => "application/vnd.api+json" }
   end
 
-  def post_registration(callback_url:, token: VALID_TOKEN)
+  def post_registration(callback_url:, token: @token)
     post api_agent_registrations_url,
          params: { data: { type: "agent_registrations", attributes: { callback_url: callback_url } } }.to_json,
          headers: { "Authorization" => "Bearer #{token}", "Content-Type" => "application/vnd.api+json" }
@@ -41,6 +36,13 @@ class Api::Agent::RegistrationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "https://example.com/cb", response.parsed_body.dig("data", "attributes", "callback_url")
   end
 
+  test "POST /api/agent/registrations endpoint is scoped to the authenticated account" do
+    post_registration(callback_url: "https://example.com/cb")
+    assert_response :created
+    endpoint = AgentEndpoint.last
+    assert_equal @account.id, endpoint.account_id
+  end
+
   test "POST /api/agent/registrations without callback_url returns 422" do
     post_registration(callback_url: "")
     assert_response :unprocessable_entity
@@ -48,10 +50,11 @@ class Api::Agent::RegistrationsControllerTest < ActionDispatch::IntegrationTest
     assert response.parsed_body.dig("errors", 0, "detail").present?
   end
 
-  test "multiple POSTs create multiple records and current returns the last" do
+  test "multiple POSTs create multiple records under the same account" do
     post_registration(callback_url: "https://first.example.com/cb")
     post_registration(callback_url: "https://second.example.com/cb")
-    assert_equal 2, AgentEndpoint.count
-    assert_equal "https://second.example.com/cb", AgentEndpoint.current.callback_url
+    endpoints = @account.agent_endpoints.reload
+    assert_equal 2, endpoints.count
+    assert_equal "https://second.example.com/cb", endpoints.last.callback_url
   end
 end

@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   end
 
   namespace :api do
+    resources :registrations, only: %i[create]
     resources :tokens,  only: %i[create]
     resources :catalog, only: %i[index]
     resources :widgets, only: %i[create]

@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   SUPPORTED_LOCALES = %w[en es fr pt-BR pt-PT de it].freeze
 
+  belongs_to :account, autosave: true
   has_many :sessions,    dependent: :destroy
   has_many :credentials, dependent: :destroy
 
@@ -15,6 +16,7 @@ class User < ApplicationRecord
     verified_at.to_i
   end
 
+  before_validation :assign_account, on: :create
   before_create :assign_webauthn_id
 
   def verified?
@@ -29,5 +31,9 @@ class User < ApplicationRecord
 
   def assign_webauthn_id
     self.webauthn_id ||= WebAuthn.generate_user_id
+  end
+
+  def assign_account
+    self.account ||= Account.new
   end
 end
