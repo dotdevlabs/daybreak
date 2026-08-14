@@ -289,7 +289,7 @@ Each message replaces all of that widget's data for today. Widgets not included 
 | `date_calendar` | object with `events` array | `events[].title` | `events[].dot_color` (CSS color for event dot) |
 | `weather` | object with `hourly` array | `hourly[].hour`, `hourly[].temp` | `hi`, `lo` (daily high/low); `hourly[].is_current`, `hourly[].condition` |
 | `daily_goals` | object (keyed map of goals) | `<key>.label`, `.current`, `.target`, `.unit` | `<key>.status` (`"complete"` or `"in_progress"`) |
-| `action_items` | object with `personal` and `work` arrays | `personal[].text`, `work[].text` | `[].priority` |
+| `action_items` | object with `personal` and `work` arrays | `personal[].text`, `work[].text` | `[].priority`; `[].done` (boolean, default false); `[].link` (URL string) |
 | `long_term_goals` | **array** of goals | `[].text`, `.progress`, `.target`, `.unit` | `[].insight` (one-line summary), `[].subtitle` |
 | `agent_activity` | **array** of entries | `[].text`, `[].timestamp` | `[].body` (longer summary), `[].status` (`"Completed"` or `"Pending"`) |
 
@@ -379,7 +379,8 @@ Outbound messages use the same `{ type, action, data }` envelope:
     "context": "personal",
     "item": {
       "text": "Call dentist to reschedule appointment",
-      "priority": "high"
+      "priority": "high",
+      "link": "https://example.com/dentist"
     }
   }
 }
@@ -392,6 +393,7 @@ Outbound messages use the same `{ type, action, data }` envelope:
 | `data.context` | Which column the item was in (`personal` or `work`) |
 | `data.item.text` | The action item text |
 | `data.item.priority` | The item's priority (`high`, `medium`, `low`) — omitted if not set |
+| `data.item.link` | The item's URL, if one was set — omitted if not set |
 
 The full outbound schema is in `public/widget_contract.json` under `$defs.outbound_action` and the top-level `outbound` key.
 

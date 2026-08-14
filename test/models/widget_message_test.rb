@@ -169,6 +169,56 @@ class WidgetMessageTest < ActiveSupport::TestCase
     assert_includes msg.errors.full_messages.join, "personal[0].text is required"
   end
 
+  test "action_items with done=true is valid" do
+    msg = WidgetMessage.new(
+      type: "action_items",
+      data: { "personal" => [ { "text" => "Call dentist", "done" => true } ] }
+    )
+    assert msg.valid?
+  end
+
+  test "action_items with done=false is valid" do
+    msg = WidgetMessage.new(
+      type: "action_items",
+      data: { "work" => [ { "text" => "Review PR", "done" => false } ] }
+    )
+    assert msg.valid?
+  end
+
+  test "action_items with non-boolean done fails" do
+    msg = WidgetMessage.new(
+      type: "action_items",
+      data: { "personal" => [ { "text" => "Call dentist", "done" => "yes" } ] }
+    )
+    assert msg.invalid?
+    assert_includes msg.errors.full_messages.join, "personal[0].done must be a boolean"
+  end
+
+  test "action_items with link as string is valid" do
+    msg = WidgetMessage.new(
+      type: "action_items",
+      data: { "work" => [ { "text" => "Review PR", "link" => "https://example.com" } ] }
+    )
+    assert msg.valid?
+  end
+
+  test "action_items with non-string link fails" do
+    msg = WidgetMessage.new(
+      type: "action_items",
+      data: { "work" => [ { "text" => "Review PR", "link" => 42 } ] }
+    )
+    assert msg.invalid?
+    assert_includes msg.errors.full_messages.join, "work[0].link must be a string"
+  end
+
+  test "action_items with done and link absent is valid" do
+    msg = WidgetMessage.new(
+      type: "action_items",
+      data: { "personal" => [ { "text" => "Call dentist" } ] }
+    )
+    assert msg.valid?
+  end
+
   # --- long_term_goals field validation ---
 
   test "long_term_goals with non-array data fails" do
