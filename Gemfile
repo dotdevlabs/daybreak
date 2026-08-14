@@ -21,6 +21,9 @@ gem "jbuilder"
 gem "sentry-ruby"
 gem "sentry-rails"
 
+# Transactional email delivery via Postmark
+gem "postmark-rails"
+
 # Internationalization
 gem "rails-i18n"
 

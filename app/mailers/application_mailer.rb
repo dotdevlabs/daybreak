@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "from@example.com"
+  default from: ENV.fetch("DAYBREAK_MAILER_FROM", "noreply@daybreak.cool")
   layout "mailer"
 end
