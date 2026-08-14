@@ -1,10 +1,11 @@
 class OutboundMessage
-  attr_reader :type, :action, :data
+  attr_reader :type, :action, :data, :account
 
-  def initialize(type:, action:, data:)
+  def initialize(type:, action:, data:, account:)
     @type = type
     @action = action
     @data = data
+    @account = account
   end
 
   def as_json(*)
@@ -12,9 +13,9 @@ class OutboundMessage
   end
 
   def deliver
-    pushed = AgentPushRegistry.instance.broadcast(as_json.to_json)
+    pushed = AgentPushRegistry.instance.broadcast_to(account.id, as_json.to_json)
     unless pushed
-      endpoint = AgentEndpoint.current
+      endpoint = account.agent_endpoints.last
       deliver_to(endpoint) if endpoint
     end
     true

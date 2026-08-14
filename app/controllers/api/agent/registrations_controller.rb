@@ -4,7 +4,7 @@ module Api
       def create
         raw = JSON.parse(request.body.read)
         attrs = raw.dig("data", "attributes") || {}
-        @endpoint = AgentEndpoint.new(callback_url: attrs["callback_url"])
+        @endpoint = Current.account.agent_endpoints.build(callback_url: attrs["callback_url"])
 
         if @endpoint.save
           render_jsonapi(

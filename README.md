@@ -99,7 +99,7 @@ An authenticated user sees a **Sign out** button in the dashboard header. Clicki
 - Email verification tokens are signed, expire in 24 hours, and are invalidated after first use.
 - Session tokens are stored server-side (`sessions` table) and referenced via a signed, `httponly`, `SameSite=Lax` cookie.
 - All auth endpoints are rate-limited (10 requests per 3 minutes).
-- The agent API (`/api/*`) uses bearer tokens and is **not** affected by session auth.
+- The agent API (`/api/*`) uses account-bound bearer tokens and is **not** affected by session auth. Every token resolves to exactly one account; owner-less tokens are rejected.
 
 ## Internationalization (i18n)
 
@@ -128,17 +128,25 @@ Translations live in `config/locales/<locale>.yml`. The CI pipeline runs `bundle
 
 ## Data Model
 
+### Account
+
+Every resource (tokens, briefings, agent endpoints) belongs to an `Account`. The `Account` model is the authorization principal for the message API.
+
+- Browser users: a `User` record is linked to an `Account` (created automatically on user creation via `before_create :assign_account`). When a signed-in user mints a token via `POST /api/tokens`, the token is bound to `user.account`.
+- Programmatic / headless agents: `POST /api/registrations` creates a bare `Account` and returns a token bound to it — no passkey or email ceremony required.
+
 ### User, Credential, and Session
 
 | Model | Key columns | Notes |
 |-------|-------------|-------|
-| `User` | `email_address`, `webauthn_id`, `verified_at`, `locale` | Email normalized to lowercase; `webauthn_id` is a stable random handle generated on create; `verified_at` is nil until email verification is complete |
+| `Account` | `id`, `created_at`, `updated_at` | Minimal authorization principal; owns tokens, briefings, and agent endpoints |
+| `User` | `email_address`, `webauthn_id`, `verified_at`, `locale`, `account_id` | Email normalized to lowercase; `webauthn_id` is a stable random handle generated on create; `verified_at` is nil until email verification is complete; automatically linked to an `Account` on create |
 | `Credential` | `user_id`, `external_id`, `public_key`, `sign_count`, `nickname` | One row per registered passkey; `external_id` is the base64url credential id from the WebAuthn ceremony; `sign_count` is updated on every authentication |
 | `Session` | `user_id`, `ip_address`, `user_agent` | Created on sign-in (only for verified users), destroyed on sign-out; referenced by the `session_id` signed cookie |
 
 ### Briefings
 
-The dashboard renders from a `DailyBriefing` record. Each briefing stores JSONB columns for each panel:
+The dashboard renders from a `DailyBriefing` record scoped to the signed-in user's account. Each briefing stores JSONB columns for each panel:
 
 | Column | Contents |
 |--------|----------|
@@ -149,7 +157,7 @@ The dashboard renders from a `DailyBriefing` record. Each briefing stores JSONB 
 | `long_term_goals_data` | Goal text, progress, and target arrays |
 | `agent_activity_data` | Activity text, timestamp, icon, optional body summary, and status arrays |
 
-`DailyBriefing.for_today` returns today's record, falling back to the most recent record if none exists for today.
+`DailyBriefing.for_today` returns today's record for the account, falling back to the most recent record if none exists for today. Records are unique per `(account_id, date)` — each account maintains its own isolated widget surface.
 
 ## Agent Widget Protocol
 
@@ -157,24 +165,26 @@ Daybreak's defining mechanic: all widget content is set by the user's assistant 
 
 ### Authentication
 
-All API endpoints (except token creation) require a Bearer token:
+All API endpoints (except token issuance) require a Bearer token bound to an account:
 
 ```
 Authorization: Bearer <token>
 ```
 
-Requests with a missing or wrong token are rejected with `401 Unauthorized` and a JSON:API error body:
+Requests with a missing, unknown, or owner-less token are rejected with `401 Unauthorized` and a JSON:API error body:
 
 ```json
 { "errors": [{ "detail": "Unauthorized" }] }
 ```
 
-#### Obtaining a token programmatically
+Every token is tied to exactly one account. All reads and writes (widgets, dashboard, agent registration, event stream, outbound delivery) are confined to that account.
 
-POST to `/api/tokens` — no authentication required. The server mints and returns a new token:
+#### Obtaining a token — programmatic / headless agents
+
+POST to `/api/registrations` — no authentication required. The server creates a new account and returns a token bound to it:
 
 ```
-POST /api/tokens
+POST /api/registrations
 Content-Type: application/vnd.api+json
 ```
 
@@ -185,17 +195,36 @@ Response (201 Created):
   "data": {
     "type": "api_tokens",
     "id": "1",
-    "attributes": { "token": "a3f7b91c2d6e..." },
-    "links": { "self": "/api/tokens/1" }
+    "attributes": { "token": "a3f7b91c2d6e..." }
   }
 }
 ```
 
-Store the returned `token` value; it is shown only once. Pass it as `Authorization: Bearer <token>` on all subsequent requests. Each call to `POST /api/tokens` mints a distinct token.
+Store the returned `token` value; it is shown only once. Pass it as `Authorization: Bearer <token>` on all subsequent requests. Each call to `POST /api/registrations` creates a distinct account with its own isolated widget surface.
 
-#### Legacy env-var token
+#### Obtaining a token — browser / signed-in users
 
-You can also set `DAYBREAK_API_TOKEN` to a secret string, which is accepted as a valid bearer token. This is useful for development and for deployments that pre-configure the token via environment variables.
+Users who have an active browser session (signed in via passkey) can mint a token for their account:
+
+```
+POST /api/tokens
+Cookie: session_id=<signed-session-cookie>
+```
+
+Response (201 Created):
+
+```json
+{
+  "data": {
+    "type": "api_tokens",
+    "id": "2",
+    "attributes": { "token": "b9e2c47f1a8d..." },
+    "links": { "self": "/api/tokens/2" }
+  }
+}
+```
+
+This path requires an active browser session and returns `401` if no valid session cookie is present.
 
 ### API Contract
 
@@ -473,7 +502,6 @@ These are passed at image build time (e.g. `docker build --build-arg APP_VERSION
 | Variable | Purpose |
 |----------|---------|
 | `DAYBREAK_DATABASE_PASSWORD` | Password for the `daybreak` Postgres role |
-| `DAYBREAK_API_TOKEN` | Optional legacy bearer token; accepted alongside programmatically-issued tokens |
 | `DAYBREAK_USER_NAME` | Your first name — shown in the dashboard greeting ("Good morning, Alex") |
 | `DAYBREAK_MAILER_FROM` | From address for outbound emails (email verification); defaults to `noreply@daybreak.local` |
 | `WEBAUTHN_ORIGIN` | Full origin for the WebAuthn relying party (e.g. `https://daybreak.cool`); defaults to `https://daybreak.cool` in production, `http://localhost:3000` in development |
@@ -493,7 +521,6 @@ Pull and run any tagged image from the registry:
 docker pull ghcr.io/dotdevlabs/daybreak:latest
 docker run -e RAILS_ENV=production \
            -e DAYBREAK_DATABASE_PASSWORD=<secret> \
-           -e DAYBREAK_API_TOKEN=<secret> \
            -e RAILS_MASTER_KEY=<key> \
            -p 3000:3000 \
            ghcr.io/dotdevlabs/daybreak:latest
@@ -518,7 +545,6 @@ Solid Queue processes background jobs and is required for the application to fun
 ```bash
 docker run -e RAILS_ENV=production \
            -e DAYBREAK_DATABASE_PASSWORD=<secret> \
-           -e DAYBREAK_API_TOKEN=<secret> \
            -e RAILS_MASTER_KEY=<key> \
            ghcr.io/dotdevlabs/daybreak:latest bin/rails solid_queue:start
 ```

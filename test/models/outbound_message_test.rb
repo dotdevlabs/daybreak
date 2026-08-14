@@ -2,12 +2,14 @@ require "test_helper"
 
 class OutboundMessageTest < ActiveSupport::TestCase
   def setup
+    @account = Account.create!
     @message = OutboundMessage.new(
       type: "action_items",
       action: "item_completed",
-      data: { "context" => "personal", "item" => { "text" => "Call dentist", "priority" => "high" } }
+      data: { "context" => "personal", "item" => { "text" => "Call dentist", "priority" => "high" } },
+      account: @account
     )
-    AgentPushRegistry.instance.instance_variable_set(:@streams, [])  # reset between tests
+    AgentPushRegistry.instance.instance_variable_set(:@streams, Hash.new { |h, k| h[k] = [] })
   end
 
   test "as_json returns correct type, action, and data keys" do
@@ -22,18 +24,17 @@ class OutboundMessageTest < ActiveSupport::TestCase
   test "deliver returns true when push broadcast succeeds" do
     stream = Object.new
     stream.define_singleton_method(:write) { |_| }
-    AgentPushRegistry.instance.register(stream)
+    AgentPushRegistry.instance.register(@account.id, stream)
 
     assert @message.deliver
   end
 
   test "deliver returns true even when no push connection and no endpoint" do
-    AgentEndpoint.delete_all
+    @account.agent_endpoints.delete_all
     assert @message.deliver
   end
 
   test "deliver falls back to callback endpoint when no push connection" do
-    # Use a local TCP server to capture the HTTP POST
     server = TCPServer.new("127.0.0.1", 0)
     port = server.addr[1]
     received_body = nil
@@ -50,7 +51,7 @@ class OutboundMessageTest < ActiveSupport::TestCase
       socket.close
     end
 
-    AgentEndpoint.create!(callback_url: "http://127.0.0.1:#{port}/callback")
+    @account.agent_endpoints.create!(callback_url: "http://127.0.0.1:#{port}/callback")
     assert @message.deliver
     server_thread.join(5)
     server.close
@@ -61,8 +62,7 @@ class OutboundMessageTest < ActiveSupport::TestCase
   end
 
   test "deliver returns true and does not raise when callback HTTP fails" do
-    # Port 1 is privileged and will refuse the connection
-    AgentEndpoint.create!(callback_url: "http://127.0.0.1:1/callback")
+    @account.agent_endpoints.create!(callback_url: "http://127.0.0.1:1/callback")
     assert_nothing_raised { assert @message.deliver }
   end
 end

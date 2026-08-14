@@ -1,5 +1,7 @@
 one:
+  account: alice_account
   token: fixture_api_token_one_0000000000000000000000000000000000000000000000000000000
 
 two:
+  account: alice_account
   token: fixture_api_token_two_0000000000000000000000000000000000000000000000000000000

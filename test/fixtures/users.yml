@@ -1,12 +1,14 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 singleton:
+  account: singleton_account
   email_address: stub@example.com
   locale:
   webauthn_id: c2luZ2xldG9uLXdlYmF1dGhuLWlk
   verified_at: 2026-08-12 12:00:00
 
 alice:
+  account: alice_account
   email_address: alice@example.com
   locale: en
   webauthn_id: YWxpY2Utd2ViYXV0aG4taWQ=

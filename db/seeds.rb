@@ -2,7 +2,9 @@
 # development, test). The code here should be idempotent so that it can be executed at any point in every environment.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
-DailyBriefing.find_or_create_by!(date: Date.today) do |b|
+seed_account = Account.first_or_create!
+DailyBriefing.find_or_initialize_by(account: seed_account, date: Date.today).tap do |b|
+  break if b.persisted?
   b.calendar_data = {
     "events" => [
       { "title" => "Team standup", "time" => "09:00", "duration_minutes" => 30 },
@@ -65,4 +67,5 @@ DailyBriefing.find_or_create_by!(date: Date.today) do |b|
     { "text" => "Drafted reply to client email", "timestamp" => "7:40am", "icon" => "send" },
     { "text" => "Reminded about dentist call at 10am", "timestamp" => "7:45am", "icon" => "bell" }
   ]
+  b.save!
 end

@@ -1,18 +1,13 @@
 require "test_helper"
 
 class Api::CatalogControllerTest < ActionDispatch::IntegrationTest
-  VALID_TOKEN = "test_daybreak_token".freeze
-
   setup do
-    ENV["DAYBREAK_API_TOKEN"] = VALID_TOKEN
-  end
-
-  teardown do
-    ENV.delete("DAYBREAK_API_TOKEN")
+    @account = Account.create!
+    @token = @account.api_tokens.create!.token
   end
 
   def auth_headers
-    { "Authorization" => "Bearer #{VALID_TOKEN}" }
+    { "Authorization" => "Bearer #{@token}" }
   end
 
   test "GET /api/catalog returns 200 with JSON:API content type" do

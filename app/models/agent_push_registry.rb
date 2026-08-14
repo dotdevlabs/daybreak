@@ -4,24 +4,21 @@ class AgentPushRegistry
   include Singleton
 
   def initialize
-    @streams = []
+    @streams = Hash.new { |h, k| h[k] = [] }
     @mutex = Mutex.new
   end
 
-  def register(stream)
-    @mutex.synchronize { @streams << stream }
+  def register(account_id, stream)
+    @mutex.synchronize { @streams[account_id] << stream }
   end
 
-  def unregister(stream)
-    @mutex.synchronize { @streams.delete(stream) }
+  def unregister(account_id, stream)
+    @mutex.synchronize { @streams[account_id].delete(stream) }
   end
 
-  # Returns true if at least one stream was written to.
-  def broadcast(event_json)
-    active = @mutex.synchronize { @streams.dup }
-    active.each do |stream|
-      stream.write(event_json) rescue nil
-    end
+  def broadcast_to(account_id, event_json)
+    active = @mutex.synchronize { @streams[account_id].dup }
+    active.each { |s| s.write(event_json) rescue nil }
     active.any?
   end
 end

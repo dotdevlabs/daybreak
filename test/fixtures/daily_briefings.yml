@@ -1,4 +1,5 @@
 today:
+  account: alice_account
   date: <%= Date.today %>
   calendar_data:
     events:
@@ -106,6 +107,7 @@ today:
       status: "Pending"
 
 yesterday:
+  account: alice_account
   date: <%= Date.yesterday %>
   calendar_data: {}
   weather_data: {}

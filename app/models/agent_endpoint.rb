@@ -1,7 +1,5 @@
 class AgentEndpoint < ApplicationRecord
-  validates :callback_url, presence: true
+  belongs_to :account
 
-  def self.current
-    last
-  end
+  validates :callback_url, presence: true
 end

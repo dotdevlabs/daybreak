@@ -8,13 +8,14 @@ class Dashboard::ActionItemCompletionsControllerTest < ActionDispatch::Integrati
   end
 
   setup do
-    AgentPushRegistry.instance.instance_variable_set(:@streams, [])  # reset between tests
+    @registry = AgentPushRegistry.instance
+    @registry.instance_variable_set(:@streams, Hash.new { |h, k| h[k] = [] })
     sign_in_as(users(:alice))
   end
 
   test "POST /dashboard/action_item_completions returns 200" do
     mock_registry = Object.new
-    mock_registry.define_singleton_method(:broadcast) { |_| true }
+    mock_registry.define_singleton_method(:broadcast_to) { |_account_id, _json| true }
     with_push_registry(mock_registry) { post_completion }
     assert_response :ok
   end
@@ -22,7 +23,7 @@ class Dashboard::ActionItemCompletionsControllerTest < ActionDispatch::Integrati
   test "POST /dashboard/action_item_completions delivers outbound message with correct data" do
     captured = nil
     mock_registry = Object.new
-    mock_registry.define_singleton_method(:broadcast) do |json|
+    mock_registry.define_singleton_method(:broadcast_to) do |_account_id, json|
       captured = JSON.parse(json)
       true
     end
@@ -40,7 +41,7 @@ class Dashboard::ActionItemCompletionsControllerTest < ActionDispatch::Integrati
   test "POST /dashboard/action_item_completions omits nil priority from item data" do
     captured = nil
     mock_registry = Object.new
-    mock_registry.define_singleton_method(:broadcast) do |json|
+    mock_registry.define_singleton_method(:broadcast_to) do |_account_id, json|
       captured = JSON.parse(json)
       true
     end
@@ -52,7 +53,7 @@ class Dashboard::ActionItemCompletionsControllerTest < ActionDispatch::Integrati
   test "POST /dashboard/action_item_completions includes link in outbound message when present" do
     captured = nil
     mock_registry = Object.new
-    mock_registry.define_singleton_method(:broadcast) do |json|
+    mock_registry.define_singleton_method(:broadcast_to) do |_account_id, json|
       captured = JSON.parse(json)
       true
     end
@@ -65,7 +66,7 @@ class Dashboard::ActionItemCompletionsControllerTest < ActionDispatch::Integrati
   test "POST /dashboard/action_item_completions omits link from outbound message when absent" do
     captured = nil
     mock_registry = Object.new
-    mock_registry.define_singleton_method(:broadcast) do |json|
+    mock_registry.define_singleton_method(:broadcast_to) do |_account_id, json|
       captured = JSON.parse(json)
       true
     end
