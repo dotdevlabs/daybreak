@@ -6,12 +6,6 @@ class PasskeyE2ETest < ApplicationSystemTestCase
   setup do
     @original_webauthn_origins = WebAuthn.configuration.allowed_origins.dup
     @original_webauthn_rp_id = WebAuthn.configuration.rp_id
-
-    # Override WebAuthn config to match the actual browser origin for this test.
-    # Capybara.server_host is "localhost" (set in application_system_test_case.rb),
-    # so the browser origin is http://localhost:PORT and rpId must be "localhost".
-    port = Capybara.server_port
-    WebAuthn.configuration.allowed_origins = [ "http://localhost:#{port}" ]
     WebAuthn.configuration.rp_id = "localhost"
   end
 
@@ -37,6 +31,13 @@ class PasskeyE2ETest < ApplicationSystemTestCase
 
     # ── Registration ──────────────────────────────────────────────────────────
     visit root_url
+
+    # Capybara picks a random port; read it from the running server AFTER the
+    # first visit (which starts Puma). Using Capybara.server_port here would
+    # return nil because we never set it explicitly.
+    actual_port = Capybara.current_session.server.port
+    WebAuthn.configuration.allowed_origins = [ "http://localhost:#{actual_port}" ]
+
     find("[data-controller='auth-overlay'][data-connected]")
 
     find("[data-auth-overlay-target='signupEmailInput']").set(test_email)
