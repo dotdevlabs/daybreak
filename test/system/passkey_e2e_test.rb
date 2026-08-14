@@ -27,9 +27,9 @@ class PasskeyE2ETest < ApplicationSystemTestCase
     authenticator_options = Selenium::WebDriver::VirtualAuthenticatorOptions.new(
       protocol: :ctap2,
       transport: :internal,
-      has_resident_key: true,
-      has_user_verification: true,
-      is_user_verified: true
+      resident_key: true,
+      user_verification: true,
+      user_verified: true
     )
     page.driver.browser.add_virtual_authenticator(authenticator_options)
 
