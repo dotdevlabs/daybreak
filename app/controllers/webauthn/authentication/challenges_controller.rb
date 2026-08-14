@@ -7,7 +7,7 @@ class Webauthn::Authentication::ChallengesController < ApplicationController
 
     if user && user.credentials.any?
       options = WebAuthn::Credential.options_for_get(
-        allow: user.credentials.map { |c| { id: c.external_id, type: "public-key" } }
+        allow: user.credentials.map(&:external_id)
       )
       session[:webauthn_challenge] = options.challenge
       session[:webauthn_user_id]   = user.id

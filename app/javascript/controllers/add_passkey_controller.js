@@ -24,7 +24,7 @@ export default class extends Controller {
       if (!optResp.ok) throw new Error("Failed to get options")
       const options = await optResp.json()
 
-      const credential = await create(options)
+      const credential = await create({ publicKey: options })
 
       const form = document.createElement("form")
       form.method = "POST"
