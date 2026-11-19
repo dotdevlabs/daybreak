@@ -147,7 +147,9 @@ jobs:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare test
+        run: |
+          ruby -v
+          bin/rails db:test:prepare test
 
   system-test:
     runs-on: ubuntu-latest
@@ -236,6 +238,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          pull: true
           push: true
           build-args: |
             APP_SHA=${{ github.sha }}
